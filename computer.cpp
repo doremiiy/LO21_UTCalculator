@@ -5,6 +5,7 @@
 //  Created by Rémi Di Vita on 26/04/2016.
 //  Copyright © 2016 Rémi Di Vita. All rights reserved.
 //
+#include "stdafx.h"
 
 #include "computer.hpp"
 
@@ -22,11 +23,33 @@ string Rationel::toString() const
 {
     stringstream s;
     s << numerateur;
+    s << '/';
     s << denominateur;
     return s.str();
 }
+
+
 Rationel* Rationel::clone() const {
     return new Rationel(*this);
+}
+void Rationel::simplifier(){
+    if (denominateur == 0) throw ComputerException("Erreur");
+    int a = numerateur;
+    int b = denominateur;
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    while(a!=b) {
+        if (a > b)
+            a = a - b;
+        else
+            b = b - a;
+    }
+    numerateur /= a;
+    denominateur /= a;
+    if (denominateur < 0) {
+        denominateur = -denominateur;
+        numerateur = -numerateur;
+    }
 }
 string OpNumeric::toString() const{
     stringstream s;
@@ -136,11 +159,16 @@ void Pile::afficherPile(ostream & f) const{
     f << "---------------------------------\n";
 }
 void Controleur::commande(const string& c) {
-    if (estUneLitterale(c))
+    if (estUneLitterale(c)) {
         if (estUnEntier(c)) {
             Entier e(stoi(c));
             pi.push(om.addOperande(e));
         }
+        if (estUnRationnel(c)) {
+            Rationel r(getNumerateur(c),getDenominateur(c));
+            pi.push(om.addOperande(r));
+        }
+    }
 }
 
 
@@ -160,4 +188,30 @@ bool estUnRationnel(const string & c){
     for (unsigned int i = 0; i < c.length(); i++)
         if (c[i] == '/') return true;
     return false;
+}
+
+bool estUnOperateur(const string & c){
+    if (estUnOpNum(c)) return true;
+    return false;
+}
+
+bool estUnOpNum(const string & c){
+    if (c == "+" || c == "-" || c == "*" || c == "/") return true;
+    return false;
+}
+
+const int getNumerateur(const string& c){
+    string s="";
+    for (unsigned int i = 0; c[i] != '/'; i++)
+        s = s + c[i];
+    return stoi(s);
+}
+
+const int getDenominateur(const string & c){
+    string s = "";
+    unsigned int i = 0;
+    while (c[i] != '/') i++;
+    for (unsigned int j = i + 1; j < c.length(); j++)
+        s = s + c[j];
+    return stoi(s);
 }
