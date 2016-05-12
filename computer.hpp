@@ -59,6 +59,7 @@ public:
 
 class Literale : public Operande {
     virtual Literale* clone()const = 0;
+    //virtual Literale* toValue()const = 0;
 };
 class LiteraleNumeric :public Literale {
     virtual LiteraleNumeric* clone() const = 0;//a verifier pour le virtual
@@ -79,10 +80,12 @@ private:
     int denominateur;
 public:
     string toString() const;
-    Rationel(const int& n, const int& d) :numerateur(n), denominateur(d) {}
+    Rationel(const int& n, const int& d) :numerateur(n), denominateur(d) { if (d != 0) simplifier(); }
+    //Rationel(const string& c);
     Rationel* clone()const;
     const int getNumerateur()const { return numerateur; }
     const int getDenominateur()const { return denominateur; }
+    void simplifier();
 };
 
 class Operateur : public Operande {
@@ -143,6 +146,14 @@ public:
 bool estUneLitterale(const string& c);
 bool estUnEntier(const string& c);
 bool estUnRationnel(const string& c);
+
+bool estUnOperateur(const string& c);
+bool estUnOpNum(const string& c);
+
+const int getNumerateur(const string& c);
+const int getDenominateur(const string& c);
+
+
 
 #endif /* computer_hpp */
 
