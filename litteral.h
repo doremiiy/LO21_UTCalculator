@@ -87,6 +87,36 @@ public:
 	string toString() const;
 };
 
+class Atome : public Litterale {
+private: 
+	string identificateur;
+public:
+	Atome(const string& s):identificateur(s){}
+	string getIdentificateur() const { return identificateur; }
+	Atome* Clone() const;
+	string toString() const;
+};
+
+class Expression : public Litterale {
+private:
+	string value;
+public:
+	Expression(const string& s):value(s){}
+	string getValue() const { return value; }
+	string toString() const;
+	Expression* Clone() const;
+};
+
+class Programme : public Litterale {
+private:
+	string value;
+public:
+	Programme(const string& s):value(s){}
+	string getValue() const { return value; }
+	string toString() const;
+	Programme* Clone() const;
+};
+
 class FabriqueLitterale {
 private:
 	vector<Litterale*> LitTab;
@@ -113,16 +143,19 @@ public:
 
 	Litterale* fabriquerComplexe(const string& s);
 	Litterale* fabriquerComplexe(LitteraleNumeric *l1, LitteraleNumeric *l2);
+	Atome* fabriquerAtome(const string& s);
+	Atome* fabriquerAtome(Atome& a);
 
 	Entier* fabriquer(const Entier& e);
 	Entier* fabriquer(int value);
 	Reel* fabriquer(const Reel& r);
 	Reel* fabriquer(double value);
 	Rationnel* fabriquer(const Rationnel& ra);
-	Rationnel* fabriquer(int num, int den);
+	//Rationnel* fabriquer(int num, int den);
 	Complexe* fabriquer(const Complexe& c);
+	Atome* fabriquer(const Atome& a);
 
-	LitteraleNumeric* fabriquerRationnel(int n, int d);
+	LitteraleNumeric* fabriquer/*Rationnel*/(int n, int d);
 };
 
 
@@ -135,12 +168,19 @@ bool isComplexe(const string& s);
 bool isEntier(const string& s);
 bool isRationnel(const string& s);
 bool isReel(const string& s);
+bool isAtome(const string& s);
+bool isExpression(const string& s);
+bool isProgramme(const string& s);
 
 Entier* LitToEnt(Litterale* l);
 Reel* LitToReel(Litterale* l);
 Rationnel* LitToRat(Litterale* l);
 Complexe* LitToComp(Litterale* l);
+Atome* LitToAtome(Litterale* l);
+Expression* LitToExpression(Litterale* l);
+Programme* LitToProgramme(Litterale* l);
 
+LitteraleNumeric* LitToLitNum(Litterale* l);
 Entier* LitNumToEnt(LitteraleNumeric* ln);
 Reel* LitNumToReel(LitteraleNumeric* ln);
 Rationnel* LitNumToRat(LitteraleNumeric* ln);

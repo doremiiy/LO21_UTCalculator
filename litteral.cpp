@@ -38,6 +38,23 @@ bool isReel(const string & s)
 	return regex_match(s, r);
 }
 
+bool isAtome(const string & s)
+{
+	regex r("[A-Z]([A-Z]|[0-9])*");
+	return regex_match(s, r);
+}
+
+bool isExpression(const string & s)
+{
+	regex r("'");
+	return regex_match(s, r);
+}
+
+bool isProgramme(const string & s)
+{
+	return false;
+}
+
 Rationnel * Rationnel::Clone() const
 {
 	return new Rationnel(*this);
@@ -87,9 +104,16 @@ Complexe * Complexe::Clone() const
 string Complexe::toString() const
 {
 	stringstream s;
-	s << pRe->toString();
+	s << getPReel()->toString();
 	s << "$";
-	s << pIm->toString();
+	s << getPIm()->toString();
+	return s.str();
+}
+
+string Atome::toString() const
+{
+	stringstream s;
+	s << getIdentificateur();
 	return s.str();
 }
 
@@ -106,6 +130,11 @@ bool isComplexe(const string & s)
 bool isLitteraleNumeric(const string& s)
 {
 	return (isEntier(s) || isReel(s) || isRationnel(s));
+}
+
+LitteraleNumeric * LitToLitNum(Litterale * l)
+{
+	return dynamic_cast<LitteraleNumeric*>(l);
 }
 
 Entier * LitNumToEnt(LitteraleNumeric * ln)
@@ -125,7 +154,7 @@ Rationnel * LitNumToRat(LitteraleNumeric * ln)
 
 bool isLitterale(const string& s)
 {
-	return (isLitteraleNumeric(s) || isComplexe(s));
+	return (isLitteraleNumeric(s) || isComplexe(s) || isExpression(s) || isAtome(s));
 }
 
 Entier * LitToEnt(Litterale * l)
@@ -146,6 +175,21 @@ Rationnel * LitToRat(Litterale * l)
 Complexe * LitToComp(Litterale * l)
 {
 	return dynamic_cast<Complexe*>(l);
+}
+
+Atome * LitToAtome(Litterale * l)
+{
+	return dynamic_cast<Atome*>(l);
+}
+
+Expression * LitToExpression(Litterale * l)
+{
+	return dynamic_cast<Expression*>(l);
+}
+
+Programme * LitToProgramme(Litterale * l)
+{
+	return dynamic_cast<Programme*>(l);
 }
 
 FabriqueLitterale::Handler FabriqueLitterale::handler = FabriqueLitterale::Handler();
@@ -174,18 +218,18 @@ void FabriqueLitterale::libererInstance()
 
 void FabriqueLitterale::supprimer(Litterale * l)
 {
-	vector<Litterale*>::iterator It = LitTab.begin();
+	vector<Litterale*>::const_iterator It = LitTab.begin();
 	unsigned int i = 0;
 	while (It != LitTab.end() && *It != l) {
 		++It;
 		i++;
 	}
-	if (It == LitTab.end()) throw LitteraleException("Element inconnu");
-	LitTab.erase(LitTab.begin() + i);
-	if (LitToComp(l) != nullptr) {
+	if (i == LitTab.size()) throw LitteraleException("Element inconnu");
+	/*if (LitToComp(l) != nullptr) {
 		supprimer(LitToComp(l)->getPReel());
 		supprimer(LitToComp(l)->getPIm());
-	}
+	}*/
+	LitTab.erase(LitTab.begin() + i);
 	delete l;
 }
 
@@ -200,8 +244,20 @@ Litterale * FabriqueLitterale::fabriquerLitterale(const string & s)
 		L = fabriquerComplexe(s);
 		return L;
 	}
+	if (isAtome(s)) {
+		L=fabriquerAtome(s);
+		return L;
+	}
 	throw LitteraleException("Erreur : pas de litterale correspondant");
 }
+
+Atome * FabriqueLitterale::fabriquerAtome(const string & s)
+{
+	Atome* a = new Atome(s);
+	LitTab.push_back(a);
+	return a;
+}
+
 
 Litterale * FabriqueLitterale::fabriquerLitterale(Litterale & l)
 {
@@ -238,7 +294,7 @@ LitteraleNumeric * FabriqueLitterale::fabriquerLitNum(const string & s)
 	}
 
 	if (isRationnel(s)) {
-		return fabriquerRationnel(NumerateurFromStr(s), DenominateurFromStr(s));
+		return fabriquer/*Rationnel*/(NumerateurFromStr(s), DenominateurFromStr(s));
 	}
 }
 
@@ -296,6 +352,13 @@ Complexe * FabriqueLitterale::fabriquer(const Complexe & c)
 	return cTmp;
 }
 
+Atome * FabriqueLitterale::fabriquer(const Atome & a)
+{
+	Atome* aTmp = a.Clone();
+	LitTab.push_back(aTmp);
+	return aTmp;
+}
+
 Entier * FabriqueLitterale::fabriquer(int value)
 {
 	Entier* e = new Entier(value);
@@ -310,19 +373,19 @@ Reel * FabriqueLitterale::fabriquer(double value)
 	return r;
 }
 
-Rationnel * FabriqueLitterale::fabriquer(int num, int den)
+/*Rationnel * FabriqueLitterale::fabriquer(int num, int den)
 {
 	Rationnel* ra = new Rationnel(num,den);
 	ra->simplifier();
 	LitTab.push_back(ra);
 	return ra;
-}
+}*/
 
 Litterale * FabriqueLitterale::fabriquerComplexe(LitteraleNumeric * l1, LitteraleNumeric * l2)
 {
 	FabriqueLitterale& f = FabriqueLitterale::getInstance();
 	Complexe * c=new Complexe(l1,l2);
-	if (LitNumToEnt(c->getPIm()) != nullptr && LitNumToEnt(c->getPIm()) == 0) {
+	if (LitNumToEnt(c->getPIm()) != nullptr && LitNumToEnt(c->getPIm())->getValue() == 0) {
 		LitteraleNumeric* ln = f.fabriquerLitNum(*c->getPReel());
 		delete c;
 		LitTab.push_back(ln);
@@ -341,7 +404,14 @@ LitteraleNumeric * FabriqueLitterale::fabriquerLitNum(LitteraleNumeric & l)
 	return tLn;
 }
 
-LitteraleNumeric * FabriqueLitterale::fabriquerRationnel(int n, int d)
+Atome * FabriqueLitterale::fabriquerAtome(Atome & a)
+{
+	Atome* tA = a.Clone();
+	LitTab.push_back(tA);
+	return tA;
+}
+
+LitteraleNumeric * FabriqueLitterale::fabriquer/*Rationnel*/(int n, int d)
 {
 	if (d == 0) throw LitteraleException("Erreur : denominateur nul");
 	Rationnel* r = new Rationnel(n, d);
@@ -349,13 +419,13 @@ LitteraleNumeric * FabriqueLitterale::fabriquerRationnel(int n, int d)
 	if (r->getDenominateur() == 1) {
 		Entier* e = new Entier(r->getNumerateur());
 		LitTab.push_back(e);
-		//supprimer(r);
+		delete r;
 		return e;
 	}
 	if (r->getNumerateur() == 0) {
 		Entier* e = new Entier(r->getNumerateur());
 		LitTab.push_back(e);
-		//supprimer(r);
+		delete r;
 		return e;
 	}
 	else {
@@ -364,6 +434,10 @@ LitteraleNumeric * FabriqueLitterale::fabriquerRationnel(int n, int d)
 	}
 }
 
+Atome * Atome::Clone() const
+{
+	return new Atome(*this);
+}
 
 int NumerateurFromStr(const string & s)
 {
@@ -381,4 +455,24 @@ int DenominateurFromStr(const string & s)
 		while (s[i] != '/') i++;
 		return atoi(s.substr(i + 1).c_str());
 	}
+}
+
+string Expression::toString() const
+{
+	return value;
+}
+
+Expression * Expression::Clone() const
+{
+	return new Expression(*this);
+}
+
+string Programme::toString() const
+{
+	return value;
+}
+
+Programme * Programme::Clone() const
+{
+	return new Programme(*this);
 }

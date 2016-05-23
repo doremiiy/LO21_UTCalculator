@@ -25,20 +25,87 @@ class Operateur {
 private:
 	string idOp;
 public:
+	static const map<string, unsigned int> listeOperateurs;
 	Operateur(const string& s):idOp(s){}
 	virtual ~Operateur(){}
+	virtual Operateur* Clone() = 0;
+	virtual Litterale* faireOperation() = 0;
 	const string& getIdOp() const { return  idOp; }
-	virtual unsigned int getArite() const = 0;
 };
 
-class OperateurNumeric : public Operateur {
+class OperateurBinaire : public Operateur {
+private:
+	Litterale* l1;
+	Litterale* l2;
+	static unsigned int arite;
 public:
-	static const map<string, unsigned int> listeOpNum;
-	OperateurNumeric(const string& s):Operateur(s){}
-	unsigned int getArite() const;
-	//Litterale* appliquerOpUnaire(Litterale* l);
-	Litterale* appliquerOpBinaire(Litterale* l1,Litterale* l2);
+	OperateurBinaire(const string& s):Operateur(s),l1(nullptr),l2(nullptr){}
+	static const unsigned int getArite() { return arite; }
+	void putLitterale(Litterale* L1, Litterale* L2);
+	Litterale* getLitterale1() const { return l1; }
+	Litterale* getLitterale2() const { return l2; }
 };
+
+class OperateurUnaire : public Operateur {
+private:
+	Litterale* l;
+	static unsigned int arite;
+public:
+	OperateurUnaire(const string& s):Operateur(s),l(nullptr){}
+	static const unsigned int getArite() { return arite; }
+	void putLitterale(Litterale* L);
+	Litterale* getLitterale() const { return l; }
+};
+
+class OperateurPile : public Operateur {
+private:
+	static unsigned int arite;
+public:
+	OperateurPile(const string & s):Operateur(s){}
+	static unsigned int getArite() { return arite; }
+};
+
+class OpPlus : public OperateurBinaire {
+public:
+	OpPlus(const string& s):OperateurBinaire(s){}
+	OpPlus* Clone();
+	Litterale* faireOperation();
+};
+
+class OpMoins : public OperateurBinaire {
+public:
+	OpMoins(const string& s) :OperateurBinaire(s) {}
+	OpMoins* Clone();
+	Litterale* faireOperation();
+};
+
+class OpFois : public OperateurBinaire {
+public:
+	OpFois(const string& s) :OperateurBinaire(s) {}
+	OpFois* Clone();
+	Litterale* faireOperation();
+};
+
+class OpDiviser : public OperateurBinaire {
+public:
+	OpDiviser(const string& s) :OperateurBinaire(s) {}
+	OpDiviser* Clone();
+	Litterale* faireOperation();
+};
+
+class OpNEG : public OperateurUnaire {
+public:
+	OpNEG(const string& s):OperateurUnaire(s){}
+	OpNEG* Clone();
+	Litterale* faireOperation();
+};
+
+/*class OpDUP : public OperateurPile {
+public:
+	OpDUP(const string& s):OperateurPile(s){}
+	OpDUP* Clone();
+	Litterale* faireOperation();
+};*/
 
 class FabriqueOperateur {
 private:
@@ -61,8 +128,8 @@ public:
 };
 
 bool isOperateur(const string& s);
-bool isOpNum(const string& s);
 
-
-OperateurNumeric* OperateurToOpNum(Operateur* Op);
+OperateurBinaire* OperateurToOpBin(Operateur* Op);
+OperateurUnaire* OperateurToOpUn(Operateur* Op);
+OperateurPile* OperateurToOpPile(Operateur* Op);
 #endif

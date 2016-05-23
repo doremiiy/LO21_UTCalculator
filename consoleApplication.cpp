@@ -8,6 +8,13 @@
 
 int main()
 {
+	/*FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	string at = "TOTO";
+	if (isAtome(at)) {
+		Litterale* a=f.fabriquerLitterale(at);
+		cout << a->toString();
+	}
+	system("pause");*/
 	/*string com;
 	cin >> com;
 	if (isOperateur(com)==true) cout<<"true";
@@ -25,9 +32,10 @@ int main()
 			cin >> comm;
 			P->commande(comm);
 			P->setMessage("Tapez une commande");
+			system("cls");
 		}
-		catch (LitteraleException e) { P->setMessage(e.getInfo()); }
-		catch (OperateurException o) { P->setMessage(o.getInfo()); }
+		catch (LitteraleException e) { P->setMessage(e.getInfo()); system("cls"); }
+		catch (OperateurException o) { P->setMessage(o.getInfo()); system("cls"); }
 	} while (comm != "q");
 	system("pause");
     return 0;
