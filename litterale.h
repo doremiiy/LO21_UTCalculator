@@ -4,10 +4,15 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
+#include <QVector>
 #include <map>
 #include <sstream>
 #include <regex>
+#include <QRegExp>
+#include <QString>
+#include <QStringRef>
+
+#include <math.h>
 
 class Litterale;
 class LitteraleNumeric;
@@ -24,158 +29,159 @@ using namespace std;
 
 class LitteraleException {
 private:
-	string info;
+    QString info;
 public:
-	string getInfo() const { return info; }
-	LitteraleException(const string& s):info(s){}
+    QString getInfo() const { return info; }
+    LitteraleException(const QString& s):info(s){}
 };
 
 
 class Litterale {
 public:
-	virtual ~Litterale() {}
-	virtual Litterale* Clone() const = 0;
-	virtual string toString() const = 0;
-	//operateurs de cast
+    virtual ~Litterale() {}
+    virtual Litterale* Clone() const = 0;
+    virtual QString toString() const = 0;
+    //operateurs de cast
 };
 
 class LitteraleNumeric : public Litterale {
 public:
-	virtual LitteraleNumeric* Clone() const = 0;
-	bool LitteraleNumeriquePositive(LitteraleNumeric* ln) const;
-	bool LitteraleNumeriqueNegative(LitteraleNumeric* ln) const;
+    virtual LitteraleNumeric* Clone() const = 0;
+    bool LitteraleNumeriquePositive(LitteraleNumeric* ln) const;
+    bool LitteraleNumeriqueNegative(LitteraleNumeric* ln) const;
+    bool LitteraleNumeriqueNulle(LitteraleNumeric* ln) const;
 };
 
 
 class Entier : public LitteraleNumeric {
 private:
-	int value;
+    int value;
 public:
-	Entier(int n):value(n){}
-	int getValue() const { return value; }
-	Entier* Clone() const;
-	string toString() const;
+    Entier(int n):value(n){}
+    int getValue() const { return value; }
+    Entier* Clone() const;
+    QString toString() const;
 };
 
 class Reel : public LitteraleNumeric {
 private:
-	double value;
+    double value;
 public:
-	Reel(double n):value(n){}
-	double getValue() const { return value; }
-	Reel* Clone() const;
-	string toString() const;
+    Reel(double n):value(n){}
+    double getValue() const { return value; }
+    Reel* Clone() const;
+    QString toString() const;
 };
 
 class Rationnel : public LitteraleNumeric {
 private:
-	int numerateur;
-	int denominateur;
+    int numerateur;
+    int denominateur;
 public:
-	Rationnel(int n,int d):numerateur(n),denominateur(d){}
-	int getNumerateur() const { return numerateur; }
-	int getDenominateur() const { return denominateur; }
-	Rationnel* Clone() const;
-	string toString() const;
-	void simplifier();
+    Rationnel(int n,int d):numerateur(n),denominateur(d){}
+    int getNumerateur() const { return numerateur; }
+    int getDenominateur() const { return denominateur; }
+    Rationnel* Clone() const;
+    QString toString() const;
+    void simplifier();
 };
 
 class Complexe : public Litterale {
 private:
-	LitteraleNumeric* pRe;
-	LitteraleNumeric* pIm;
+    LitteraleNumeric* pRe;
+    LitteraleNumeric* pIm;
 public:
-	Complexe(LitteraleNumeric* r, LitteraleNumeric* i):pRe(r),pIm(i){}
-	LitteraleNumeric* getPReel() const { return pRe; }
-	LitteraleNumeric* getPIm() const { return pIm; }
-	Complexe* Clone() const;
-	string toString() const;
+    Complexe(LitteraleNumeric* r, LitteraleNumeric* i):pRe(r),pIm(i){}
+    LitteraleNumeric* getPReel() const { return pRe; }
+    LitteraleNumeric* getPIm() const { return pIm; }
+    Complexe* Clone() const;
+    QString toString() const;
 };
 
 class Atome : public Litterale {
-private: 
-	string identificateur;
+private:
+    QString identificateur;
 public:
-	Atome(const string& s):identificateur(s){}
-	string getIdentificateur() const { return identificateur; }
-	Atome* Clone() const;
-	string toString() const;
+    Atome(const QString& s):identificateur(s){}
+    QString getIdentificateur() const { return identificateur; }
+    Atome* Clone() const;
+    QString toString() const;
 };
 
 class Expression : public Litterale {
 private:
-	string value;
+    QString value;
 public:
-	Expression(const string& s):value(s){}
-	string getValue() const { return value; }
-	string toString() const;
-	Expression* Clone() const;
+    Expression(const QString& s):value(s){}
+    QString getValue() const { return value; }
+    QString toString() const;
+    Expression* Clone() const;
 };
 
 class Programme : public Litterale {
 private:
-	string value;
+    QString value;
 public:
-	Programme(const string& s):value(s){}
-	string getValue() const { return value; }
-	string toString() const;
-	Programme* Clone() const;
+    Programme(const QString& s):value(s){}
+    QString getValue() const { return value; }
+    QString toString() const;
+    Programme* Clone() const;
 };
 
 class FabriqueLitterale {
 private:
-	vector<Litterale*> LitTab;
-	FabriqueLitterale(){}
-	~FabriqueLitterale();
-	FabriqueLitterale(const FabriqueLitterale& fl);
-	void operator=(const FabriqueLitterale& fl);
-	struct Handler {
-		FabriqueLitterale* instance;
-		Handler():instance(nullptr){}
-		~Handler() { delete instance; }
-	};
-	static Handler handler;
+    QVector<Litterale*> LitTab;
+    FabriqueLitterale(){}
+    ~FabriqueLitterale();
+    FabriqueLitterale(const FabriqueLitterale& fl);
+    void operator=(const FabriqueLitterale& fl);
+    struct Handler {
+        FabriqueLitterale* instance;
+        Handler():instance(nullptr){}
+        ~Handler() { delete instance; }
+    };
+    static Handler handler;
 public:
-	static FabriqueLitterale& getInstance();
-	static void libererInstance();
-	void supprimer(Litterale* l);
-	//Fabriques
-	Litterale* fabriquerLitterale(const string& s);
-	Litterale* fabriquerLitterale(Litterale& l);
+    static FabriqueLitterale& getInstance();
+    static void libererInstance();
+    void supprimer(Litterale* l);
+    //Fabriques
+    Litterale* fabriquerLitterale(const QString& s);
+    Litterale* fabriquerLitterale(Litterale& l);
 
-	LitteraleNumeric* fabriquerLitNum(const string& s);
-	LitteraleNumeric* fabriquerLitNum(LitteraleNumeric& l);
+    LitteraleNumeric* fabriquerLitNum(const QString& s);
+    LitteraleNumeric* fabriquerLitNum(LitteraleNumeric& l);
 
-	Litterale* fabriquerComplexe(const string& s);
-	Litterale* fabriquerComplexe(LitteraleNumeric *l1, LitteraleNumeric *l2);
-	Atome* fabriquerAtome(const string& s);
-	Atome* fabriquerAtome(Atome& a);
+    Litterale* fabriquerComplexe(const QString& s);
+    Litterale* fabriquerComplexe(LitteraleNumeric *l1, LitteraleNumeric *l2);
+    Atome* fabriquerAtome(const QString& s);
+    Atome* fabriquerAtome(Atome& a);
 
-	Entier* fabriquer(const Entier& e);
-	Entier* fabriquer(int value);
-	Reel* fabriquer(const Reel& r);
-	Reel* fabriquer(double value);
-	Rationnel* fabriquer(const Rationnel& ra);
-	//Rationnel* fabriquer(int num, int den);
-	Complexe* fabriquer(const Complexe& c);
-	Atome* fabriquer(const Atome& a);
+    Entier* fabriquer(const Entier& e);
+    Entier* fabriquer(int value);
+    Reel* fabriquer(const Reel& r);
+    Reel* fabriquer(double value);
+    Rationnel* fabriquer(const Rationnel& ra);
+    //Rationnel* fabriquer(int num, int den);
+    Complexe* fabriquer(const Complexe& c);
+    Atome* fabriquer(const Atome& a);
 
-	LitteraleNumeric* fabriquer/*Rationnel*/(int n, int d);
+    LitteraleNumeric* fabriquer/*Rationnel*/(int n, int d);
 };
 
 
-int NumerateurFromStr(const string& s);
-int DenominateurFromStr(const string& s);
+int NumerateurFromStr(const QString& s);
+int DenominateurFromStr(const QString& s);
 
-bool isLitterale(const string& s);
-bool isLitteraleNumeric(const string& s);
-bool isComplexe(const string& s);
-bool isEntier(const string& s);
-bool isRationnel(const string& s);
-bool isReel(const string& s);
-bool isAtome(const string& s);
-bool isExpression(const string& s);
-bool isProgramme(const string& s);
+bool isLitterale(const QString& s);
+bool isLitteraleNumeric(const QString& s);
+bool isComplexe(const QString& s);
+bool isEntier(const QString& s);
+bool isRationnel(const QString& s);
+bool isReel(const QString& s);
+bool isAtome(const QString& s);
+bool isExpression(const QString& s);
+bool isProgramme(const QString& s);
 
 Entier* LitToEnt(Litterale* l);
 Reel* LitToReel(Litterale* l);

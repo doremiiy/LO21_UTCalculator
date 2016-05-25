@@ -4,7 +4,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
+#include <QVector>
+#include <QString>
 #include <map>
 #include <sstream>
 #include <regex>
@@ -22,175 +23,231 @@ using namespace std;
 
 class OperateurException {
 private:
-	string info;
+    QString info;
 public:
-	string getInfo() const { return info; }
-	OperateurException(const string& s) :info(s) {}
+    QString getInfo() const { return info; }
+    OperateurException(const QString& s) :info(s) {}
 };
 
 class Operateur {
 private:
-	string idOp;
+    QString idOp;
 public:
-	static const map<string, unsigned int> listeOperateurs;
-	Operateur(const string& s):idOp(s){}
-	virtual ~Operateur(){}
-	virtual Operateur* Clone() = 0;
-	virtual Litterale* faireOperation() = 0;
-	const string& getIdOp() const { return  idOp; }
+    static const map<QString, unsigned int> listeOperateurs;
+    Operateur(const QString& s):idOp(s){}
+    virtual ~Operateur(){}
+    virtual Operateur* Clone() = 0;
+    virtual Litterale* faireOperation() = 0;
+    const QString& getIdOp() const { return  idOp; }
 };
 
 class OperateurBinaire : public Operateur {
 private:
-	Litterale* l1;
-	Litterale* l2;
-	static unsigned int arite;
+    Litterale* l1;
+    Litterale* l2;
+    static unsigned int arite;
 public:
-	OperateurBinaire(const string& s):Operateur(s),l1(nullptr),l2(nullptr){}
-	static const unsigned int getArite() { return arite; }
-	void putLitterale(Litterale* L1, Litterale* L2);
-	Litterale* getLitterale1() const { return l1; }
-	Litterale* getLitterale2() const { return l2; }
+    OperateurBinaire(const QString& s):Operateur(s),l1(nullptr),l2(nullptr){}
+    static const unsigned int getArite() { return arite; }
+    void putLitterale(Litterale* L1, Litterale* L2);
+    Litterale* getLitterale1() const { return l1; }
+    Litterale* getLitterale2() const { return l2; }
 };
 
 class OperateurUnaire : public Operateur {
 private:
-	Litterale* l;
-	static unsigned int arite;
+    Litterale* l;
+    static unsigned int arite;
 public:
-	OperateurUnaire(const string& s):Operateur(s),l(nullptr){}
-	static const unsigned int getArite() { return arite; }
-	void putLitterale(Litterale* L);
-	Litterale* getLitterale() const { return l; }
+    OperateurUnaire(const QString& s):Operateur(s),l(nullptr){}
+    static const unsigned int getArite() { return arite; }
+    void putLitterale(Litterale* L);
+    Litterale* getLitterale() const { return l; }
 };
 
 class OperateurPile : public Operateur {
 private:
-	static unsigned int arite;
+    static unsigned int arite;
 public:
-	OperateurPile(const string & s):Operateur(s){}
-	static unsigned int getArite() { return arite; }
+    OperateurPile(const QString & s):Operateur(s){}
+    static unsigned int getArite() { return arite; }
 };
 
 class OpPlus : public OperateurBinaire {
 public:
-	OpPlus(const string& s):OperateurBinaire(s){}
-	OpPlus* Clone();
-	Litterale* faireOperation();
+    OpPlus(const QString& s):OperateurBinaire(s){}
+    OpPlus* Clone();
+    Litterale* faireOperation();
 };
 
 class OpMoins : public OperateurBinaire {
 public:
-	OpMoins(const string& s) :OperateurBinaire(s) {}
-	OpMoins* Clone();
-	Litterale* faireOperation();
+    OpMoins(const QString& s) :OperateurBinaire(s) {}
+    OpMoins* Clone();
+    Litterale* faireOperation();
 };
 
 class OpFois : public OperateurBinaire {
 public:
-	OpFois(const string& s) :OperateurBinaire(s) {}
-	OpFois* Clone();
-	Litterale* faireOperation();
+    OpFois(const QString& s) :OperateurBinaire(s) {}
+    OpFois* Clone();
+    Litterale* faireOperation();
 };
 
 class OpDiviser : public OperateurBinaire {
 public:
-	OpDiviser(const string& s) :OperateurBinaire(s) {}
-	OpDiviser* Clone();
-	Litterale* faireOperation();
+    OpDiviser(const QString& s) :OperateurBinaire(s) {}
+    OpDiviser* Clone();
+    Litterale* faireOperation();
 };
 
 class OpNEG : public OperateurUnaire {
 public:
-	OpNEG(const string& s):OperateurUnaire(s){}
-	OpNEG* Clone();
-	Litterale* faireOperation();
+    OpNEG(const QString& s):OperateurUnaire(s){}
+    OpNEG* Clone();
+    Litterale* faireOperation();
 };
 
 class OpDUP : public OperateurPile {
 public:
-	OpDUP(const string& s):OperateurPile(s){}
-	OpDUP* Clone();
-	Litterale* faireOperation();
+    OpDUP(const QString& s):OperateurPile(s){}
+    OpDUP* Clone();
+    Litterale* faireOperation();
 };
 
 class OpDROP : public OperateurPile {
 public:
-	OpDROP(const string& s) :OperateurPile(s) {}
-	OpDROP* Clone();
-	Litterale* faireOperation();
+    OpDROP(const QString& s) :OperateurPile(s) {}
+    OpDROP* Clone();
+    Litterale* faireOperation();
 };
 
 class OpSWAP : public OperateurPile {
 public:
-	OpSWAP(const string& s) :OperateurPile(s) {}
-	OpSWAP* Clone();
-	Litterale* faireOperation();
+    OpSWAP(const QString& s) :OperateurPile(s) {}
+    OpSWAP* Clone();
+    Litterale* faireOperation();
 };
 
 class OpEGAL : public OperateurBinaire {
 public:
-	OpEGAL(const string& s) :OperateurBinaire(s) {}
-	OpEGAL* Clone();
-	Litterale* faireOperation();
+    OpEGAL(const QString& s) :OperateurBinaire(s) {}
+    OpEGAL* Clone();
+    Litterale* faireOperation();
 };
 
 class OpDIF : public OperateurBinaire {
 public:
-	OpDIF(const string& s) :OperateurBinaire(s) {}
-	OpDIF* Clone();
-	Litterale* faireOperation();
+    OpDIF(const QString& s) :OperateurBinaire(s) {}
+    OpDIF* Clone();
+    Litterale* faireOperation();
 };
 
 class OpSTRICTINF : public OperateurBinaire {
 public:
-	OpSTRICTINF(const string& s) :OperateurBinaire(s) {}
-	OpSTRICTINF* Clone();
-	Litterale* faireOperation();
+    OpSTRICTINF(const QString& s) :OperateurBinaire(s) {}
+    OpSTRICTINF* Clone();
+    Litterale* faireOperation();
 };
 
 class OpSTRICTSUP : public OperateurBinaire{
 public:
-	OpSTRICTSUP(const string& s) :OperateurBinaire(s) {}
-	OpSTRICTSUP* Clone();
-	Litterale* faireOperation();
+    OpSTRICTSUP(const QString& s) :OperateurBinaire(s) {}
+    OpSTRICTSUP* Clone();
+    Litterale* faireOperation();
 };
 
 class OpINF : public OperateurBinaire {
 public:
-	OpINF(const string& s) :OperateurBinaire(s) {}
-	OpINF* Clone();
-	Litterale* faireOperation();
+    OpINF(const QString& s) :OperateurBinaire(s) {}
+    OpINF* Clone();
+    Litterale* faireOperation();
 };
 
 class OpSUP : public OperateurBinaire {
 public:
-	OpSUP(const string& s) :OperateurBinaire(s) {}
-	OpSUP* Clone();
-	Litterale* faireOperation();
+    OpSUP(const QString& s) :OperateurBinaire(s) {}
+    OpSUP* Clone();
+    Litterale* faireOperation();
+};
+
+class OpAND : public OperateurBinaire {
+public:
+    OpAND(const QString& s) :OperateurBinaire(s) {}
+    OpAND* Clone();
+    Litterale* faireOperation();
+};
+
+class OpOR : public OperateurBinaire {
+public:
+    OpOR(const QString& s) :OperateurBinaire(s) {}
+    OpOR* Clone();
+    Litterale* faireOperation();
+};
+
+class OpNOT : public OperateurUnaire {
+public:
+    OpNOT(const QString& s) :OperateurUnaire(s) {}
+    OpNOT* Clone();
+    Litterale* faireOperation();
+};
+
+class OpNUM : public OperateurUnaire {
+public:
+    OpNUM(const QString& s) :OperateurUnaire(s) {}
+    OpNUM* Clone();
+    Litterale* faireOperation();
+};
+
+class OpDEN : public OperateurUnaire {
+public:
+    OpDEN(const QString& s) :OperateurUnaire(s) {}
+    OpDEN* Clone();
+    Litterale* faireOperation();
+};
+
+class OpDOLLAR : public OperateurBinaire {
+public:
+    OpDOLLAR(const QString& s) :OperateurBinaire(s) {}
+    OpDOLLAR* Clone();
+    Litterale* faireOperation();
+};
+
+class OpRE : public OperateurUnaire {
+public:
+    OpRE(const QString& s) :OperateurUnaire(s) {}
+    OpRE* Clone();
+    Litterale* faireOperation();
+};
+
+class OpIM : public OperateurUnaire {
+public:
+    OpIM(const QString& s) :OperateurUnaire(s) {}
+    OpIM* Clone();
+    Litterale* faireOperation();
 };
 
 class FabriqueOperateur {
 private:
-	vector<Operateur*> OpTab;
-	FabriqueOperateur(){}
-	~FabriqueOperateur();
-	void operator=(const FabriqueLitterale& f){}
-	FabriqueOperateur(const FabriqueOperateur& f);
-	struct Handler {
-		FabriqueOperateur* instance;
-		Handler() :instance(nullptr) {}
-		~Handler() { delete instance; }
-	};
-	static Handler handler;
+    QVector<Operateur*> OpTab;
+    FabriqueOperateur(){}
+    ~FabriqueOperateur();
+    void operator=(const FabriqueLitterale& f){}
+    FabriqueOperateur(const FabriqueOperateur& f);
+    struct Handler {
+        FabriqueOperateur* instance;
+        Handler() :instance(nullptr) {}
+        ~Handler() { delete instance; }
+    };
+    static Handler handler;
 public:
-	static FabriqueOperateur& getInstance();
-	static void libererInstance();
-	void supprimer(Operateur* Op);
-	Operateur* fabriquer(const string& s);
+    static FabriqueOperateur& getInstance();
+    static void libererInstance();
+    void supprimer(Operateur* Op);
+    Operateur* fabriquer(const QString& s);
 };
 
-bool isOperateur(const string& s);
+bool isOperateur(const QString& s);
 
 OperateurBinaire* OperateurToOpBin(Operateur* Op);
 OperateurUnaire* OperateurToOpUn(Operateur* Op);
