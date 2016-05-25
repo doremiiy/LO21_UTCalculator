@@ -10,6 +10,13 @@
 #include <regex>
 
 #include "Litterale.h"
+#include "Pile.h"
+
+class OperateurException;
+class Operateur;
+class OperateurBinaire;
+class OperateurUnaire;
+class OperateurPile;
 
 using namespace std;
 
@@ -100,12 +107,68 @@ public:
 	Litterale* faireOperation();
 };
 
-/*class OpDUP : public OperateurPile {
+class OpDUP : public OperateurPile {
 public:
 	OpDUP(const string& s):OperateurPile(s){}
 	OpDUP* Clone();
 	Litterale* faireOperation();
-};*/
+};
+
+class OpDROP : public OperateurPile {
+public:
+	OpDROP(const string& s) :OperateurPile(s) {}
+	OpDROP* Clone();
+	Litterale* faireOperation();
+};
+
+class OpSWAP : public OperateurPile {
+public:
+	OpSWAP(const string& s) :OperateurPile(s) {}
+	OpSWAP* Clone();
+	Litterale* faireOperation();
+};
+
+class OpEGAL : public OperateurBinaire {
+public:
+	OpEGAL(const string& s) :OperateurBinaire(s) {}
+	OpEGAL* Clone();
+	Litterale* faireOperation();
+};
+
+class OpDIF : public OperateurBinaire {
+public:
+	OpDIF(const string& s) :OperateurBinaire(s) {}
+	OpDIF* Clone();
+	Litterale* faireOperation();
+};
+
+class OpSTRICTINF : public OperateurBinaire {
+public:
+	OpSTRICTINF(const string& s) :OperateurBinaire(s) {}
+	OpSTRICTINF* Clone();
+	Litterale* faireOperation();
+};
+
+class OpSTRICTSUP : public OperateurBinaire{
+public:
+	OpSTRICTSUP(const string& s) :OperateurBinaire(s) {}
+	OpSTRICTSUP* Clone();
+	Litterale* faireOperation();
+};
+
+class OpINF : public OperateurBinaire {
+public:
+	OpINF(const string& s) :OperateurBinaire(s) {}
+	OpINF* Clone();
+	Litterale* faireOperation();
+};
+
+class OpSUP : public OperateurBinaire {
+public:
+	OpSUP(const string& s) :OperateurBinaire(s) {}
+	OpSUP* Clone();
+	Litterale* faireOperation();
+};
 
 class FabriqueOperateur {
 private:

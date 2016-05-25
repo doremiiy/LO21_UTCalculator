@@ -3,7 +3,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<string, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",0} };
+const map<string, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2}};
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -98,11 +98,51 @@ Operateur * FabriqueOperateur::fabriquer(const string & s)
 			OpTab.push_back(Op);
 			return Op;
 		}
-		/*if (s == "DUP") {
+		if (s == "DUP") {
 			Op = new OpDUP("DUP");
 			OpTab.push_back(Op);
 			return Op;
-		}*/
+		}
+		if (s == "DROP") {
+			Op = new OpDROP("DROP");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == "SWAP") {
+			Op = new OpSWAP("SWAP");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == "=") {
+			Op = new OpEGAL("EGAL");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == "!=") {
+			Op = new OpDIF("DIF");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == "<") {
+			Op = new OpSTRICTINF("STRICTINF");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == ">") {
+			Op = new OpSTRICTSUP("STRICTSUP");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == "<=") {
+			Op = new OpINF("INF");
+			OpTab.push_back(Op);
+			return Op;
+		}
+		if (s == ">=") {
+			Op = new OpSUP("SUP");
+			OpTab.push_back(Op);
+			return Op;
+		}
 	}
 	throw OperateurException("Erreur : Operateur non reconnu");
 }
@@ -693,12 +733,216 @@ Litterale * OpNEG::faireOperation()
 	throw OperateurException("Erreur : cette operateur ne s'applique pas sur ce type de litterale");
 }
 
-/*OpDUP * OpDUP::Clone()
+OpDUP * OpDUP::Clone()
 {
 	return new OpDUP(*this);
-}*/
+}
 
-/*Litterale * OpDUP::faireOperation()
+Litterale * OpDUP::faireOperation()
 {
-	
-}*/
+	FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	Litterale* res;
+	Pile& p = Pile::getInstance();
+	if (!p.estVide()) {
+		Litterale* l = &p.top();
+		res = f.fabriquerLitterale(*l);
+		return res;
+	}
+	throw PileException("La pile est vide");
+}
+
+OpDROP * OpDROP::Clone()
+{
+	return new OpDROP(*this);
+}
+
+Litterale * OpDROP::faireOperation()
+{
+	Pile& p = Pile::getInstance();
+	if (!p.estVide()) {
+		p.pop();
+		return nullptr;
+	}
+	throw PileException("La pile est vide");
+}
+
+OpSWAP * OpSWAP::Clone()
+{
+	return new OpSWAP(*this);
+}
+
+Litterale * OpSWAP::faireOperation()
+{
+	FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	Pile& p = Pile::getInstance();
+	if (p.taille() >= 2) {
+		Litterale* l1 = f.fabriquerLitterale(*(&p.top()));
+		p.pop();
+		Litterale* l2 = f.fabriquerLitterale(*(&p.top()));
+		p.pop();
+		p.push(*l1);
+		p.push(*l2);
+		return nullptr;
+	}
+	throw PileException("Impossible d'appliquer l'operateur");
+}
+
+OpEGAL * OpEGAL::Clone()
+{
+	return new OpEGAL(*this);
+}
+
+Litterale * OpEGAL::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if((LitToLitNum(l1) == nullptr) && (LitToLitNum(l2) == nullptr))
+		throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp=f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriquePositive(LitToLitNum(resTmp)) || LitToLitNum(resTmp)->LitteraleNumeriqueNegative(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("0");
+		else
+			res = f1.fabriquerLitterale("1");
+		f2.supprimer(OpTmp);
+		return res;
+	}
+}
+
+OpDIF * OpDIF::Clone()
+{
+	return new OpDIF(*this);
+}
+
+Litterale * OpDIF::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp = f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriquePositive(LitToLitNum(resTmp)) || LitToLitNum(resTmp)->LitteraleNumeriqueNegative(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("1");
+		else
+			res = f1.fabriquerLitterale("0");
+		f2.supprimer(OpTmp);
+		return res;
+	}
+	else return nullptr;
+	//throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
+}
+
+OpSTRICTINF * OpSTRICTINF::Clone()
+{
+	return new OpSTRICTINF(*this);
+}
+
+Litterale * OpSTRICTINF::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp = f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriqueNegative(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("1");
+		else
+			res = f1.fabriquerLitterale("0");
+		return res;
+	}
+	else return nullptr;
+}
+
+OpSTRICTSUP * OpSTRICTSUP::Clone()
+{
+	return new OpSTRICTSUP(*this);
+}
+
+Litterale * OpSTRICTSUP::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp = f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriquePositive(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("1");
+		else
+			res = f1.fabriquerLitterale("0");
+		return res;
+	}
+	else return nullptr;
+}
+
+OpINF * OpINF::Clone()
+{
+	return new OpINF(*this);
+}
+
+Litterale * OpINF::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp = f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriqueNegative(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("1");
+		else
+			res = f1.fabriquerLitterale("0");
+		return res;
+	}
+	else return nullptr;
+}
+
+OpSUP * OpSUP::Clone()
+{
+	return new OpSUP(*this);
+}
+
+Litterale * OpSUP::faireOperation()
+{
+	FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
+	FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+	Litterale* l1 = getLitterale1();
+	Litterale* l2 = getLitterale2();
+	Litterale* res;
+	if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
+		Operateur* OpTmp = f2.fabriquer("-");
+		OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
+		tmp->putLitterale(l1, l2);
+		Litterale* resTmp = tmp->faireOperation();
+		if (LitToLitNum(resTmp)->LitteraleNumeriquePositive(LitToLitNum(resTmp)))
+			res = f1.fabriquerLitterale("1");
+		else
+			res = f1.fabriquerLitterale("0");
+		return res;
+	}
+	else return nullptr;
+}

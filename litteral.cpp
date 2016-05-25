@@ -230,7 +230,7 @@ void FabriqueLitterale::supprimer(Litterale * l)
 		supprimer(LitToComp(l)->getPIm());
 	}*/
 	LitTab.erase(LitTab.begin() + i);
-	delete l;
+	//delete l;
 }
 
 Litterale * FabriqueLitterale::fabriquerLitterale(const string & s)
@@ -475,4 +475,44 @@ string Programme::toString() const
 Programme * Programme::Clone() const
 {
 	return new Programme(*this);
+}
+
+bool LitteraleNumeric::LitteraleNumeriquePositive(LitteraleNumeric* ln) const
+{
+	if (LitNumToEnt(ln) != nullptr) {
+		if (LitNumToEnt(ln)->getValue() > 0) 
+			return true;
+		return false;
+	}
+	if (LitNumToRat(ln) != nullptr) {
+		if ((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() > 0) || (LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() < 0))
+			return true;
+		return false;
+	}
+	if (LitNumToReel(ln) != nullptr) {
+		if (LitNumToReel(ln)->getValue() > 0)
+			return true;
+		return false;
+	}
+	throw LitteraleException("Erreur");
+}
+
+bool LitteraleNumeric::LitteraleNumeriqueNegative(LitteraleNumeric * ln) const
+{
+	if (LitNumToEnt(ln) != nullptr) {
+		if (LitNumToEnt(ln)->getValue() < 0)
+			return true;
+		return false;
+	}
+	if (LitNumToRat(ln) != nullptr) {
+		if ((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() < 0) || (LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() > 0))
+			return true;
+		return false;
+	}
+	if (LitNumToReel(ln) != nullptr) {
+		if (LitNumToReel(ln)->getValue() < 0)
+			return true;
+		return false;
+	}
+	throw LitteraleException("Erreur");
 }

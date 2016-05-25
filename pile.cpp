@@ -2,6 +2,26 @@
 
 #include "Pile.h"
 
+Pile::Handler Pile::handler = Pile::Handler();
+
+Pile::~Pile()
+{
+	FabriqueLitterale::libererInstance(); 
+	FabriqueOperateur::libererInstance();
+}
+
+Pile& Pile::getInstance()
+{
+	if (handler.instance == nullptr) handler.instance = new Pile;
+	return *handler.instance;
+}
+
+void Pile::libererInstance()
+{
+	delete handler.instance;
+	handler.instance = nullptr;
+}
+
 void Pile::pop()
 {
 	if (!estVide())
@@ -39,79 +59,110 @@ void Pile::afficherPile(ostream & f) const
 	f << "---------------------------------\n";
 }
 
-void Pile::commande(const string & s)
+/*void Pile::setState(vector<Item*> items)
 {
-	if (isLitterale(s)) {
-		Litterale* l = f.fabriquerLitterale(s);
-		push(*l);
+	FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	vector<Item*> state = *(new vector<Item*>);
+	for (vector<Item*>::const_iterator It = items.begin(); It != items.end(); ++It) {
+		state.push_back(new Item(*f.fabriquerLitterale((*It)->getLitterale())));
 	}
-	if (isOperateur(s)) {
-		Operateur* Op = o.fabriquer(s);
-		appliquerOperateur(Op);
-	}
-}
-
-void Pile::appliquerOperateur(Operateur * Op)
-{
-	if (OperateurToOpBin(Op) != nullptr) {
-		if (taille() < OperateurToOpBin(Op)->getArite()) {
-			o.supprimer(Op);
-			throw OperateurException("Erreur : Pas assez d'arguments");
-		}
-		Litterale* l1=&top();
-		pop();
-		Litterale* l2=&top();
-		pop();
-		try {
-			OperateurToOpBin(Op)->putLitterale(l1, l2);
-			Litterale* res = Op->faireOperation();
-			push(*res);
-			//f.supprimer(l1);
-			//f.supprimer(l2);
-			return;
-		}
-		catch (OperateurException e) {
-			push(*l2);
-			push(*l1);
-			o.supprimer(Op);
-			e.getInfo();
-		}
-	}
-	if (OperateurToOpUn(Op) != nullptr) {
-		if (taille() < OperateurToOpUn(Op)->getArite()) {
-			o.supprimer(Op);
-			throw OperateurException("Erreur : Pas assez d'arguments");
-		}
-		Litterale* l = &top();
-		pop();
-		try {
-			OperateurToOpUn(Op)->putLitterale(l);
-			Litterale* res = Op->faireOperation();
-			push(*res);
-			//f.supprimer(l);
-			return;
-		}
-		catch (OperateurException e) {
-			push(*l);
-			o.supprimer(Op);
-			e.getInfo();
-		}
-	}
-	if (OperateurToOpPile(Op) != nullptr) {
-		if (taille() < OperateurToOpPile(Op)->getArite()) {
-			o.supprimer(Op);
-			throw OperateurException("Erreur : Pas assez d'arguments");
-		}
-
-	}
-	throw OperateurException("Erreur : Operateur inconnu");
-}
+	itTab.clear();
+	itTab = state;
+	state.clear();
+}*/
 
 /*Memento::Memento(const vector<Item*> items)
 {
 	FabriqueLitterale& f = FabriqueLitterale::getInstance();
 	state = *(new vector<Item*>);
-	for (vector<Item*>::const_iterator It = items.begin; It != items.end(); ++It) {
-		state.push_back(new Item(*f.fabriquer((*It)->getLitterale)));
+	for (vector<Item*>::const_iterator It = items.begin(); It != items.end(); ++It) {
+		state.push_back(new Item(*f.fabriquerLitterale((*It)->getLitterale())));
 	}
 }*/
+
+/*vector<Item*> CareTaker::undo()
+{
+		
+}
+
+vector<Item*> CareTaker::redo()
+{
+	
+}*/
+
+void Controleur::commande(const string & s)
+{
+	FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	FabriqueOperateur& o = FabriqueOperateur::getInstance();
+	if (isOperateur(s)) {
+		Operateur* Op = o.fabriquer(s);
+		appliquerOperateur(Op);
+	}
+	else {
+		if (isLitterale(s)) {
+			Litterale* l = f.fabriquerLitterale(s);
+			p.push(*l);
+		}
+	}
+}
+
+void Controleur::appliquerOperateur(Operateur * Op)
+{
+	FabriqueLitterale& f = FabriqueLitterale::getInstance();
+	FabriqueOperateur& o = FabriqueOperateur::getInstance();
+	if (OperateurToOpBin(Op) != nullptr) {
+		if (p.taille() < OperateurToOpBin(Op)->getArite()) {
+			o.supprimer(Op);
+			throw OperateurException("Erreur : Pas assez d'arguments");
+		}
+		Litterale* l1 = &p.top();
+		p.pop();
+		Litterale* l2 = &p.top();
+		p.pop();
+		try {
+			OperateurToOpBin(Op)->putLitterale(l1, l2);
+			Litterale* res = Op->faireOperation();
+			if (res != nullptr)
+				p.push(*res);
+			else throw PileException("Erreur ");
+			return;
+		}
+		catch (OperateurException e) {
+			p.push(*l2);
+			p.push(*l1);
+			o.supprimer(Op);
+			e.getInfo();
+		}
+	}
+	if (OperateurToOpUn(Op) != nullptr) {
+		if (p.taille() < OperateurToOpUn(Op)->getArite()) {
+			o.supprimer(Op);
+			throw OperateurException("Erreur : Pas assez d'arguments");
+		}
+		Litterale* l = &p.top();
+		p.pop();
+		try {
+			OperateurToOpUn(Op)->putLitterale(l);
+			Litterale* res = Op->faireOperation();
+			p.push(*res);
+			return;
+		}
+		catch (OperateurException e) {
+			p.push(*l);
+			o.supprimer(Op);
+			e.getInfo();
+		}
+	}
+	if (OperateurToOpPile(Op) != nullptr) {
+		try {
+			Litterale* res = OperateurToOpPile(Op)->faireOperation();
+			if (res != nullptr) p.push(*res);
+			return;
+		}
+		catch (OperateurException e) {
+			o.supprimer(Op);
+			e.getInfo();
+		}
+	}
+	throw OperateurException("Erreur : Operateur inconnu");
+}

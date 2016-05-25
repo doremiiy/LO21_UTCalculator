@@ -23,19 +23,21 @@ int main()
 	f.supprimer(op);
 	system("pause");*/
 	string comm;
-	Pile *P = new Pile;
-	P->setMessage("Bonjour");
+	Pile& P = Pile::getInstance();
+	Controleur* C = new Controleur();
+	P.setMessage("Bonjour");
 	do {
 		try {
-			P->afficherPile(cout);
+			P.afficherPile(cout);
 			cout << "Commande : ";
 			cin >> comm;
-			P->commande(comm);
-			P->setMessage("Tapez une commande");
+			C->commande(comm);
+			P.setMessage("Tapez une commande");
 			system("cls");
 		}
-		catch (LitteraleException e) { P->setMessage(e.getInfo()); system("cls"); }
-		catch (OperateurException o) { P->setMessage(o.getInfo()); system("cls"); }
+		catch (LitteraleException e) { P.setMessage(e.getInfo()); system("cls"); }
+		catch (OperateurException o) { P.setMessage(o.getInfo()); system("cls"); }
+		catch (PileException p) { P.setMessage(p.getInfo()); system("cls"); }
 	} while (comm != "q");
 	system("pause");
     return 0;

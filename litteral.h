@@ -15,6 +15,10 @@ class Entier;
 class Reel;
 class Rationnel;
 class Complexe;
+class Atome;
+class Expression;
+class Programme;
+class FabriqueLitterale;
 
 using namespace std;
 
@@ -38,7 +42,8 @@ public:
 class LitteraleNumeric : public Litterale {
 public:
 	virtual LitteraleNumeric* Clone() const = 0;
-	//operateurs de cast
+	bool LitteraleNumeriquePositive(LitteraleNumeric* ln) const;
+	bool LitteraleNumeriqueNegative(LitteraleNumeric* ln) const;
 };
 
 
