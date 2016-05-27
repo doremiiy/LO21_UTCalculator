@@ -48,7 +48,7 @@ private:
     static unsigned int arite;
 public:
     OperateurBinaire(const QString& s):Operateur(s),l1(nullptr),l2(nullptr){}
-    static const unsigned int getArite() { return arite; }
+    static unsigned int getArite() { return arite; }
     void putLitterale(Litterale* L1, Litterale* L2);
     Litterale* getLitterale1() const { return l1; }
     Litterale* getLitterale2() const { return l2; }
@@ -60,7 +60,7 @@ private:
     static unsigned int arite;
 public:
     OperateurUnaire(const QString& s):Operateur(s),l(nullptr){}
-    static const unsigned int getArite() { return arite; }
+    static unsigned int getArite() { return arite; }
     void putLitterale(Litterale* L);
     Litterale* getLitterale() const { return l; }
 };
@@ -232,7 +232,7 @@ private:
     QVector<Operateur*> OpTab;
     FabriqueOperateur(){}
     ~FabriqueOperateur();
-    void operator=(const FabriqueLitterale& f){}
+    void operator=(const FabriqueLitterale& f);
     FabriqueOperateur(const FabriqueOperateur& f);
     struct Handler {
         FabriqueOperateur* instance;

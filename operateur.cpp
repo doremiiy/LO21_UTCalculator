@@ -63,7 +63,7 @@ void FabriqueOperateur::supprimer(Operateur * Op)
         ++It;
         i++;
     }
-    if (i == OpTab.size()) throw OperateurException("Element inconnu");
+    if (i == (unsigned int)OpTab.size()) throw OperateurException("Element inconnu");
     OpTab.erase(OpTab.begin() + i);
     delete(Op);
 }

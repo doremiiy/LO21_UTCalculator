@@ -56,13 +56,14 @@ void QComputer::refresh(){
     unsigned int nb=1;
     //for(QVector<Item*>::const_iterator It=P.itTab.cbegin(); It!=P.itTab.cend() && nb<P.getNbToAffiche();++It,++nb)
     //    vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString()/*"Bonjour"*/);
-    QVector<Item*>::const_iterator It = P.itTab.begin();
+    /*QVector<Item*>::const_iterator It = P.itTab.begin();
     for (unsigned int i = 5; i > 0; i--){
         if (6-i <= P.taille()) {
-            vuePile->item(i-1,0)->setText((*It)->getLitterale().toString()/*"Bonjour"*/);
+            vuePile->item(i-1,0)->setText((*It)->getLitterale().toString());
             ++It;
         }
-    }
+    }*/
+    vuePile->item(0,0)->setText("Bonjour");
 }
 
 void QComputer::getNextCommande(){

@@ -5,6 +5,7 @@
 #include "Litterale.h"
 #include "Pile.h"
 #include "Operateur.h"
+#include "mainWindow.h"
 
  int main(int argc, char* argv[]){
 
@@ -42,9 +43,10 @@
     } while (comm != "q");
     system("pause");
     */
-    Pile& P=Pile::getInstance();
+
+    //Pile& P=Pile::getInstance();
     QApplication app(argc, argv);
-    QComputer fenetre;
+    MainWindow fenetre;
     fenetre.show();
     return app.exec();
 }
