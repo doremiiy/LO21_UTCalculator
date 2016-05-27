@@ -12,8 +12,8 @@
 #include <QTextStream>
 
 
-#include "Litterale.h"
-#include "Operateur.h"
+#include "litterale.h"
+#include "operateur.h"
 
 using namespace std;
 
@@ -50,7 +50,7 @@ public:
 class Pile:public QObject {
 private:
     Q_OBJECT
-    friend class QComputer;
+    friend class MainWindow;
     QVector<Item*> itTab;
     unsigned int nbAffiche;
     QString message;

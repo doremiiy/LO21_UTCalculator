@@ -34,7 +34,8 @@ public slots:
     void on_buttonDiv_clicked();
     void on_buttonVirg_clicked();
     void on_buttonEnter_clicked();
-    //void getNextCommande();
+    void refresh();
+    void getNextCommande();
 private:
     Ui::MainWindow *ui;
     Pile& P=Pile::getInstance();

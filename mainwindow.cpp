@@ -7,10 +7,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    Pile& P=Pile::getInstance();//creation de la pile
+    ui->vuePile->setRowCount(P.getNbToAffiche());
+    ui->vuePile->setColumnCount(1);
     ui->message->setStyleSheet("background: cyan; color: black");
     ui->message->setReadOnly(true);
-    //ui->vuePile->setStyleSheet("background: darker; color: white");
-    //ui->vuePile->verticalHeader()->setStyleSheet("color: black");
+    ui->vuePile->setStyleSheet("background: darker; color: white");
+    ui->vuePile->verticalHeader()->setStyleSheet("color: black");
     ui->vuePile->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->vuePile->horizontalHeader()->setVisible(false);
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
@@ -22,7 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->vuePile->setItem(i-1,0,new QTableWidgetItem(""));
         }
     ui->vuePile->setVerticalHeaderLabels(numberlist);
-    //ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
+    ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
+    connect(&P,SIGNAL(modificationEtat()),this,SLOT(refresh()));
+    connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
     ui->commande->setFocus();
 }
 //destructeur
@@ -78,5 +83,56 @@ void MainWindow::on_buttonVirg_clicked(){
 }
 void MainWindow::on_buttonEnter_clicked(){
     ui->commande->returnPressed();
+}
+void MainWindow::refresh(){
+    //Le message
+    Pile& P=Pile::getInstance();
+    ui->message->setText(P.getMessage());
+    //Effacer tout
+    for(unsigned int i=0;i<P.getNbToAffiche();i++)
+        ui->vuePile->item(i,0)->setText("test1");
+    //Mettre a jour
+    unsigned int nb=1;
+    //je ne sait pas pk, mais 'iterator n'a pas l'aire de marché: le contenu de la boucle for ne s'execute pas une seule fois
+    for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<P.getNbToAffiche();++It,++nb)
+        ui->vuePile->item(0,0)->setText("test2");
+        //vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString()/*"Bonjour"*/);
+    /*
+    //Test non fonctionelle
+    QVector<Item*>::const_iterator It = P.itTab.begin();
+    for (unsigned int i = 5; i > 0; i--){
+       if (6-i <= P.taille()) {
+            vuePile->item(i-1,0)->setText((*It)->getLitterale().toString());
+            ++It;
+        }
+    }
+    //TD6-Ex26
+    for(Pile::iterator it=pile->begin();it!=pile->end() && nb<pile->getNbItemsToAffiche();++it,++nb)
+        vuePile->item(pile->getNbItemsToAffiche()-1-nb,0)->setText((*it).toString());
+    */
+}
+void MainWindow::getNextCommande(){
+    P.setMessage("");
+    //Recuperation du texte de la ligne de commande
+    QString c = ui->commande->text();
+    //Extraction de chaque element de la ligne
+    /*QTextStream stream(&c);
+    QString com;
+    do{
+        try{
+            stream>>com;//extraction d'un element
+            //envoyer la commande au controleur
+            if(com!="") controleur->commande(com);
+        }
+        catch (LitteraleException e) { P.setMessage(e.getInfo()); }
+        catch (OperateurException o) { P.setMessage(o.getInfo()); }
+        catch (PileException p) { P.setMessage(p.getInfo()); }
+    }while(com!="");
+    */
+
+    //test avec commande une a une
+        //envoyer la commande au controleur
+    if(c!="") controleur->commande(c);
+    //Ligne de commande a zero
     ui->commande->clear();
 }
