@@ -13,8 +13,8 @@ QString Entier::toString() const
 
 bool isEntier(const QString & s)
 {
-    QRegExp r("-?[[:digit:]]+");
-    return r.exactMatch(s);
+    QRegExp r("^-?[\\d]+$");
+    return s.contains(r);
 }
 
 Reel * Reel::Clone() const
@@ -29,20 +29,20 @@ QString Reel::toString() const
 
 bool isReel(const QString & s)
 {
-    QRegExp r("(-?[[:digit:]]*\\.[[:digit:]]+)|(-?[[:digit:]]+\\.[[:digit:]]*)");
-    return r.exactMatch(s);
+    QRegExp r("^(-?[\\d]*\\.[\\d]+)|(-?[\\d]+\\.[\\d]*)$");
+    return s.contains(r);
 }
 
 bool isAtome(const QString & s)
 {
-    QRegExp r("[A-Z]([A-Z]|[0-9])*");
-    return r.exactMatch(s);
+    QRegExp r("^[A-Z]([A-Z]|[0-9])*$");
+     return s.contains(r);
 }
 
 bool isExpression(const QString & s)
 {
     QRegExp r("'");
-    return r.exactMatch(s);
+    return s.contains(r);
 }
 
 bool isProgramme(const QString & s)
@@ -67,8 +67,8 @@ QString Rationnel::toString() const
 
 bool isRationnel(const QString & s)
 {
-    QRegExp r("(-?[[:digit:]]+)(\\/([[:digit:]]+))");
-    return r.exactMatch(s);
+    QRegExp r("^(-?[\\d]+)(\\/([\\d]+))$");
+     return s.contains(r);
 }
 
 void Rationnel::simplifier()

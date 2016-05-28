@@ -54,9 +54,7 @@ private:
     QVector<Item*> itTab;
     unsigned int nbAffiche;
     QString message;
-    Pile() :nbAffiche(5), message("") {
-        QVector<Item*> itTab = *(new QVector<Item*>);
-    }
+    Pile() :nbAffiche(5), message("") { QVector<Item*> itTab = *(new QVector<Item*>); }
     ~Pile();
     void operator=(const Pile& p);
     Pile(const Pile& p);

@@ -2,15 +2,12 @@
 #define Operateur_h
 
 #include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
 #include <QVector>
 #include <QString>
 #include <map>
 #include <sstream>
-#include <regex>
 
-#include "Litterale.h"
 #include "Pile.h"
 
 class OperateurException;
@@ -48,7 +45,7 @@ private:
     static unsigned int arite;
 public:
     OperateurBinaire(const QString& s):Operateur(s),l1(nullptr),l2(nullptr){}
-    static unsigned int getArite() { return arite; }
+    static const unsigned int getArite() { return arite; }
     void putLitterale(Litterale* L1, Litterale* L2);
     Litterale* getLitterale1() const { return l1; }
     Litterale* getLitterale2() const { return l2; }
@@ -60,7 +57,7 @@ private:
     static unsigned int arite;
 public:
     OperateurUnaire(const QString& s):Operateur(s),l(nullptr){}
-    static unsigned int getArite() { return arite; }
+    static const unsigned int getArite() { return arite; }
     void putLitterale(Litterale* L);
     Litterale* getLitterale() const { return l; }
 };
