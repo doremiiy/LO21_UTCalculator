@@ -2,7 +2,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2} };
+const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -182,6 +182,31 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             OpTab.push_back(Op);
             return Op;
         }
+        if (s == "UNDO") {
+            Op = new OpUNDO("UNDO");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "REDO") {
+            Op = new OpREDO("REDO");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "LASTOP") {
+            Op = new OpLASTOP("LASTOP");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "LASTARG") {
+            Op = new OpLASTARG("LASTARG");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "CLEAR") {
+            Op = new OpCLEAR("CLEAR");
+            OpTab.push_back(Op);
+            return Op;
+        }
     }
     throw OperateurException("Erreur : Operateur non reconnu");
 }
@@ -236,55 +261,53 @@ Litterale * OpPlus::faireOperation()
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer((LitToRat(l2)->getDenominateur()*LitToEnt(l1)->getValue()) + LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer((LitToRat(l2)->getDenominateur() * LitToEnt(l1)->getValue()) + LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue() + LitToReel(l2)->getValue());
+            res = f1.fabriquer((double)LitToEnt(l1)->getValue() + LitToReel(l2)->getValue());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("+");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("+"));
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est rationnel
     if (LitToRat(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur() + LitToEnt(l2)->getValue()*LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur() + LitToEnt(l2)->getValue() * LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur()*LitToRat(l2)->getDenominateur() + LitToRat(l1)->getDenominateur()*LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur()*LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur() * LitToRat(l2)->getDenominateur() + LitToRat(l1)->getDenominateur()*LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur() * LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur() + LitToReel(l2)->getValue()*LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
+            res = f1.fabriquer(((double)LitToRat(l1)->getNumerateur() + LitToReel(l2)->getValue() * (double)LitToRat(l1)->getDenominateur()) / (double)LitToRat(l1)->getDenominateur());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("+");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("+"));
+            tmp->putLitterale(LitToRat(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est reel
     if (LitToReel(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue() + LitToEnt(l2)->getValue());
+            res = f1.fabriquer(LitToReel(l1)->getValue() + (double)LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer((LitToRat(l2)->getDenominateur()*LitToReel(l1)->getValue()) + LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(((double)LitToRat(l2)->getDenominateur() * LitToReel(l1)->getValue() + (double)LitToRat(l2)->getNumerateur()) / (double)LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
@@ -292,38 +315,36 @@ Litterale * OpPlus::faireOperation()
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("+");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("+"));
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est complexe
     if (LitToComp(l1) != nullptr) {
-        Operateur* Tmp = f2.fabriquer("+");
-        OperateurBinaire* tmp = OperateurToOpBin(Tmp);
+        OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("+"));
         if (LitToEnt(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToEnt(l2), LitToComp(l1)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToRat(l2), LitToComp(l1)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToReel(l2), LitToComp(l1)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToComp(l2) != nullptr) {
@@ -332,7 +353,7 @@ Litterale * OpPlus::faireOperation()
             tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l1)->getPIm());
             Litterale* im = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(re),LitToLitNum(im));
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
@@ -352,55 +373,53 @@ Litterale * OpMoins::faireOperation()
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer((LitToRat(l2)->getDenominateur()*LitToEnt(l1)->getValue()) - LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l2)->getDenominateur() * LitToEnt(l1)->getValue() - LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue() - LitToReel(l2)->getValue());
+            res = f1.fabriquer((double)LitToEnt(l1)->getValue() - LitToReel(l2)->getValue());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("-");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("-"));
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est rationnel
     if (LitToRat(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur() - LitToEnt(l2)->getValue()*LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur() - LitToEnt(l2)->getValue() * LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur()*LitToRat(l2)->getDenominateur() - LitToRat(l1)->getDenominateur()*LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur()*LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur() * LitToRat(l2)->getDenominateur() - LitToRat(l1)->getDenominateur() * LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur() * LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur() - LitToReel(l2)->getValue()*LitToRat(l1)->getDenominateur(), LitToRat(l1)->getDenominateur());
+            res = f1.fabriquer(((double)LitToRat(l1)->getNumerateur() - LitToReel(l2)->getValue() * (double)LitToRat(l1)->getDenominateur()) / (double)LitToRat(l1)->getDenominateur());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("-");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("-"));
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est reel
     if (LitToReel(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue() - LitToEnt(l2)->getValue());
+            res = f1.fabriquer(LitToReel(l1)->getValue() - (double)LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer((LitToRat(l2)->getDenominateur()*LitToReel(l1)->getValue()) - LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(((double)LitToRat(l2)->getDenominateur() * LitToReel(l1)->getValue() - (double)LitToRat(l2)->getNumerateur()) / (double)LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
@@ -408,51 +427,49 @@ Litterale * OpMoins::faireOperation()
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("-");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("-"));
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPReel());
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est complexe
     if (LitToComp(l1) != nullptr) {
-        Operateur* Tmp = f2.fabriquer("-");
-        OperateurBinaire* tmp = OperateurToOpBin(Tmp);
+        OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("-"));
         if (LitToEnt(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToEnt(l2));
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(),LitToRat(l2));
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            tmp->putLitterale(l2, LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(),LitToReel(l2));
             res = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l1)->getPIm());
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToComp(l2)->getPReel());
             Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l1)->getPIm());
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToComp(l2)->getPIm());
             Litterale* im = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
     }
-    throw OperateurException("L'operateur + ne s'applique pas sur ces litterales");
+    throw OperateurException("L'operateur - ne s'applique pas sur ces litterales");
 }
 
 Litterale * OpFois::faireOperation()
@@ -472,16 +489,17 @@ Litterale * OpFois::faireOperation()
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue() * LitToReel(l2)->getValue());
+            res = f1.fabriquer((double)LitToEnt(l1)->getValue() * LitToReel(l2)->getValue());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("*");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPReel());
+            Litterale* re = tmp->faireOperation();
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPIm());
+            Litterale* im = tmp->faireOperation();
+            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
+            f2.supprimer(tmp);
             return res;
         }
     }
@@ -492,31 +510,32 @@ Litterale * OpFois::faireOperation()
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur()*LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur()*LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur() * LitToRat(l2)->getNumerateur(), LitToRat(l1)->getDenominateur() * LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur() * LitToReel(l2)->getValue(), LitToRat(l1)->getDenominateur());
+            res = f1.fabriquer((double)LitToRat(l1)->getNumerateur() * LitToReel(l2)->getValue() / (double)LitToRat(l1)->getDenominateur());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("*");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            tmp->putLitterale(LitToRat(l1), LitToComp(l2)->getPReel());
+            Litterale* re = tmp->faireOperation();
+            tmp->putLitterale(LitToRat(l1), LitToComp(l2)->getPIm());
+            Litterale* im = tmp->faireOperation();
+            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
+            f2.supprimer(tmp);
             return res;
         }
     }
     //si l1 est reel
     if (LitToReel(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue() * LitToEnt(l2)->getValue());
+            res = f1.fabriquer(LitToReel(l1)->getValue() * (double)LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue() * LitToRat(l2)->getNumerateur(), LitToRat(l2)->getDenominateur());
+            res = f1.fabriquer(LitToReel(l1)->getValue() * (double)LitToRat(l2)->getNumerateur() / (double)LitToRat(l2)->getDenominateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
@@ -524,65 +543,67 @@ Litterale * OpFois::faireOperation()
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("*");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
-            return res;
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPReel());
+            Litterale* re = tmp->faireOperation();
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPIm());
+            Litterale* im = tmp->faireOperation();
+            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
+            f2.supprimer(tmp);
         }
     }
     //si l1 est complexe
     if (LitToComp(l1) != nullptr) {
-        Operateur* Tmp = f2.fabriquer("*");
-        OperateurBinaire* tmp = OperateurToOpBin(Tmp);
+        OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
         if (LitToEnt(l2) != nullptr) {
-            tmp->putLitterale(LitToEnt(l2), LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(),LitToEnt(l2));
             Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToEnt(l2), LitToComp(l1)->getPIm());
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToEnt(l2));
             Litterale* im = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            tmp->putLitterale(LitToRat(l2), LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToRat(l2));
             Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToRat(l2), LitToComp(l1)->getPIm());
+            tmp->putLitterale(LitToComp(l1)->getPIm(),LitToRat(l2));
             Litterale* im = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            tmp->putLitterale(LitToReel(l2), LitToComp(l1)->getPReel());
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToReel(l2));
             Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToReel(l2), LitToComp(l1)->getPIm());
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToReel(l2));
             Litterale* im = tmp->faireOperation();
             res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            f2.supprimer(tmp);
             return res;
         }
-        if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp2 = f2.fabriquer("-");
-            OperateurBinaire* tmp2 = OperateurToOpBin(Tmp2);
-            Operateur* Tmp3 = f2.fabriquer("+");
-            OperateurBinaire* tmp3 = OperateurToOpBin(Tmp3);
+        if (LitToComp(l2) != nullptr) {//(ac-bd)+i(ad+bc)
+            OperateurBinaire* tmp2 = OperateurToOpBin(f2.fabriquer("-"));
+            OperateurBinaire* tmp3 = OperateurToOpBin(f2.fabriquer("+"));
 
-            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l1)->getPReel());
-            Litterale* reTmp = tmp->faireOperation();//a*a'
-            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l1)->getPIm());
-            Litterale* imTmp = tmp->faireOperation();//b*b'
-            tmp2->putLitterale(reTmp,imTmp);
-            Litterale* re = tmp2->faireOperation();//aa'-bb'
-            tmp3->putLitterale(reTmp,imTmp);
-            Litterale* im = tmp3->faireOperation();//aa'+bb'
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToComp(l2)->getPReel());
+            Litterale* tmpRe = tmp->faireOperation();//ac
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToComp(l2)->getPIm());
+            Litterale* tmpRe2 = tmp->faireOperation();//bd
+            tmp2->putLitterale(tmpRe, tmpRe2);
+            Litterale* tmpRe3 = tmp2->faireOperation();//ac-bd
 
-            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
-            f2.supprimer(Tmp2);
-            f2.supprimer(Tmp3);
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToComp(l2)->getPIm());
+            Litterale* tmpIm = tmp->faireOperation();//ad
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToComp(l2)->getPReel());
+            Litterale* tmpIm2 = tmp->faireOperation();//bc
+            tmp3->putLitterale(tmpIm, tmpIm2);
+            Litterale* tmpIm3 = tmp3->faireOperation();//ad+bc
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe3), LitToLitNum(tmpIm3));
+            f2.supprimer(tmp);
+            f2.supprimer(tmp2);
+            f2.supprimer(tmp3);
             return res;
         }
     }
@@ -596,33 +617,57 @@ Litterale * OpDiviser::faireOperation()
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
     Litterale* res;
+    //l1 ENTIER
     if (LitToEnt(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue() / LitToEnt(l2)->getValue());
+            res = f1.fabriquer(LitToEnt(l1)->getValue(),LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue()*LitToRat(l2)->getDenominateur(), LitToRat(l2)->getNumerateur());
+            res = f1.fabriquer(LitToEnt(l1)->getValue() * LitToRat(l2)->getDenominateur(), LitToRat(l2)->getNumerateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToEnt(l1)->getValue() / LitToReel(l2)->getValue());
+            res = f1.fabriquer((double)LitToEnt(l1)->getValue() / LitToReel(l2)->getValue());
             return res;
         }
-        if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("/");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+        if (LitToComp(l2) != nullptr) { // a/(b+ic)=(ab/(b≤+c≤))-(ac/(b≤+c≤))i)
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            OperateurBinaire* tmp2 = OperateurToOpBin(f2.fabriquer("+"));
+            OperateurBinaire* tmp3 = OperateurToOpBin(f2.fabriquer("/"));
+            OperateurUnaire* tmp4 = OperateurToOpUn(f2.fabriquer("NEG"));
+
+            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l2)->getPReel());
+            Litterale* tmpMod = tmp->faireOperation();//b≤
+            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l2)->getPIm());
+            Litterale* tmpMod2 = tmp->faireOperation();//c≤
+            tmp2->putLitterale(tmpMod,tmpMod2);
+            Litterale* tmpMod3 = tmp2->faireOperation();//b≤+c≤
+
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPReel());
+            Litterale* tmpRe = tmp->faireOperation();//ab
+            tmp->putLitterale(LitToEnt(l1), LitToComp(l2)->getPIm());
+            Litterale* tmpIm = tmp->faireOperation();//ac
+            tmp4->putLitterale(tmpIm);
+            Litterale* tmpIm2 = tmp4->faireOperation();//-ac
+
+            tmp3->putLitterale(tmpRe, tmpMod3);
+            Litterale* tmpRe2 = tmp3->faireOperation();//ab/(b≤+c≤)
+            tmp3->putLitterale(tmpIm2, tmpMod3);
+            Litterale* tmpIm3 = tmp3->faireOperation();//-ac/(b≤+c≤)
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe2), LitToLitNum(tmpIm3));
+            f2.supprimer(tmp);
+            f2.supprimer(tmp2);
+            f2.supprimer(tmp3);
+            f2.supprimer(tmp4);
             return res;
         }
     }
-    //si l1 est rationnel
+    //l1 RATIONNEL
     if (LitToRat(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur(),LitToRat(l1)->getDenominateur()*LitToEnt(l1)->getValue());
+            res = f1.fabriquer(LitToRat(l1)->getNumerateur(), LitToRat(l1)->getDenominateur()*LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
@@ -630,27 +675,50 @@ Litterale * OpDiviser::faireOperation()
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            res = f1.fabriquer(LitToRat(l1)->getNumerateur(), LitToRat(l1)->getDenominateur()*LitToReel(l1)->getValue());
+            res = f1.fabriquer((double)LitToRat(l1)->getNumerateur() / (double)LitToRat(l1)->getDenominateur()*LitToReel(l2)->getValue());
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("/");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            OperateurBinaire* tmp2 = OperateurToOpBin(f2.fabriquer("+"));
+            OperateurBinaire* tmp3 = OperateurToOpBin(f2.fabriquer("/"));
+            OperateurUnaire* tmp4 = OperateurToOpUn(f2.fabriquer("NEG"));
+
+            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l2)->getPReel());
+            Litterale* tmpMod = tmp->faireOperation();//b≤
+            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l2)->getPIm());
+            Litterale* tmpMod2 = tmp->faireOperation();//c≤
+            tmp2->putLitterale(tmpMod, tmpMod2);
+            Litterale* tmpMod3 = tmp2->faireOperation();//b≤+c≤
+
+            tmp->putLitterale(LitToRat(l1), LitToComp(l2)->getPReel());
+            Litterale* tmpRe = tmp->faireOperation();
+            tmp->putLitterale(LitToRat(l1), LitToComp(l2)->getPIm());
+            Litterale* tmpIm = tmp->faireOperation();//ac
+            tmp4->putLitterale(tmpIm);
+            Litterale* tmpIm2 = tmp4->faireOperation();//-ac
+
+            tmp3->putLitterale(tmpRe, tmpMod3);
+            Litterale* tmpRe2 = tmp3->faireOperation();//ab/(b≤+c≤)
+            tmp3->putLitterale(tmpIm2, tmpMod3);
+            Litterale* tmpIm3 = tmp3->faireOperation();//-ac/(b≤+c≤)
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe2), LitToLitNum(tmpIm3));
+            f2.supprimer(tmp);
+            f2.supprimer(tmp2);
+            f2.supprimer(tmp3);
+            f2.supprimer(tmp4);
             return res;
         }
     }
-    //si l1 est reel
+    //l1 REEL
     if (LitToReel(l1) != nullptr) {
         if (LitToEnt(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue() / LitToEnt(l2)->getValue());
+            res = f1.fabriquer(LitToReel(l1)->getValue() / (double)LitToEnt(l2)->getValue());
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            res = f1.fabriquer(LitToReel(l1)->getValue()*LitToRat(l2)->getDenominateur(),LitToRat(l2)->getNumerateur());
+            res = f1.fabriquer(LitToReel(l1)->getValue() * (double)LitToRat(l2)->getDenominateur() / (double)LitToRat(l2)->getNumerateur());
             return res;
         }
         if (LitToReel(l2) != nullptr) {
@@ -658,86 +726,105 @@ Litterale * OpDiviser::faireOperation()
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp = f2.fabriquer("/");
-            OperateurBinaire* tmp = OperateurToOpBin(Tmp);
-            tmp->putLitterale(l1, LitToComp(l2)->getPReel());
-            res = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(res), LitToComp(l2)->getPIm());
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            OperateurBinaire* tmp2 = OperateurToOpBin(f2.fabriquer("+"));
+            OperateurBinaire* tmp3 = OperateurToOpBin(f2.fabriquer("/"));
+            OperateurUnaire* tmp4 = OperateurToOpUn(f2.fabriquer("NEG"));
+
+            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l2)->getPReel());
+            Litterale* tmpMod = tmp->faireOperation();//b≤
+            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l2)->getPIm());
+            Litterale* tmpMod2 = tmp->faireOperation();//c≤
+            tmp2->putLitterale(tmpMod, tmpMod2);
+            Litterale* tmpMod3 = tmp2->faireOperation();//b≤+c≤
+
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPReel());
+            Litterale* tmpRe = tmp->faireOperation();
+            tmp->putLitterale(LitToReel(l1), LitToComp(l2)->getPIm());
+            Litterale* tmpIm = tmp->faireOperation();//ac
+            tmp4->putLitterale(tmpIm);
+            Litterale* tmpIm2 = tmp4->faireOperation();//-ac
+
+            tmp3->putLitterale(tmpRe, tmpMod3);
+            Litterale* tmpRe2 = tmp3->faireOperation();//ab/(b≤+c≤)
+            tmp3->putLitterale(tmpIm2, tmpMod3);
+            Litterale* tmpIm3 = tmp3->faireOperation();//-ac/(b≤+c≤)
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe2), LitToLitNum(tmpIm3));
+            f2.supprimer(tmp);
+            f2.supprimer(tmp2);
+            f2.supprimer(tmp3);
+            f2.supprimer(tmp4);
             return res;
         }
     }
-    //si l1 est complexe
+    //l1 COMPLEXE
     if (LitToComp(l1) != nullptr) {
-        Operateur* Tmp = f2.fabriquer("/");
-        OperateurBinaire* tmp = OperateurToOpBin(Tmp);
         if (LitToEnt(l2) != nullptr) {
-            tmp->putLitterale(LitToEnt(l2), LitToComp(l1)->getPReel());
-            Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToEnt(l2), LitToComp(l1)->getPIm());
-            Litterale* im = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("/"));
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToEnt(l2));
+            Litterale* tmpRe = tmp->faireOperation();
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToEnt(l2));
+            Litterale* tmpIm = tmp->faireOperation();
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe),LitToLitNum(tmpIm));
             return res;
         }
         if (LitToRat(l2) != nullptr) {
-            tmp->putLitterale(LitToRat(l2), LitToComp(l1)->getPReel());
-            Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToRat(l2), LitToComp(l1)->getPIm());
-            Litterale* im = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("/"));
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToRat(l2));
+            Litterale* tmpRe = tmp->faireOperation();
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToRat(l2));
+            Litterale* tmpIm = tmp->faireOperation();
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe), LitToLitNum(tmpIm));
             return res;
         }
         if (LitToReel(l2) != nullptr) {
-            tmp->putLitterale(LitToReel(l2), LitToComp(l1)->getPReel());
-            Litterale* re = tmp->faireOperation();
-            tmp->putLitterale(LitToReel(l2), LitToComp(l1)->getPIm());
-            Litterale* im = tmp->faireOperation();
-            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("/"));
+            tmp->putLitterale(LitToComp(l1)->getPReel(), LitToReel(l2));
+            Litterale* tmpRe = tmp->faireOperation();
+            tmp->putLitterale(LitToComp(l1)->getPIm(), LitToReel(l2));
+            Litterale* tmpIm = tmp->faireOperation();
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe), LitToLitNum(tmpIm));
             return res;
         }
         if (LitToComp(l2) != nullptr) {
-            Operateur* Tmp1 = f2.fabriquer("*");
-            OperateurBinaire* tmp1 = OperateurToOpBin(Tmp1);
-            Operateur* Tmp2 = f2.fabriquer("-");
-            OperateurBinaire* tmp2 = OperateurToOpBin(Tmp2);
-            Operateur* Tmp3 = f2.fabriquer("+");
-            OperateurBinaire* tmp3 = OperateurToOpBin(Tmp3);
+            OperateurBinaire* tmp = OperateurToOpBin(f2.fabriquer("*"));
+            OperateurBinaire* tmp2 = OperateurToOpBin(f2.fabriquer("+"));
+            OperateurBinaire* tmp3 = OperateurToOpBin(f2.fabriquer("/"));
+            OperateurUnaire* tmp4 = OperateurToOpUn(f2.fabriquer("NEG"));
 
-            tmp1->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l1)->getPReel());
-            Litterale* reTmp1 = tmp1->faireOperation();//a*a'
-            tmp1->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l1)->getPIm());
-            Litterale* reTmp2 = tmp1->faireOperation();//b*b'
-            tmp1->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l2)->getPReel());
-            Litterale* reTmp3 = tmp1->faireOperation();//a'*a'
-            tmp1->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l2)->getPIm());
-            Litterale* reTmp4 = tmp1->faireOperation();//b'*b'
-            tmp3->putLitterale(reTmp1, reTmp2);
-            Litterale* reTmp5 = tmp3->faireOperation();//aa'+bb'
-            tmp3->putLitterale(reTmp3, reTmp4);
-            Litterale* reTmp6 = tmp3->faireOperation();//a'a'+b'b'
-            tmp->putLitterale(reTmp5, reTmp6);
-            Litterale* re = tmp->faireOperation();
+            tmp->putLitterale(LitToComp(l2)->getPReel(), LitToComp(l2)->getPReel());
+            Litterale* tmpMod = tmp->faireOperation();//c≤
+            tmp->putLitterale(LitToComp(l2)->getPIm(), LitToComp(l2)->getPIm());
+            Litterale* tmpMod2 = tmp->faireOperation();//d≤
+            tmp2->putLitterale(tmpMod, tmpMod2);
+            Litterale* tmpMod3 = tmp2->faireOperation();//c≤+d≤
 
-            tmp1->putLitterale(LitToComp(l1)->getPIm(), LitToComp(l2)->getPReel());
-            Litterale* imTmp1 = tmp1->faireOperation();//b*a'
-            tmp1->putLitterale(LitToComp(l1)->getPReel(), LitToComp(l2)->getPIm());
-            Litterale* imTmp2 = tmp1->faireOperation();//a*b'
-            tmp2->putLitterale(imTmp1, imTmp2);
-            Litterale* imTmp3 = tmp2->faireOperation();//ba'-ab'
-            tmp->putLitterale(imTmp3, reTmp6);
-            Litterale* im = tmp->faireOperation();
+            tmp4->putLitterale(LitToComp(l2)->getPIm());
+            Litterale* tmpConj = tmp4->faireOperation();//-d
+            Litterale* tmpConj2 = f1.fabriquerComplexe(LitToLitNum(LitToComp(l2)->getPReel()),LitToLitNum(tmpConj));//c-id
+            tmp->putLitterale(LitToComp(l1), LitToComp(tmpConj2));
+            Litterale* tmpFois = tmp->faireOperation();
 
-            res = f1.fabriquerComplexe(LitToLitNum(re), LitToLitNum(im));
-            f2.supprimer(Tmp);
-            f2.supprimer(Tmp1);
-            f2.supprimer(Tmp2);
-            f2.supprimer(Tmp3);
+            tmp3->putLitterale(LitToComp(tmpFois)->getPReel(), tmpMod3);
+            Litterale* tmpRe = tmp3->faireOperation();
+
+            tmp3->putLitterale(LitToComp(tmpFois)->getPIm(), tmpMod3);
+            Litterale* tmpIm = tmp3->faireOperation();
+
+            res = f1.fabriquerComplexe(LitToLitNum(tmpRe), LitToLitNum(tmpIm));
+            f2.supprimer(tmp);
+            f2.supprimer(tmp2);
+            f2.supprimer(tmp3);
+            f2.supprimer(tmp4);
+            f1.supprimer(tmpConj2);
             return res;
         }
     }
+
     throw OperateurException("L'operateur + ne s'applique pas sur ces litterales");
 }
 
@@ -781,7 +868,7 @@ Litterale * OpDUP::faireOperation()
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     Litterale* res;
-    Pile& p = Pile::getInstance();
+    Pile& p = Controleur::getInstance().getPile();
     if (!p.estVide()) {
         Litterale* l = &p.top();
         res = f.fabriquerLitterale(*l);
@@ -797,7 +884,7 @@ OpDROP * OpDROP::Clone()
 
 Litterale * OpDROP::faireOperation()
 {
-    Pile& p = Pile::getInstance();
+    Pile& p = Controleur::getInstance().getPile();
     if (!p.estVide()) {
         p.pop();
         return nullptr;
@@ -813,7 +900,7 @@ OpSWAP * OpSWAP::Clone()
 Litterale * OpSWAP::faireOperation()
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
-    Pile& p = Pile::getInstance();
+    Pile& p = Controleur::getInstance().getPile();
     if (p.taille() >= 2) {
         Litterale* l1 = f.fabriquerLitterale(*(&p.top()));
         p.pop();

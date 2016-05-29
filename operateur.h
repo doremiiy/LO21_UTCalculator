@@ -224,6 +224,42 @@ public:
     Litterale* faireOperation();
 };
 
+class OpUNDO : public OperateurPile {
+public:
+    OpUNDO(const QString& s) :OperateurPile(s) {}
+    OpUNDO* Clone();
+    Litterale* faireOperation();
+};
+
+class OpREDO : public OperateurPile {
+public:
+    OpREDO(const QString& s) :OperateurPile(s) {}
+    OpREDO* Clone();
+    Litterale* faireOperation();
+};
+
+class OpLASTOP : public OperateurPile {
+public:
+    OpLASTOP(const QString& s) :OperateurPile(s) {}
+    OpLASTOP* Clone();
+    Litterale* faireOperation();
+};
+
+class OpLASTARG : public OperateurPile {
+public:
+    OpLASTARG(const QString& s) :OperateurPile(s) {}
+    OpLASTARG* Clone();
+    Litterale* faireOperation();
+};
+
+class OpCLEAR : public OperateurPile {
+public:
+    OpCLEAR(const QString& s) :OperateurPile(s) {}
+    OpCLEAR* Clone();
+    Litterale* faireOperation();
+};
+
+
 class FabriqueOperateur {
 private:
     QVector<Operateur*> OpTab;

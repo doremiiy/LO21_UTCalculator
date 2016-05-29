@@ -1,25 +1,46 @@
 
 #include "Pile.h"
 
+Controleur::Handler Controleur::handler = Controleur::Handler();
 
-Pile::Handler Pile::handler = Pile::Handler();
-
-Pile::~Pile()
+Controleur& Controleur::getInstance()
 {
-    FabriqueLitterale::libererInstance();
-    FabriqueOperateur::libererInstance();
-}
-
-Pile& Pile::getInstance()
-{
-    if (handler.instance == nullptr) handler.instance = new Pile;
+    if (handler.instance == nullptr) handler.instance = new Controleur;
     return *handler.instance;
 }
 
-void Pile::libererInstance()
+void Controleur::libererInstance()
 {
     delete handler.instance;
     handler.instance = nullptr;
+}
+
+void Controleur::sauvegardeEtatPile(Operateur * op)
+{
+    if (op == nullptr) {
+        Memento* m;
+        while (!ct.VecteurRedo.empty()) {
+            m = ct.VecteurRedo.back();
+            ct.VecteurRedo.pop_back();
+            delete m;
+        }
+        ct.VecteurUndo.push_back(new Memento(p.getState()));
+    }
+    if (op != nullptr) {
+        if (op->getIdOp() != "LASTOP")
+            ct.setDernierOpUtilise(op->getIdOp());
+        if (op->getIdOp() == "UNDO" || op->getIdOp() == "REDO")
+            ct.VecteurUndo.push_back(new Memento(p.getState()));
+        else {
+            Memento* m;
+            while (!ct.VecteurRedo.empty()) {
+                m = ct.VecteurRedo.back();
+                ct.VecteurRedo.pop_back();
+                delete m;
+            }
+            ct.VecteurUndo.push_back(new Memento(p.getState()));
+        }
+    }
 }
 
 void Pile::pop()
@@ -44,7 +65,7 @@ void Pile::push(Litterale & L)
     itTab.push_back(new Item(L));
     modificationEtat();
 }
-
+/* Ne sert pluas a rien
 void Pile::afficherPile(QTextStream & f) const
 {
     f << "****************************\n";
@@ -61,37 +82,56 @@ void Pile::afficherPile(QTextStream & f) const
     }
     f << "---------------------------------\n";
 }
-
-/*void Pile::setState(QVector<Item*> items)
-{
-    FabriqueLitterale& f = FabriqueLitterale::getInstance();
-    QVector<Item*> state = *(new QVector<Item*>);
-    for (QVector<Item*>::const_iterator It = items.begin(); It != items.end(); ++It) {
-        state.push_back(new Item(*f.fabriquerLitterale((*It)->getLitterale())));
-    }
-    itTab.clear();
-    itTab = state;
-    state.clear();
-}*/
-
-/*Memento::Memento(const QVector<Item*> items)
+*/
+Memento::Memento(const QVector<Item*> items)
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     state = *(new QVector<Item*>);
     for (QVector<Item*>::const_iterator It = items.begin(); It != items.end(); ++It) {
         state.push_back(new Item(*f.fabriquerLitterale((*It)->getLitterale())));
     }
-}*/
+}
 
-/*QVector<Item*> CareTaker::undo()
+
+CareTaker::~CareTaker()
 {
+    Memento *Tmp;
+    while (!VecteurUndo.empty()) {
+        Tmp = VecteurUndo.back();
+        VecteurUndo.pop_back();
+        delete Tmp;
+    }
+    while (!VecteurRedo.empty()) {
+        Tmp = VecteurRedo.back();
+        VecteurUndo.pop_back();
+        delete Tmp;
+    }
+}
 
+QVector<Item*> CareTaker::undo()
+{
+    if (VecteurUndo.size() == 0 || VecteurUndo.size() == 1)
+        throw PileException("Erreur impossible d'appliquer l'operateur");
+    Memento* c = VecteurUndo.back();
+    QVector<Item*> cState = c->getState();
+    VecteurRedo.push_back(new Memento(cState));
+    VecteurUndo.pop_back();
+    Memento* l = VecteurUndo.back();
+    QVector<Item*> lState = l->getState();
+    VecteurUndo.pop_back();
+    delete c;
+    delete l;
+    return lState;
 }
 
 QVector<Item*> CareTaker::redo()
 {
-
-}*/
+    Memento* l = VecteurRedo.back();
+    QVector<Item*> lState = l->getState();
+    VecteurRedo.pop_back();
+    delete l;
+    return lState;
+}
 
 void Controleur::commande(const QString & s)
 {
@@ -99,12 +139,16 @@ void Controleur::commande(const QString & s)
     FabriqueOperateur& o = FabriqueOperateur::getInstance();
     if (isOperateur(s)) {
         Operateur* Op = o.fabriquer(s);
+        sauvegardeEtatPile(Op);
         appliquerOperateur(Op);
+        o.supprimer(Op);
     }
     else {
         if (isLitterale(s)) {
+            sauvegardeEtatPile(nullptr);
             Litterale* l = f.fabriquerLitterale(s);
             p.push(*l);
+            f.supprimer(l);
         }
     }
 }
@@ -113,6 +157,7 @@ void Controleur::appliquerOperateur(Operateur * Op)
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     FabriqueOperateur& o = FabriqueOperateur::getInstance();
+    Controleur& C = Controleur::getInstance();
     if (OperateurToOpBin(Op) != nullptr) {
         if (p.taille() < OperateurToOpBin(Op)->getArite()) {
             o.supprimer(Op);
@@ -123,8 +168,11 @@ void Controleur::appliquerOperateur(Operateur * Op)
         Litterale* l2 = &p.top();
         p.pop();
         try {
-            OperateurToOpBin(Op)->putLitterale(l1, l2);
+            OperateurToOpBin(Op)->putLitterale(l2, l1);
             Litterale* res = Op->faireOperation();
+            C.getCareTaker().clearVecteurLits();
+            C.getCareTaker().addLitteraleVecteur(l1);
+            C.getCareTaker().addLitteraleVecteur(l2);
             if (res != nullptr)
                 p.push(*res);
             else throw PileException("Erreur ");
@@ -147,6 +195,8 @@ void Controleur::appliquerOperateur(Operateur * Op)
         try {
             OperateurToOpUn(Op)->putLitterale(l);
             Litterale* res = Op->faireOperation();
+            C.getCareTaker().clearVecteurLits();
+            C.getCareTaker().addLitteraleVecteur(l);
             if(res!=nullptr) p.push(*res);
             return;
         }

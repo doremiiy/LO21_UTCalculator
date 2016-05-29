@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QSound>
 #include "pile.h"
 
 namespace Ui {
@@ -32,13 +33,15 @@ public slots:
     void on_buttonMoins_clicked();
     void on_buttonFois_clicked();
     void on_buttonDiv_clicked();
-    void on_buttonVirg_clicked();
+    void on_buttonPoint_clicked();
     void on_buttonEnter_clicked();
+    void on_activeClavier_clicked();
+    void on_taillePile_valueChanged();
     void refresh();
     void getNextCommande();
 private:
     Ui::MainWindow *ui;
-    Pile& P=Pile::getInstance();
+    //Pile& P;
     Controleur* controleur;
 };
 

@@ -21,6 +21,9 @@ class Operateur;
 class PileException;
 class Item;
 class Pile;
+class Memento;
+class CareTaker;
+class Controleur;
 
 class PileException {
 private:
@@ -32,42 +35,42 @@ public:
 
 class Item {
 private:
+    friend class Memento;
+    friend class Pile;
     Litterale& L;
-public:
     Item(Litterale& l) :L(*l.Clone()) {}
+    Item(const Item& It) :L(*It.L.Clone()) {}
+    Item& operator=(const Item& i);
+public:
     void setLitterale(Litterale& l) { L = *l.Clone(); }
     Litterale& getLitterale() const { return L; }
 };
 
-/*class Memento {
+class Memento {
 private:
+    friend class Controleur;
+    friend class CareTaker;
     QVector<Item*> state;
 public:
     Memento(const QVector<Item*> items);
     QVector<Item*> getState() const { return state; }
-};*/
+};
 
-class Pile:public QObject {
+class Pile:public QObject{
 private:
     Q_OBJECT
     friend class MainWindow;
+    friend class Controleur;
+
     QVector<Item*> itTab;
     unsigned int nbAffiche;
     QString message;
-    Pile() :nbAffiche(5), message("") { QVector<Item*> itTab = *(new QVector<Item*>); }
-    ~Pile();
+
     void operator=(const Pile& p);
     Pile(const Pile& p);
-    struct Handler {
-        Pile* instance;
-        Handler() :instance(nullptr) {}
-        ~Handler() { delete instance; }
-    };
-    static Handler handler;
 public:
-    //QVector<Item*> getPile() const { return itTab; }
-    static Pile& getInstance();
-    static void libererInstance();
+    Pile() :nbAffiche(5), message("") { vector<Item*> itTab = *(new vector<Item*>); }
+    QVector<Item*> getitTab() const { return itTab; }
     bool estVide() const { return itTab.empty(); }
     void pop();
     Litterale& top() const;
@@ -75,44 +78,54 @@ public:
     unsigned int taille() const { return itTab.size(); }
     void setNbToAffiche(unsigned int n) { nbAffiche = n; }
     unsigned int getNbToAffiche() const { return nbAffiche; }
-    void afficherPile(QTextStream& f) const;
-    void setMessage(const QString& s) { message = s; modificationEtat(); }
+    //void afficherPile(ostream& f) const;//fonction inutile
+    void setMessage(const QString& s) { message = s; }
     QString getMessage() const { return message; }
-    //void setState(QVector<Item*> items);
-    //QVector<Item*> getState() { return itTab; }
-    //Memento saveStateToMemento() { return new Memento(itTab); }
-    //void getStateFromMemento() { itTab = Memento.getState(); }
-signals://Signaux pour Qt
+    void setState(const QVector<Item*>& items) { itTab = items; }
+    QVector<Item*> getState() { return itTab; }
+    void clear() { itTab.clear(); }
+signals:
     void modificationEtat();
-
 };
-
-/*class CareTaker {
+class CareTaker {
 private:
-    list<Memento> mementoList;
-    //Operateur* DernierOpApplique;
+    friend class Controleur;
+    QVector<Memento*> VecteurUndo;
+    QVector<Memento*> VecteurRedo;
+    QVector<Litterale*> VecteurLits;
+    QString DernierOpUtilise;
+    CareTaker() :DernierOpUtilise("") {}
 public:
-    //CareTaker():DernierOpApplique(nullptr){}
-    //Operateur* getDernierOpApplique() const { return DernierOpApplique; }
-    //void setDernierOpApplique(Operateur* Op) { delete DernierOpApplique; DernierOpApplique = Op->Clone(); }
-    //QVector<const Litterale*> getListLitterales() const { return ListLitterales; }
-    //void clearListLitterales() { ListLitterales.clear(); }
-    void Add(Memento state) { mementoList.push_back(state); }
-    Memento get() {return mementoList.}
+    ~CareTaker();
+    QString getDernierOpUtilise() const { return DernierOpUtilise; }
+    void setDernierOpUtilise(QString s) { DernierOpUtilise = s; }
+    QVector<Litterale*> getVecteurLits() const { return VecteurLits; }
+    void clearVecteurLits() { VecteurLits.clear(); }
+    void addLitteraleVecteur(Litterale* lit) { VecteurLits.push_back(lit); }
     QVector<Item*> undo();
     QVector<Item*> redo();
-};*/
+};
 
 class Controleur {
 private:
     Pile& p;
-    //CareTaker& ct;
+    CareTaker& ct;
+    Controleur() :p(*new Pile()), ct(*new CareTaker()) {}
+    struct Handler {
+        Controleur* instance;
+        Handler() :instance(nullptr) {}
+        ~Handler() { delete instance; }
+    };
 public:
-    Controleur() :p(Pile::getInstance()) {}
-    //void saveOp(Operateur* Op);
+    static Handler handler;
+    static Controleur& getInstance();
+    static void libererInstance();
+
+    void sauvegardeEtatPile(Operateur* op);
+    Pile& getPile() const { return p; }
+    CareTaker& getCareTaker() const { return ct; }
     void commande(const QString& s);
     void appliquerOperateur(Operateur* Op);
 };
-
 
 #endif
