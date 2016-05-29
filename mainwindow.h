@@ -41,8 +41,7 @@ public slots:
     void getNextCommande();
 private:
     Ui::MainWindow *ui;
-    //Pile& P;
-    Controleur* controleur;
+    Controleur& controleur = Controleur::getInstance();
 };
 
 #endif // MAINWINDOW_H

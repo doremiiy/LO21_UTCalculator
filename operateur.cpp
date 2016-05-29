@@ -182,6 +182,7 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             OpTab.push_back(Op);
             return Op;
         }
+        /*
         if (s == "UNDO") {
             Op = new OpUNDO("UNDO");
             OpTab.push_back(Op);
@@ -206,7 +207,7 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             Op = new OpCLEAR("CLEAR");
             OpTab.push_back(Op);
             return Op;
-        }
+        }*/
     }
     throw OperateurException("Erreur : Operateur non reconnu");
 }

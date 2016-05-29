@@ -7,8 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    controleur->getInstance();
-    Pile& P = Controleur::getInstance().getPile();
+    Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
     ui->message->setStyleSheet("background: cyan; color: black");
@@ -168,7 +167,7 @@ void MainWindow::getNextCommande(){
         try{
             stream>>com;//extraction d'un element
             //envoyer la commande au controleur
-            if(com!="") controleur->commande(com);
+            if(com!="") controleur.commande(com);
         }
         catch (LitteraleException e) { P.setMessage(e.getInfo()); ring.play(); }
         catch (OperateurException o) { P.setMessage(o.getInfo()); ring.play(); }
