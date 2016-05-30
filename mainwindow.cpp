@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     Pile& P = controleur.getPile();
-    ui->message->setText("Bonjour");
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
     ui->message->setStyleSheet("background: cyan; color: black");
@@ -31,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
     ui->commande->setFocus();
     MainWindow::on_activeClavier_clicked();
+    ui->message->setText("Bonjour");
 }
 //destructeur
 MainWindow::~MainWindow()
@@ -145,46 +145,36 @@ void MainWindow::on_taillePile_valueChanged(){
 
 void MainWindow::refresh(){
     //Le message
-    Pile& P = Controleur::getInstance().getPile();
+    ui->message->clear();
     //Effacer tout
+    Pile& P = controleur.getInstance().getPile();
     for(unsigned int i=0;i<P.getNbToAffiche();i++)
         ui->vuePile->item(i,0)->setText("");
-    //Mettre a jour
-
+    //Mettre a jour de la vuePile
     unsigned int nb=1;
     for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
         ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
-    /*
-    unsigned int nb=P.getNbToAffiche();
-    while(nb>0 && It!=P.itTab.end()){
-        if (nb <= P.taille()) {
-            ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
-            It++;
-        }
-        nb++;
-    }*/
-       /* for (unsigned int i = P.getNbToAffiche(); i > 0; i--) {
-            if (i <= P.taille()) {
-                ui->vuePile->item(P.getNbToAffiche()-i,0)->setText((*It)->getLitterale().toString());
-                ++It;
-            }
-        }*/
+    //Mettre a jour de la vueVar
+    //QHash<QString,LitteraleNumeric*> Var;
+    nb=0;
+    for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.getVar().begin(); It!=controleur.getVar().end();++It,nb++)
+        ui->vueVar->item(nb,0)->setText((*It)->toString());
+
 }
 void MainWindow::getNextCommande(){
-    Pile& P = Controleur::getInstance().getPile();
     QSound ring ("beep.wav");
     //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
     //Extraction de chaque element de la ligne
     QTextStream stream(&c);
     QString com;
-    int i=0;
     do{
         try{
             stream>>com;//extraction d'un element
             //envoyer la commande au controleur
             if(com!="") controleur.commande(com);
             ui->commande->clear();
+            //ui->message->clear();
         }
         catch (LitteraleException e) { ui->message->setText(e.getInfo()); ring.play(); }
         catch (OperateurException o) { ui->message->setText(o.getInfo()); ring.play(); }

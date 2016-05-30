@@ -119,7 +119,7 @@ public:
     static Handler handler;
     static Controleur& getInstance();
     static void libererInstance();
-
+    QHash<QString,LitteraleNumeric*> getVar() const { return Var; }
     void addVar(const QString& s1,LitteraleNumeric* l);
     void eraseVar(const QString& s);
     LitteraleNumeric* getVar(const QString& s);
