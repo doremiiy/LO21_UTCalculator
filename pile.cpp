@@ -146,6 +146,12 @@ void Controleur::commande(const QString & s)
     else {
         if (isLitterale(s)) {
             sauvegardeEtatPile(nullptr);
+            if(isAtome(s)){
+                QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
+                if(It!=Var.end()){
+                    p.push(*It.value());
+                }
+            }
             Litterale* l = f.fabriquerLitterale(s);
             p.push(*l);
             f.supprimer(l);
@@ -210,6 +216,7 @@ void Controleur::appliquerOperateur(Operateur * Op)
         try {
             Litterale* res = OperateurToOpPile(Op)->faireOperation();
             if (res != nullptr) p.push(*res);
+            Controleur::getInstance().getPile().modificationEtat();
             return;
         }
         catch (OperateurException e) {
@@ -219,3 +226,34 @@ void Controleur::appliquerOperateur(Operateur * Op)
     }
     throw OperateurException("Erreur : Operateur inconnu");
 }
+
+void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
+{
+    if (isAtome(s1)) {
+        map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
+        if (It != Operateur::listeOperateurs.end())
+            throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+        QHash<QString,LitteraleNumeric*>::iterator It2 = Var.find(s1);
+        if (It2 != Var.end())
+            Var.erase(It2);
+        Var.insert(s1,l);
+    }
+}
+
+/*void Controleur::eraseVar(const string & s)
+{
+    QMap<string, string>::const_iterator It=Var.find(s);
+    if(It!=Var.end())
+        Var.erase(It);
+}
+
+LitteraleNumeric * Controleur::getVar(const string & s)
+{
+    FabriqueLitterale& f = FabriqueLitterale::getInstance();
+    map<string, string>::const_iterator It = Var.find(s);
+    if (It == Var.end())
+        throw PileException("Erreur : variable inconnue");
+    else
+        return f.fabriquerLitNum((*It).second);
+}*/
+

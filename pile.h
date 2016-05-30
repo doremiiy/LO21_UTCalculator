@@ -3,13 +3,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <map>
+#include <QMap>
 #include <sstream>
 #include <regex>
 #include <list>
 #include <QVector>
 #include <QString>
 #include <QTextStream>
+#include <QHash>
+
 
 
 #include "litterale.h"
@@ -110,6 +112,7 @@ class Controleur {
 private:
     Pile& p;
     CareTaker& ct;
+    QHash<QString,LitteraleNumeric*> Var;
     Controleur() :p(*new Pile()), ct(*new CareTaker()) {}
     struct Handler {
         Controleur* instance;
@@ -121,6 +124,9 @@ public:
     static Controleur& getInstance();
     static void libererInstance();
 
+    void addVar(const QString& s1,LitteraleNumeric* l);
+    void eraseVar(const QString& s);
+    LitteraleNumeric* getVar(const QString& s);
     void sauvegardeEtatPile(Operateur* op);
     Pile& getPile() const { return p; }
     CareTaker& getCareTaker() const { return ct; }

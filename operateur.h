@@ -223,7 +223,7 @@ public:
     OpIM* Clone();
     Litterale* faireOperation();
 };
-/*
+
 class OpUNDO : public OperateurPile {
 public:
     OpUNDO(const QString& s) :OperateurPile(s) {}
@@ -258,7 +258,14 @@ public:
     OpCLEAR* Clone();
     Litterale* faireOperation();
 };
-*/
+
+class OpSTO : public OperateurBinaire {
+public:
+    OpSTO(const QString& s) :OperateurBinaire(s) {}
+    OpSTO* Clone();
+    Litterale* faireOperation();
+};
+
 
 class FabriqueOperateur {
 private:

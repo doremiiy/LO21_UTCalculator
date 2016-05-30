@@ -2,7 +2,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0} };
+const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -182,7 +182,6 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             OpTab.push_back(Op);
             return Op;
         }
-        /*
         if (s == "UNDO") {
             Op = new OpUNDO("UNDO");
             OpTab.push_back(Op);
@@ -207,7 +206,12 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             Op = new OpCLEAR("CLEAR");
             OpTab.push_back(Op);
             return Op;
-        }*/
+        }
+        if (s == "STO") {
+            Op = new OpSTO("STO");
+            OpTab.push_back(Op);
+            return Op;
+        }
     }
     throw OperateurException("Erreur : Operateur non reconnu");
 }
@@ -1267,5 +1271,87 @@ Litterale * OpIM::faireOperation()
         res = f1.fabriquer(0);
         return res;
     }
+    return nullptr;
+}
+
+OpUNDO * OpUNDO::Clone()
+{
+    return new OpUNDO(*this);
+}
+
+Litterale * OpUNDO::faireOperation()
+{
+    Controleur::getInstance().getPile().setState(Controleur::getInstance().getCareTaker().undo());
+    return nullptr;
+}
+
+OpREDO * OpREDO::Clone()
+{
+    return new OpREDO(*this);
+}
+
+Litterale * OpREDO::faireOperation()
+{
+    Controleur::getInstance().getPile().setState(Controleur::getInstance().getCareTaker().redo());
+    return nullptr;
+}
+
+OpLASTOP * OpLASTOP::Clone()
+{
+    return new OpLASTOP(*this);
+}
+
+Litterale * OpLASTOP::faireOperation()
+{
+    Controleur& C = Controleur::getInstance();
+    QString s = C.getCareTaker().getDernierOpUtilise();
+    if (s != "") {
+        Operateur* Op = FabriqueOperateur::getInstance().fabriquer(s);
+        C.appliquerOperateur(Op);
+    }
+    return nullptr;
+}
+
+OpLASTARG * OpLASTARG::Clone()
+{
+    return new OpLASTARG(*this);
+}
+
+Litterale * OpLASTARG::faireOperation()
+{
+    Controleur& C = Controleur::getInstance();
+    QVector<Litterale*> vec = C.getCareTaker().getVecteurLits();
+    while (!vec.empty()) {
+        Litterale* tmp = vec.back();
+        C.getPile().push(*tmp);
+        vec.pop_back();
+        delete tmp;
+    }
+    return nullptr;
+}
+
+OpCLEAR * OpCLEAR::Clone()
+{
+    return new OpCLEAR(*this);
+}
+
+Litterale * OpCLEAR::faireOperation()
+{
+    Controleur& C = Controleur::getInstance();
+    C.getPile().clear();
+    return nullptr;
+}
+
+OpSTO * OpSTO::Clone()
+{
+    return new OpSTO(*this);
+}
+
+Litterale * OpSTO::faireOperation()
+{
+    FabriqueLitterale& f = FabriqueLitterale::getInstance();
+    Litterale* l1 = getLitterale1();
+    Litterale* l2 = getLitterale2();
+    Controleur::getInstance().addVar(l2->toString(), LitToLitNum(l1));
     return nullptr;
 }

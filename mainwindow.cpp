@@ -150,10 +150,15 @@ void MainWindow::refresh(){
     for(unsigned int i=0;i<P.getNbToAffiche();i++)
         ui->vuePile->item(i,0)->setText("");
     //Mettre a jour
-    unsigned int nb=1;
-    for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<P.getNbToAffiche();++It,++nb)
-        ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
+    QVector<Item*>::const_iterator It = P.itTab.begin();
+    for (unsigned int i = P.getNbToAffiche(); i > 0; i--) {
+        if (i <= P.taille()) {
+            ui->vuePile->item(P.getNbToAffiche()-i,0)->setText((*It)->getLitterale().toString());
+            ++It;
+        }
+    }
 }
+
 void MainWindow::getNextCommande(){
     Pile& P = Controleur::getInstance().getPile();
     P.setMessage("");
@@ -168,6 +173,7 @@ void MainWindow::getNextCommande(){
             stream>>com;//extraction d'un element
             //envoyer la commande au controleur
             if(com!="") controleur.commande(com);
+            ring.play();
         }
         catch (LitteraleException e) { P.setMessage(e.getInfo()); ring.play(); }
         catch (OperateurException o) { P.setMessage(o.getInfo()); ring.play(); }

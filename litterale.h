@@ -156,6 +156,7 @@ public:
     Litterale* fabriquerComplexe(LitteraleNumeric *l1, LitteraleNumeric *l2);
     Atome* fabriquerAtome(const QString& s);
     Atome* fabriquerAtome(Atome& a);
+    Expression* fabriquerExpression(const QString & s);
 
     Entier* fabriquer(const Entier& e);
     Entier* fabriquer(int value);
@@ -195,4 +196,7 @@ LitteraleNumeric* LitToLitNum(Litterale* l);
 Entier* LitNumToEnt(LitteraleNumeric* ln);
 Reel* LitNumToReel(LitteraleNumeric* ln);
 Rationnel* LitNumToRat(LitteraleNumeric* ln);
+
+const QString supprimerEspacesExpression(const QString& s);
+const QString supprimerGuillemetsExpression(const QString& s);
 #endif

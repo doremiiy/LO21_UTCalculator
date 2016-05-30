@@ -36,13 +36,42 @@ bool isReel(const QString & s)
 bool isAtome(const QString & s)
 {
     QRegExp r("^[A-Z]([A-Z]|[0-9])*$");
-     return s.contains(r);
+    return s.contains(r);
 }
 
 bool isExpression(const QString & s)
 {
-    QRegExp r("'");
+    unsigned int nbParGauche = 0;
+    unsigned int nbParDroite = 0;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] == '(')
+            nbParGauche++;
+        if (s[i] == ')')
+            nbParDroite++;
+    }
+    if (nbParDroite != nbParGauche)return false;
+    QRegExp r("^'([A-Z0-9\\(\\)\\$\\+\\*/-])+'$");
     return s.contains(r);
+}
+
+const QString supprimerEspacesExpression(const QString & s)
+{
+    QString sSansEsp;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] != ' ')
+            sSansEsp += s[i];
+    }
+    return sSansEsp;
+}
+
+const QString supprimerGuillemetsExpression(const QString & s)
+{
+    QString sSansGuillemet;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] != '\'')
+            sSansGuillemet += s[i];
+    }
+    return sSansGuillemet;
 }
 
 bool isProgramme(const QString & s)
@@ -242,6 +271,10 @@ Litterale * FabriqueLitterale::fabriquerLitterale(const QString & s)
         L=fabriquerAtome(s);
         return L;
     }
+    if (isExpression(s)) {
+        L=fabriquerExpression(s);
+        return L;
+    }
     throw LitteraleException("Erreur : pas de litterale correspondant");
 }
 
@@ -252,6 +285,19 @@ Atome * FabriqueLitterale::fabriquerAtome(const QString & s)
     return a;
 }
 
+Expression * FabriqueLitterale::fabriquerExpression(const QString & s)
+{
+    QString sTmp = supprimerEspacesExpression(s);
+    Expression* e = new Expression(sTmp);
+    LitTab.push_back(e);
+    return e;
+}
+
+QString Expression::toString() const
+{
+    QString sTmp = supprimerEspacesExpression(value);
+    return sTmp;
+}
 
 Litterale * FabriqueLitterale::fabriquerLitterale(Litterale & l)
 {
@@ -450,10 +496,6 @@ int DenominateurFromStr(const QString & s)
     }
 }
 
-QString Expression::toString() const
-{
-    return value;
-}
 
 Expression * Expression::Clone() const
 {
