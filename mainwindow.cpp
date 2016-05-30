@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     Pile& P = controleur.getPile();
+    ui->message->setText("Bonjour");
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
     ui->message->setStyleSheet("background: cyan; color: black");
@@ -145,39 +146,49 @@ void MainWindow::on_taillePile_valueChanged(){
 void MainWindow::refresh(){
     //Le message
     Pile& P = Controleur::getInstance().getPile();
-    ui->message->setText(P.getMessage());
     //Effacer tout
     for(unsigned int i=0;i<P.getNbToAffiche();i++)
         ui->vuePile->item(i,0)->setText("");
     //Mettre a jour
-    QVector<Item*>::const_iterator It = P.itTab.begin();
-    for (unsigned int i = P.getNbToAffiche(); i > 0; i--) {
-        if (i <= P.taille()) {
-            ui->vuePile->item(P.getNbToAffiche()-i,0)->setText((*It)->getLitterale().toString());
-            ++It;
-        }
-    }
-}
 
+    unsigned int nb=1;
+    for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
+        ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
+    /*
+    unsigned int nb=P.getNbToAffiche();
+    while(nb>0 && It!=P.itTab.end()){
+        if (nb <= P.taille()) {
+            ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
+            It++;
+        }
+        nb++;
+    }*/
+       /* for (unsigned int i = P.getNbToAffiche(); i > 0; i--) {
+            if (i <= P.taille()) {
+                ui->vuePile->item(P.getNbToAffiche()-i,0)->setText((*It)->getLitterale().toString());
+                ++It;
+            }
+        }*/
+}
 void MainWindow::getNextCommande(){
     Pile& P = Controleur::getInstance().getPile();
-    P.setMessage("");
     QSound ring ("beep.wav");
     //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
     //Extraction de chaque element de la ligne
     QTextStream stream(&c);
     QString com;
+    int i=0;
     do{
         try{
             stream>>com;//extraction d'un element
             //envoyer la commande au controleur
             if(com!="") controleur.commande(com);
-            ring.play();
+            ui->commande->clear();
         }
-        catch (LitteraleException e) { P.setMessage(e.getInfo()); ring.play(); }
-        catch (OperateurException o) { P.setMessage(o.getInfo()); ring.play(); }
-        catch (PileException p) { P.setMessage(p.getInfo()); ring.play(); }
+        catch (LitteraleException e) { ui->message->setText(e.getInfo()); ring.play(); }
+        catch (OperateurException o) { ui->message->setText(o.getInfo()); ring.play(); }
+        catch (PileException p) { ui->message->setText(p.getInfo()); ring.play(); }
     }while(com!="");
     //Ligne de commande a zero
     ui->commande->clear();
