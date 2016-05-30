@@ -98,6 +98,27 @@ public:
     Litterale* faireOperation();
 };
 
+class OpDIV : public OperateurBinaire {
+public:
+    OpDIV(const QString& s) :OperateurBinaire(s) {}
+    OpDIV* Clone();
+    Litterale* faireOperation();
+};
+
+class OpMOD : public OperateurBinaire {
+public:
+    OpMOD(const QString& s) :OperateurBinaire(s) {}
+    OpMOD* Clone();
+    Litterale* faireOperation();
+};
+
+class OpEVAL : public OperateurUnaire {
+public:
+    OpEVAL(const QString& s) :OperateurUnaire(s) {}
+    OpEVAL* Clone();
+    Litterale* faireOperation();
+};
+
 class OpNEG : public OperateurUnaire {
 public:
     OpNEG(const QString& s):OperateurUnaire(s){}

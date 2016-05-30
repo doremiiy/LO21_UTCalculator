@@ -2,7 +2,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2} };
+const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -212,6 +212,21 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             OpTab.push_back(Op);
             return Op;
         }
+        if (s == "DIV") {
+            Op = new OpDIV("DIV");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "MOD") {
+            Op = new OpMOD("MOD");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "EVAL") {
+            Op = new OpEVAL("EVAL");
+            OpTab.push_back(Op);
+            return Op;
+        }
     }
     throw OperateurException("Erreur : Operateur non reconnu");
 }
@@ -362,6 +377,35 @@ Litterale * OpPlus::faireOperation()
             return res;
         }
     }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
+        QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
+        int samePrio1=0,samePrio2=0;
+        for(unsigned int i=0;i<exp1.length();i++){
+            if(exp1[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp1[i]=='+' || exp1[i]=='-'){
+                samePrio1=1;
+            }
+        }
+        for(unsigned int i=0;i<exp2.length();i++){
+            if(exp2[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp2[i]=='+' || exp2[i]=='-'){
+                samePrio2=1;
+            }
+        }
+        QString s="'";
+        if(samePrio1==1) s+=exp1;
+        else s+="("+exp1+")";
+        s+="+";
+        if(samePrio2==1) s+=exp2+"'";
+        else s+="("+exp2+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     throw OperateurException("L'operateur + ne s'applique pas sur ces litterales");
 }
 
@@ -473,6 +517,35 @@ Litterale * OpMoins::faireOperation()
             f2.supprimer(tmp);
             return res;
         }
+    }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
+        QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
+        int samePrio1=0,samePrio2=0;
+        for(unsigned int i=0;i<exp1.length();i++){
+            if(exp1[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp1[i]=='+' || exp1[i]=='-'){
+                samePrio1=1;
+            }
+        }
+        for(unsigned int i=0;i<exp2.length();i++){
+            if(exp2[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp2[i]=='+' || exp2[i]=='-'){
+                samePrio2=1;
+            }
+        }
+        QString s="'";
+        if(samePrio1==1) s+=exp1;
+        else s+="("+exp1+")";
+        s+="-";
+        if(samePrio2==1) s+=exp2+"'";
+        else s+="("+exp2+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
     }
     throw OperateurException("L'operateur - ne s'applique pas sur ces litterales");
 }
@@ -611,6 +684,35 @@ Litterale * OpFois::faireOperation()
             f2.supprimer(tmp3);
             return res;
         }
+    }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
+        QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
+        int samePrio1=0,samePrio2=0;
+        for(unsigned int i=0;i<exp1.length();i++){
+            if(exp1[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp1[i]=='/' || exp1[i]=='*'){
+                samePrio1=1;
+            }
+        }
+        for(unsigned int i=0;i<exp2.length();i++){
+            if(exp2[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp2[i]=='/' || exp2[i]=='*'){
+                samePrio2=1;
+            }
+        }
+        QString s="'";
+        if(samePrio1==1) s+=exp1;
+        else s+="("+exp1+")";
+        s+="*";
+        if(samePrio2==1) s+=exp2+"'";
+        else s+="("+exp2+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
     }
     throw OperateurException("L'operateur + ne s'applique pas sur ces litterales");
 }
@@ -829,7 +931,35 @@ Litterale * OpDiviser::faireOperation()
             return res;
         }
     }
-
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
+        QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
+        int samePrio1=0,samePrio2=0;
+        for(unsigned int i=0;i<exp1.length();i++){
+            if(exp1[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp1[i]=='*' || exp1[i]=='/'){
+                samePrio1=1;
+            }
+        }
+        for(unsigned int i=0;i<exp2.length();i++){
+            if(exp2[i]=='('){
+                while(exp1[i]!=')') i++;
+            }
+            if(exp2[i]=='*' || exp2[i]=='/'){
+                samePrio2=1;
+            }
+        }
+        QString s="'";
+        if(samePrio1==1) s+=exp1;
+        else s+="("+exp1+")";
+        s+="/";
+        if(samePrio2==1) s+=exp2+"'";
+        else s+="("+exp2+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     throw OperateurException("L'operateur + ne s'applique pas sur ces litterales");
 }
 
@@ -859,6 +989,11 @@ Litterale * OpNEG::faireOperation()
         LitteraleNumeric* im = LitToLitNum(OperateurToOpUn(Tmp)->faireOperation());
         res = f1.fabriquerComplexe(re, im);
         f2.supprimer(Tmp);
+        return res;
+    }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'NEG("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
         return res;
     }
     throw OperateurException("Erreur : cette operateur ne s'applique pas sur ce type de litterale");
@@ -1121,6 +1256,11 @@ Litterale * OpAND::faireOperation()
             res = f1.fabriquerLitterale("0");
         return res;
     }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString s="'AND("+supprimerGuillemetsExpression(LitToExpression(l1)->toString())+","+supprimerGuillemetsExpression(LitToExpression(l2)->toString())+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     else return nullptr;
 }
 
@@ -1143,6 +1283,11 @@ Litterale * OpOR::faireOperation()
             res = f1.fabriquerLitterale("1");
         return res;
     }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString s="'OR("+supprimerGuillemetsExpression(LitToExpression(l1)->toString())+","+supprimerGuillemetsExpression(LitToExpression(l2)->toString())+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     else return nullptr;
 }
 
@@ -1162,6 +1307,11 @@ Litterale * OpNOT::faireOperation()
             res = f1.fabriquerLitterale("1");
         else
             res = f1.fabriquerLitterale("0");
+        return res;
+    }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'NOT("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
         return res;
     }
     else return nullptr;
@@ -1186,6 +1336,11 @@ Litterale * OpNUM::faireOperation()
         res = f1.fabriquer(LitToEnt(l)->getValue());
         return res;
     }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'NUM("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     return nullptr;
 }
 
@@ -1208,6 +1363,11 @@ Litterale * OpDEN::faireOperation()
         res = f1.fabriquer(1);
         return res;
     }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'DEN("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     return nullptr;
 }
 
@@ -1225,6 +1385,13 @@ Litterale * OpDOLLAR::faireOperation()
     Litterale* res;
     if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
         res = f1.fabriquerComplexe(LitToLitNum(l1),LitToLitNum(l2));
+        return res;
+    }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
+        QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
+        QString s="'("+exp1+")$("+exp2+")'";
+        res=f1.fabriquerExpression(s);
         return res;
     }
     else return nullptr;
@@ -1249,6 +1416,11 @@ Litterale * OpRE::faireOperation()
         res = f1.fabriquerLitNum(*LitToLitNum(l));
         return res;
     }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'RE("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
+        return res;
+    }
     return nullptr;
 }
 
@@ -1269,6 +1441,11 @@ Litterale * OpIM::faireOperation()
     }
     if (LitToLitNum(l) != nullptr) {
         res = f1.fabriquer(0);
+        return res;
+    }
+    if(LitToExpression(l)!=nullptr){
+        QString s="'IM("+supprimerGuillemetsExpression(LitToExpression(l)->toString())+")'";
+        res=f1.fabriquerExpression(s);
         return res;
     }
     return nullptr;
@@ -1357,4 +1534,89 @@ Litterale * OpSTO::faireOperation()
             Controleur::getInstance().addVar(supprimerGuillemetsExpression(LitToExpression(l1)->toString()), LitToLitNum(l2));
     }
     return nullptr;
+}
+
+OpDIV* OpDIV::Clone(){
+    return new OpDIV(*this);
+}
+
+Litterale* OpDIV::faireOperation(){
+    FabriqueLitterale& f=FabriqueLitterale::getInstance();
+    Litterale* l1=getLitterale1();
+    Litterale* l2=getLitterale2();
+    Litterale* res;
+    if(LitToEnt(l1)!=nullptr && LitToEnt(l2)!=nullptr){
+        int a=LitToEnt(l1)->getValue();
+        int b=LitToEnt(l2)->getValue();
+        if(b==0) throw OperateurException("Erreur : Division par 0");
+        if(a<0) a=-a;
+        if(b<0) b=-b;
+        int r=0;
+        while(a>=b){
+            a-=b;
+            r++;
+        }
+        res = f.fabriquer(r);
+        return res;
+    }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString s="'DIV("+supprimerGuillemetsExpression(LitToExpression(l1)->toString())+","+supprimerGuillemetsExpression(LitToExpression(l2)->toString())+")'";
+        res=f.fabriquerExpression(s);
+        return res;
+    }
+    else throw OperateurException("Erreur : Operateur non disponible pour ces litterales");
+}
+
+OpMOD* OpMOD::Clone() {
+    return new OpMOD(*this);
+}
+
+Litterale* OpMOD::faireOperation(){
+    FabriqueLitterale& f=FabriqueLitterale::getInstance();
+    Litterale* l1=getLitterale1();
+    Litterale* l2=getLitterale2();
+    Litterale* res;
+    if(LitToEnt(l1)!=nullptr && LitToEnt(l2)!=nullptr){
+        int a=LitToEnt(l1)->getValue();
+        int b=LitToEnt(l2)->getValue();
+        if(b==0) throw OperateurException("Erreur : Division par 0");
+        if(a<0) a=-a;
+        if(b<0) b=-b;
+        int r=0,q;
+        while(a>=b){
+            a-=b;
+            r++;
+        }
+        q=a;
+        res = f.fabriquer(q);
+        return res;
+    }
+    if(LitToExpression(l1)!=nullptr && LitToExpression(l2)!=nullptr){
+        QString s="'MOD("+supprimerGuillemetsExpression(LitToExpression(l1)->toString())+","+supprimerGuillemetsExpression(LitToExpression(l2)->toString())+")'";
+        res=f.fabriquerExpression(s);
+        return res;
+    }
+    else throw OperateurException("Erreur : Operateur non disponible pour ces litterales");
+}
+
+OpEVAL* OpEVAL::Clone(){
+    return new OpEVAL(*this);
+}
+
+Litterale* OpEVAL::faireOperation(){
+    Litterale* l=getLitterale();
+    FabriqueLitterale& f=FabriqueLitterale::getInstance();
+    if(isExpression(l->toString())){
+        QString s=supprimerGuillemetsExpression(LitToExpression(l)->toString());
+        //si expression composée d'une litterale simple
+        if(isLitterale(s)){
+            Litterale* res=f.fabriquerLitterale(s);
+            return res;
+        }
+        //Evaluation des operateurs unaires
+        QRegExp r3("^[A-Z]([A-Z])*\\(([.\\(\\)])+\\)$");
+        //Evaluation des operateurs binaires
+
+        //Evaluation globale par rapport aux parentheses
+    }
 }

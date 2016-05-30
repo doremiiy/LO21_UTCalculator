@@ -571,3 +571,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
     }
     throw LitteraleException("Erreur");
 }
+
+/*Litterale* Expression::eval() const {
+
+}*/

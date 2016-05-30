@@ -116,6 +116,7 @@ public:
     QString getValue() const { return value; }
     QString toString() const;
     Expression* Clone() const;
+    Litterale* eval() const;
 };
 
 class Programme : public Litterale {
