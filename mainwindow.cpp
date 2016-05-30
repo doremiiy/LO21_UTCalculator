@@ -10,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
+    ui->vuePile->setRowCount(5);
+    ui->vueVar->setColumnCount(2);
+    for(unsigned int i=0;i<5;i++){
+        ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
+    }
     ui->message->setStyleSheet("background: cyan; color: black");
     ui->message->setReadOnly(true);
     ui->vuePile->setStyleSheet("background: darker; color: white");
@@ -19,11 +24,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
     QStringList numberlist;
     for(unsigned int i=P.getNbToAffiche();i>0;i--){
-            QString str = QString::number(i);
-            str+=" : ";
-            numberlist<<str;
-            ui->vuePile->setItem(i-1,0,new QTableWidgetItem(""));
-        }
+        QString str = QString::number(i);
+        str+=" : ";
+        numberlist<<str;
+        ui->vuePile->setItem(i-1,0,new QTableWidgetItem(""));
+    }
     ui->vuePile->setVerticalHeaderLabels(numberlist);
     ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refresh()));
