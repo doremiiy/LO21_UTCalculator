@@ -130,13 +130,21 @@ void Controleur::commande(const QString & s)
             sauvegardeEtatPile(nullptr);
             if(isAtome(s)){
                 QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
+                if(It==Var.end()){
+                    QString stmp="'"+s+"'";
+                    Litterale* l=f.fabriquerExpression(stmp);
+                    p.push(*l);
+                    f.supprimer(l);
+                }
                 if(It!=Var.end()){
                     p.push(*It.value());
                 }
             }
-            Litterale* l = f.fabriquerLitterale(s);
-            p.push(*l);
-            f.supprimer(l);
+            else {
+                Litterale* l = f.fabriquerLitterale(s);
+                p.push(*l);
+                f.supprimer(l);
+            }
         }
     }
 }
@@ -211,15 +219,13 @@ void Controleur::appliquerOperateur(Operateur * Op)
 
 void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
 {
-    if (isAtome(s1)) {
-        map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
-        if (It != Operateur::listeOperateurs.end())
-            throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
-        QHash<QString,LitteraleNumeric*>::iterator It2 = Var.find(s1);
-        if (It2 != Var.end())
-            Var.erase(It2);
-        Var.insert(s1,l);
-    }
+    map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
+    if (It != Operateur::listeOperateurs.end())
+        throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+    QHash<QString,LitteraleNumeric*>::iterator It2 = Var.find(s1);
+    if (It2 != Var.end())
+        Var.erase(It2);
+    Var.insert(s1,l);
 }
 
 /*void Controleur::eraseVar(const string & s)

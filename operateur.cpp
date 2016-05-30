@@ -1352,6 +1352,9 @@ Litterale * OpSTO::faireOperation()
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
-    Controleur::getInstance().addVar(l2->toString(), LitToLitNum(l1));
+    if(isExpression(l1->toString())){
+        if(isAtome(supprimerGuillemetsExpression(LitToExpression(l1)->toString())))
+            Controleur::getInstance().addVar(supprimerGuillemetsExpression(LitToExpression(l1)->toString()), LitToLitNum(l2));
+    }
     return nullptr;
 }
