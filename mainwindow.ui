@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
-    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="maximumSize">
        <size>

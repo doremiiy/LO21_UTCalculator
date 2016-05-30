@@ -46,7 +46,7 @@ void Controleur::sauvegardeEtatPile(Operateur * op)
 void Pile::pop()
 {
     if (!estVide()){
-        itTab.pop_back();
+        itTab.pop_front();
         modificationEtat();
     }
     else
@@ -56,33 +56,16 @@ void Pile::pop()
 Litterale & Pile::top() const
 {
     if (!estVide())
-        return itTab.back()->getLitterale();
+        return itTab.front()->getLitterale();
     throw PileException("Erreur : pile vide");
 }
 
 void Pile::push(Litterale & L)
 {
-    itTab.push_back(new Item(L));
+    itTab.push_front(new Item(L));
     modificationEtat();
 }
-/* Ne sert pluas a rien
-void Pile::afficherPile(QTextStream & f) const
-{
-    f << "****************************\n";
-    f << "M : " << message << "\n";
-    f << "------------------------------\n";
-    QVector<Item*>::const_iterator It = itTab.begin();
-    for (unsigned int i = nbAffiche; i > 0; i--) {
-        if (i <= taille()) {
-            f << i << ": " << (*It)->getLitterale().toString() << "\n";
-            ++It;
-        }
-        else f << i << ": ";
-        cout << "\n";
-    }
-    f << "---------------------------------\n";
-}
-*/
+
 Memento::Memento(const QVector<Item*> items)
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
@@ -91,7 +74,6 @@ Memento::Memento(const QVector<Item*> items)
         state.push_back(new Item(*f.fabriquerLitterale((*It)->getLitterale())));
     }
 }
-
 
 CareTaker::~CareTaker()
 {

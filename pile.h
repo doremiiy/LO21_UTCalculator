@@ -64,12 +64,11 @@ private:
 
     QVector<Item*> itTab;
     unsigned int nbAffiche;
-    QString message;
 
     void operator=(const Pile& p);
     Pile(const Pile& p);
 public:
-    Pile() :nbAffiche(5), message("") { vector<Item*> itTab = *(new vector<Item*>); }
+    Pile() :nbAffiche(5) { vector<Item*> itTab = *(new vector<Item*>); }
     QVector<Item*> getitTab() const { return itTab; }
     bool estVide() const { return itTab.empty(); }
     void pop();
@@ -78,9 +77,6 @@ public:
     unsigned int taille() const { return itTab.size(); }
     void setNbToAffiche(unsigned int n) { nbAffiche = n; }
     unsigned int getNbToAffiche() const { return nbAffiche; }
-    //void afficherPile(ostream& f) const;//fonction inutile
-    void setMessage(const QString& s) { message = s; }
-    QString getMessage() const { return message; }
     void setState(const QVector<Item*>& items) { itTab = items; }
     QVector<Item*> getState() { return itTab; }
     void clear() { itTab.clear(); }

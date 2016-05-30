@@ -73,7 +73,7 @@ bool isRationnel(const QString & s)
 
 void Rationnel::simplifier()
 {
-    if (denominateur == 0) throw LitteraleException("Erreur");
+    if (denominateur == 0) throw LitteraleException("Erreur : Dénominateur nul");
     int a = numerateur;
     int b = denominateur;
     if (a < 0) a = -a;
