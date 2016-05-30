@@ -105,6 +105,7 @@ public:
 };
 
 class Controleur {
+    friend class MainWindow;
 private:
     Pile& p;
     CareTaker& ct;

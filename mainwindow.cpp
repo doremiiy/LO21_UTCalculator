@@ -7,14 +7,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //Creation vuePile
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
-    ui->vuePile->setRowCount(5);
-    ui->vueVar->setColumnCount(2);
+    //Creation vueVar
+    //ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
     for(unsigned int i=0;i<5;i++){
-        ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
+            ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
+            ui->vueVar->setItem(i,1,new QTableWidgetItem(""));
     }
+    //Parametre graphique
     ui->message->setStyleSheet("background: cyan; color: black");
     ui->message->setReadOnly(true);
     ui->vuePile->setStyleSheet("background: darker; color: white");
@@ -22,19 +25,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vuePile->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->vuePile->horizontalHeader()->setVisible(false);
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
-    QStringList numberlist;
-    for(unsigned int i=P.getNbToAffiche();i>0;i--){
-        QString str = QString::number(i);
-        str+=" : ";
-        numberlist<<str;
-        ui->vuePile->setItem(i-1,0,new QTableWidgetItem(""));
-    }
-    ui->vuePile->setVerticalHeaderLabels(numberlist);
-    ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
+    //conection des seignau
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refresh()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
+    //initialisation
     ui->commande->setFocus();
-    MainWindow::on_activeClavier_clicked();
+    on_activeClavier_clicked();
+    on_taillePile_valueChanged();
     ui->message->setText("Bonjour");
 }
 //destructeur
@@ -132,9 +129,9 @@ void MainWindow::on_activeClavier_clicked(){
 void MainWindow::on_taillePile_valueChanged(){
     Pile& P = Controleur::getInstance().getPile();
     P.setNbToAffiche((unsigned)ui->afficheTaillePile->text().toInt());
-    for(int i=ui->vuePile->rowCount();i>0;i--){
-         ui->vuePile->removeRow(i);
-    }
+    if(ui->vuePile->rowCount()>0)
+        for(int i=ui->vuePile->rowCount();i>0;i--)
+            ui->vuePile->removeRow(i);
     ui->vuePile->setRowCount(P.getNbToAffiche());
     QStringList numberlist;
     for(unsigned int i=P.getNbToAffiche();i>0;i--){
@@ -162,9 +159,10 @@ void MainWindow::refresh(){
     //Mettre a jour de la vueVar
     //QHash<QString,LitteraleNumeric*> Var;
     nb=0;
-    for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.getVar().begin(); It!=controleur.getVar().end();++It,nb++)
-        ui->vueVar->item(nb,0)->setText((*It)->toString());
-
+    for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.Var.begin(); It!=controleur.Var.end();++It,nb++){
+        ui->vueVar->item(nb,0)->setText(It.key());
+        ui->vueVar->item(nb,1)->setText(It.value()->toString());
+    }
 }
 void MainWindow::getNextCommande(){
     QSound ring ("beep.wav");
@@ -179,7 +177,6 @@ void MainWindow::getNextCommande(){
             //envoyer la commande au controleur
             if(com!="") controleur.commande(com);
             ui->commande->clear();
-            //ui->message->clear();
         }
         catch (LitteraleException e) { ui->message->setText(e.getInfo()); ring.play(); }
         catch (OperateurException o) { ui->message->setText(o.getInfo()); ring.play(); }
