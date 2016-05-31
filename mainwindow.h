@@ -37,7 +37,8 @@ public slots:
     void on_buttonEnter_clicked();
     void on_activeClavier_clicked();
     void on_taillePile_valueChanged();
-    void refresh();
+    void refreshCalcul();
+    void refreshVar();
     void getNextCommande();
 private:
     Ui::MainWindow *ui;

@@ -104,7 +104,8 @@ public:
     QVector<Item*> redo();
 };
 
-class Controleur {
+class Controleur:public QObject{
+    Q_OBJECT
     friend class MainWindow;
 private:
     Pile& p;
@@ -129,6 +130,8 @@ public:
     CareTaker& getCareTaker() const { return ct; }
     void commande(const QString& s);
     void appliquerOperateur(Operateur* Op);
+signals:
+    void modificationVar();
 };
 
 #endif

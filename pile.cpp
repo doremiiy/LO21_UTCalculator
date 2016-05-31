@@ -226,6 +226,7 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     if (It2 != Var.end())
         Var.erase(It2);
     Var.insert(s1,l);
+    modificationVar();
 }
 
 /*void Controleur::eraseVar(const string & s)
@@ -243,5 +244,6 @@ LitteraleNumeric * Controleur::getVar(const string & s)
         throw PileException("Erreur : variable inconnue");
     else
         return f.fabriquerLitNum((*It).second);
+    modificationVar();
 }*/
 

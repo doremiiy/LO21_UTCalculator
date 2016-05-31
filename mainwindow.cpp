@@ -26,14 +26,16 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     //Creation du son
     player = new QMediaPlayer();
-    player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.wav")));
+    player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.mp3")));
     player->setVolume(50);
     //Paramtre de Message
     ui->message->setStyleSheet("background: cyan; color: black");
     ui->message->setReadOnly(true);
     //conection des signaux
-    connect(&P,SIGNAL(modificationEtat()),this,SLOT(refresh()));
+    connect(&P,SIGNAL(modificationEtat()),this,SLOT(refreshCalcul()));
+    connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
+
     //initialisation
     ui->commande->setFocus();
     on_activeClavier_clicked();
@@ -148,13 +150,13 @@ void MainWindow::on_taillePile_valueChanged(){
         }
     ui->vuePile->setVerticalHeaderLabels(numberlist);
     ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
-    refresh();
+    refreshCalcul();
 }
 void MainWindow::son(){
     if(ui->activeSon->isChecked()) player->play();
 }
 
-void MainWindow::refresh(){
+void MainWindow::refreshCalcul(){//Mettre a jour de la vuePile
     //Le message
     ui->message->clear();
     //Effacer tout
@@ -165,14 +167,16 @@ void MainWindow::refresh(){
     unsigned int nb=1;
     for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
         ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
-    //Mettre a jour de la vueVar
-    //QHash<QString,LitteraleNumeric*> Var;
-    nb=0;
+
+}
+void MainWindow::refreshVar(){//Mettre a jour de la vueVar
+    unsigned int nb=0;
     for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.Var.begin(); It!=controleur.Var.end();++It,nb++){
         ui->vueVar->item(nb,0)->setText(It.key());
         ui->vueVar->item(nb,1)->setText(It.value()->toString());
     }
 }
+
 void MainWindow::getNextCommande(){
     //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
