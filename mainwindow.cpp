@@ -11,21 +11,27 @@ MainWindow::MainWindow(QWidget *parent) :
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
-    //Creation vueVar
-    //ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    for(unsigned int i=0;i<5;i++){
-            ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
-            ui->vueVar->setItem(i,1,new QTableWidgetItem(""));
-    }
-    //Parametre graphique
-    ui->message->setStyleSheet("background: cyan; color: black");
-    ui->message->setReadOnly(true);
     ui->vuePile->setStyleSheet("background: darker; color: white");
     ui->vuePile->verticalHeader()->setStyleSheet("color: black");
     ui->vuePile->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->vuePile->horizontalHeader()->setVisible(false);
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
-    //conection des seignau
+    //Creation vueVar
+    ui->vueVar->setRowCount(5);
+    ui->vueVar->setColumnCount(2);
+    ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    for(unsigned int i=0;i<5;i++){
+            ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
+            ui->vueVar->setItem(i,1,new QTableWidgetItem(""));
+    }
+    //Creation du son
+    player = new QMediaPlayer();
+    player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.wav")));
+    player->setVolume(50);
+    //Paramtre de Message
+    ui->message->setStyleSheet("background: cyan; color: black");
+    ui->message->setReadOnly(true);
+    //conection des signaux
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refresh()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
     //initialisation
@@ -144,6 +150,9 @@ void MainWindow::on_taillePile_valueChanged(){
     ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
     refresh();
 }
+void MainWindow::son(){
+    if(ui->activeSon->isChecked()) player->play();
+}
 
 void MainWindow::refresh(){
     //Le message
@@ -165,7 +174,6 @@ void MainWindow::refresh(){
     }
 }
 void MainWindow::getNextCommande(){
-    QSound ring ("beep.wav");
     //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
     //Extraction de chaque element de la ligne
@@ -178,9 +186,9 @@ void MainWindow::getNextCommande(){
             if(com!="") controleur.commande(com);
             ui->commande->clear();
         }
-        catch (LitteraleException e) { ui->message->setText(e.getInfo()); ring.play(); }
-        catch (OperateurException o) { ui->message->setText(o.getInfo()); ring.play(); }
-        catch (PileException p) { ui->message->setText(p.getInfo()); ring.play(); }
+        catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
+        catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
+        catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
     }while(com!="");
     //Ligne de commande a zero
     ui->commande->clear();

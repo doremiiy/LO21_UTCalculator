@@ -313,25 +313,11 @@ LitteraleNumeric * FabriqueLitterale::fabriquerLitNum(const QString & s)
         LitTab.push_back(e);
         return e;
     }
-
     if (isReel(s)) {
-        int i = 0;
-        while (s[i] != '.') i++;
-        if (s.rightRef(i + 1).toInt() == 0) {
-            Entier* e = new Entier(s.toInt());
-            LitTab.push_back(e);
-            return e;
-        }
-        else {
-            int m = s.leftRef(i).toInt();
-            int e = s.rightRef(i + 1).toInt();
-            QString s = QString::number(e);
-            Reel* r = new Reel(m+(e/pow(10,s.length())));
-            LitTab.push_back(r);
-            return r;
-        }
+        Reel* e = new Reel(s.toDouble());
+        LitTab.push_back(e);
+        return e;
     }
-
     if (isRationnel(s)) {
         return fabriquer/*Rationnel*/(NumerateurFromStr(s), DenominateurFromStr(s));
     }

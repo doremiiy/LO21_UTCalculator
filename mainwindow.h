@@ -3,8 +3,8 @@
 
 #include <QApplication>
 #include <QMainWindow>
-#include <QSound>
 #include "pile.h"
+#include <QMediaPlayer>
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +42,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
     Controleur& controleur = Controleur::getInstance();
+    QMediaPlayer *player;
+public:
+    void son();
 };
 
 #endif // MAINWINDOW_H
