@@ -200,4 +200,5 @@ Rationnel* LitNumToRat(LitteraleNumeric* ln);
 
 const QString supprimerEspacesExpression(const QString& s);
 const QString supprimerGuillemetsExpression(const QString& s);
+const QString supprimerParentheseExpression(const QString& s);
 #endif

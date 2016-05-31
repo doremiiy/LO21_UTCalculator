@@ -1604,41 +1604,11 @@ OpEVAL* OpEVAL::Clone(){
 }
 
 Litterale* OpEVAL::faireOperation(){
-    Litterale* l=getLitterale();
     FabriqueLitterale& f=FabriqueLitterale::getInstance();
-    FabriqueOperateur& o=FabriqueOperateur::getInstance();
-    if(isExpression(l->toString())){
-        QString s=supprimerGuillemetsExpression(LitToExpression(l)->toString());
-        if(isLitterale(s)){
-            if(isAtome(s)){
-                QHash<QString,LitteraleNumeric*>::iterator It=Controleur::getInstance().getVar().find(s);
-                if(It!=Controleur::getInstance().getVar().end()){
-                    return (It.value());
-                }
-                else
-                    throw OperateurException("Erreur : nom de variable inconnu");
-            }
-            else{
-                Litterale* res=f.fabriquerLitterale(s);
-                return res;
-            }
-        }
-        //Evaluation des operateurs unaires
-        QRegExp r3("([A-Z](?:[A-Z])*)\\(([^,\\(\\)]+)\\)");
-        while(r3.indexIn(s)>-1){
-            QString op=r3.cap(1);
-            QString arg=r3.cap(2);
-            Expression* argTmp=f.fabriquerExpression(arg);
-            OperateurUnaire* TmpOp=OperateurToOpUn(o.fabriquer("EVAL"));
-            TmpOp->putLitterale(argTmp);
-            Litterale* resTmp=TmpOp->faireOperation();
-            OperateurUnaire* TmpOp2=OperateurToOpUn(o.fabriquer(op));
-            TmpOp2->putLitterale(resTmp);
-            Litterale* res=TmpOp2->faireOperation();
-            s.replace(s.indexOf(op),2+op.length()+arg.length(),res->toString());
-        }
-        //Evaluation des operateurs binaires
-
-        //Evaluation globale par rapport aux parentheses
+    Litterale* l=getLitterale();
+    if(LitToExpression(l)!=nullptr){
+        Litterale* res=LitToExpression(l)->eval();
+        //Litterale* res=f.fabriquerLitterale(LitToExpression(l)->eval()->toString());
+        return res;
     }
 }
