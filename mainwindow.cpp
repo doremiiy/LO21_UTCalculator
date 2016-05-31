@@ -17,13 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vuePile->horizontalHeader()->setVisible(false);
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
     //Creation vueVar
-    ui->vueVar->setRowCount(5);
     ui->vueVar->setColumnCount(2);
-    ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    for(unsigned int i=0;i<5;i++){
-            ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
-            ui->vueVar->setItem(i,1,new QTableWidgetItem(""));
-    }
+    ui->vueVar->setFixedWidth(2*ui->vueVar->columnWidth(0)+2);
+    ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);//A supprimer pour la modification
+    ui->vueVar->horizontalHeader()->setVisible(false);
+    ui->vueVar->verticalHeader()->setVisible(false);
     //Creation du son
     player = new QMediaPlayer();
     player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.mp3")));
@@ -37,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
 
     //initialisation
+    refreshVar();
     ui->commande->setFocus();
     on_activeClavier_clicked();
     on_taillePile_valueChanged();
@@ -137,9 +136,7 @@ void MainWindow::on_activeClavier_clicked(){
 void MainWindow::on_taillePile_valueChanged(){
     Pile& P = Controleur::getInstance().getPile();
     P.setNbToAffiche((unsigned)ui->afficheTaillePile->text().toInt());
-    if(ui->vuePile->rowCount()>0)
-        for(int i=ui->vuePile->rowCount();i>0;i--)
-            ui->vuePile->removeRow(i);
+    ui->vuePile->clear();
     ui->vuePile->setRowCount(P.getNbToAffiche());
     QStringList numberlist;
     for(unsigned int i=P.getNbToAffiche();i>0;i--){
@@ -170,11 +167,16 @@ void MainWindow::refreshCalcul(){//Mettre a jour de la vuePile
 
 }
 void MainWindow::refreshVar(){//Mettre a jour de la vueVar
+    //Effacer tout
+    ui->vueVar->clear();
+    //Mettre a jour de la vueVar
+    ui->vueVar->setRowCount(controleur.Var.count());
     unsigned int nb=0;
     for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.Var.begin(); It!=controleur.Var.end();++It,nb++){
-        ui->vueVar->item(nb,0)->setText(It.key());
-        ui->vueVar->item(nb,1)->setText(It.value()->toString());
+        ui->vueVar->setItem(nb,0,new QTableWidgetItem(It.key()));
+        ui->vueVar->setItem(nb,1,new QTableWidgetItem(It.value()->toString()));
     }
+    ui->vueVar->setFixedHeight(5*ui->vueVar->rowHeight(0)+2);
 }
 
 void MainWindow::getNextCommande(){
