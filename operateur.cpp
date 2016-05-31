@@ -1608,13 +1608,32 @@ Litterale* OpEVAL::faireOperation(){
     FabriqueLitterale& f=FabriqueLitterale::getInstance();
     if(isExpression(l->toString())){
         QString s=supprimerGuillemetsExpression(LitToExpression(l)->toString());
+        //parcourt toute l'expression pour remplacer les atomes par leur expression
+        //for(unsigned int i=0;i<s.length();i++){
+
+        //}
         //si expression composée d'une litterale simple
         if(isLitterale(s)){
-            Litterale* res=f.fabriquerLitterale(s);
-            return res;
+            if(isAtome(s)){
+                QHash<QString,LitteraleNumeric*>::iterator It=Controleur::getInstance().getVar().find(s);
+                if(It!=Controleur::getInstance().getVar().end()){
+                    return (*It.value());
+                }
+                else
+                    throw OperateurException("Erreur : nom de variable inconnu");
+            }
+            else{
+                Litterale* res=f.fabriquerLitterale(s);
+                return res;
+            }
         }
         //Evaluation des operateurs unaires
-        QRegExp r3("^[A-Z]([A-Z])*\\(([.\\(\\)])+\\)$");
+        QRegExp r3("([A-Z](?:[A-Z])*)\\(([^,\\(\\)]+)\\)");
+        while(int pos = r3.indexIn(s)){
+            QString op=r3.cap(1);
+            QString arg=r3.cap(2);
+
+        }
         //Evaluation des operateurs binaires
 
         //Evaluation globale par rapport aux parentheses
