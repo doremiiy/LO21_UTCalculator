@@ -12,7 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vuePile->setRowCount(P.getNbToAffiche());
     ui->vuePile->setColumnCount(1);
     //Creation vueVar
-    //ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->vueVar->setRowCount(5);
+    ui->vueVar->setColumnCount(2);
+    ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);
     for(unsigned int i=0;i<5;i++){
             ui->vueVar->setItem(i,0,new QTableWidgetItem(""));
             ui->vueVar->setItem(i,1,new QTableWidgetItem(""));

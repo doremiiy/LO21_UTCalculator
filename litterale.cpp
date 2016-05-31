@@ -1,5 +1,6 @@
 
 #include "litterale.h"
+#include "Operateur.h"
 
 Entier * Entier::Clone() const
 {
@@ -50,7 +51,7 @@ bool isExpression(const QString & s)
             nbParDroite++;
     }
     if (nbParDroite != nbParGauche)return false;
-    QRegExp r("^'([A-Z0-9\\(\\)\\$\\+\\*/-])+'$");
+    QRegExp r("^'([A-Z0-9\\(\\)\\$\\+\\*/-,])+'$");
     return s.contains(r);
 }
 
@@ -72,6 +73,15 @@ const QString supprimerGuillemetsExpression(const QString & s)
             sSansGuillemet += s[i];
     }
     return sSansGuillemet;
+}
+
+const QString supprimerParentheseExpression(const QString& s){
+    QString sSansPar;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] != '(' && s[i]!=')')
+            sSansPar += s[i];
+    }
+    return sSansPar;
 }
 
 bool isProgramme(const QString & s)
@@ -572,6 +582,107 @@ bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
     throw LitteraleException("Erreur");
 }
 
-/*Litterale* Expression::eval() const {
+Litterale* Expression::eval() const {
+    FabriqueLitterale& f=FabriqueLitterale::getInstance();
+    FabriqueOperateur& o=FabriqueOperateur::getInstance();
+    Controleur& c=Controleur::getInstance();
+    QHash<QString,LitteraleNumeric*> v=c.getVar();
+    QString exp=value;
+    QString s=supprimerGuillemetsExpression(exp);
+    if(isLitterale(s)){
+        if(!isAtome(s)){
+            Litterale* res=f.fabriquerLitterale(s);
+            return res;
+        }
+        else{
+            QHash<QString,LitteraleNumeric*>::iterator It=v.find(s);
+            if(It!=v.end()){
+                return It.value();
+            }
+            else
+                throw OperateurException("Erreur : nom de variable inconnu");
+        }
+    }
 
-}*/
+    //Evaluation des operateurs binaires
+    QRegExp r2("([A-Z](?:[A-Z])*)\\(([^,]+),([^,]+)\\)");
+    while(r2.indexIn(s)>-1){
+        QString op=r2.cap(1);
+        QString arg1=r2.cap(2);
+        QString arg2=r2.cap(3);
+        Expression* argTmp1=f.fabriquerExpression(arg1);
+        Litterale* resTmp1=argTmp1->eval();
+        Expression* argTmp2=f.fabriquerExpression(arg2);
+        Litterale* resTmp2=argTmp2->eval();
+        OperateurBinaire* TmpOp=OperateurToOpBin(o.fabriquer(op));
+        TmpOp->putLitterale(resTmp1,resTmp2);
+        Litterale* res=TmpOp->faireOperation(); //Ajouter un bloc try/catch
+        s.replace(s.indexOf(op),3+op.length()+arg1.length()+arg2.length(),res->toString());
+        Expression* ss=f.fabriquerExpression(s);
+        return ss->eval();
+    }
+
+    //Evaluation des operateurs unaires
+    QRegExp r1("([A-Z](?:[A-Z])*)\\(([^,]+)\\)");
+    while(r1.indexIn(s)>-1){
+        QString op=r1.cap(1);
+        QString arg=r1.cap(2);
+        Expression* argTmp=f.fabriquerExpression(arg);
+        Litterale* resTmp=argTmp->eval();
+        OperateurUnaire* TmpOp2=OperateurToOpUn(o.fabriquer(op));
+        TmpOp2->putLitterale(resTmp);
+        Litterale* res=TmpOp2->faireOperation(); //Ajouter un bloc try/catch
+        s.replace(s.indexOf(op),2+op.length()+arg.length(),res->toString());
+        Expression* ss=f.fabriquerExpression(s);
+        return ss->eval();
+    }
+
+
+    //Evaluation globale par rapport aux parentheses
+    QRegExp r3("(\\([^\\(]*\\))");
+    while(r3.indexIn(s)>-1){
+        QString arg=supprimerParentheseExpression(r3.cap(1));
+        Expression* argTmp=f.fabriquerExpression(arg);
+        Litterale* res=argTmp->eval();
+        s.replace(s.indexOf(r3.cap(1)),r3.cap(1).length(),res->toString());
+        Expression* ss=f.fabriquerExpression(s);
+        return ss->eval();
+    }
+
+    //Evaluation * /
+    QRegExp r4("([0-9]+|([A-Z]([A-Z]|[0-9])*))([\\*/])([0-9]+|([A-Z]([A-Z]|[0-9])*))");
+    while(r4.indexIn(s)>-1){
+        QString arg1=r4.cap(1);
+        QString op=r4.cap(4);
+        QString arg2=r4.cap(5);
+        Expression* argTmp1=f.fabriquerExpression(arg1);
+        Litterale* resTmp1=argTmp1->eval();
+        Expression* argTmp2=f.fabriquerExpression(arg2);
+        Litterale* resTmp2=argTmp2->eval();
+        OperateurBinaire* OpTmp=OperateurToOpBin(o.fabriquer(op));
+        OpTmp->putLitterale(resTmp1,resTmp2);
+        Litterale* res=OpTmp->faireOperation(); //Ajouter un bloc try/catch
+        s.replace(s.indexOf(arg1),op.length()+arg1.length()+arg2.length(),res->toString());
+        Expression* ss=f.fabriquerExpression(s);
+        return ss->eval();
+    }
+
+    //Evaluation + -
+    QRegExp r5("([0-9]+|([A-Z]([A-Z]|[0-9])*))([\\+-])([0-9]+|([A-Z]([A-Z]|[0-9])*))");
+    while(r5.indexIn(s)>-1){
+        QString arg1=r5.cap(1);
+        QString op=r5.cap(4);
+        QString arg2=r5.cap(5);
+        Expression* argTmp1=f.fabriquerExpression(arg1);
+        Litterale* resTmp1=argTmp1->eval();
+        Expression* argTmp2=f.fabriquerExpression(arg2);
+        Litterale* resTmp2=argTmp2->eval();
+        OperateurBinaire* OpTmp=OperateurToOpBin(o.fabriquer(op));
+        OpTmp->putLitterale(resTmp1,resTmp2);
+        Litterale* res=OpTmp->faireOperation(); //Ajouter un bloc try/catch
+        s.replace(s.indexOf(arg1),op.length()+arg1.length()+arg2.length(),res->toString());
+        Expression* ss=f.fabriquerExpression(s);
+        return ss->eval();
+    }
+
+}
