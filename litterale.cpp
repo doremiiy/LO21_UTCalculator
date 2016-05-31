@@ -605,7 +605,7 @@ Litterale* Expression::eval() const {
     }
 
     //Evaluation des operateurs binaires
-    QRegExp r2("([A-Z](?:[A-Z])*)\\(([^,]+),([^,]+)\\)");
+    QRegExp r2("([A-Z](?:[A-Z])*)\\((.+),(.+)\\)");
     while(r2.indexIn(s)>-1){
         QString op=r2.cap(1);
         QString arg1=r2.cap(2);
