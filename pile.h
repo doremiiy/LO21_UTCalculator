@@ -1,6 +1,5 @@
 #ifndef Pile_h
 #define Pile_h
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <QMap>
@@ -104,8 +103,10 @@ public:
     QVector<Item*> redo();
 };
 
-class Controleur {
+class Controleur:public QObject{
+    Q_OBJECT
     friend class MainWindow;
+    friend class Expression;
 private:
     Pile& p;
     CareTaker& ct;
@@ -129,6 +130,9 @@ public:
     CareTaker& getCareTaker() const { return ct; }
     void commande(const QString& s);
     void appliquerOperateur(Operateur* Op);
+signals:
+    void modificationVar();
+    //void pressedOperator();
 };
 
 #endif
