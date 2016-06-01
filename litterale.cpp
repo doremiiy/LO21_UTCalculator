@@ -572,7 +572,7 @@ Litterale* Expression::eval() const {
     FabriqueLitterale& f=FabriqueLitterale::getInstance();
     FabriqueOperateur& o=FabriqueOperateur::getInstance();
     Controleur& c=Controleur::getInstance();
-    QHash<QString,LitteraleNumeric*> v=c.getVar();
+    //QHash<QString,LitteraleNumeric*> v=c.getVar();
     QString exp=value;
     QString s=supprimerGuillemetsExpression(exp);
     if(isLitterale(s)){
@@ -581,8 +581,8 @@ Litterale* Expression::eval() const {
             return res;
         }
         else{
-            QHash<QString,LitteraleNumeric*>::iterator It=v.find(s);
-            if(It!=v.end()){
+            QHash<QString,LitteraleNumeric*>::iterator It=c.Var.find(s);
+            if(It!=c.Var.end()){
                 return It.value();
             }
             else
@@ -627,6 +627,7 @@ Litterale* Expression::eval() const {
     //Evaluation globale par rapport aux parentheses
     QRegExp r3("(\\([^\\(]*\\))");
     while(r3.indexIn(s)>-1){
+        QString arg1=r3.cap(1);
         QString arg=supprimerParentheseExpression(r3.cap(1));
         Expression* argTmp=f.fabriquerExpression(arg);
         Litterale* res=argTmp->eval();
@@ -636,7 +637,7 @@ Litterale* Expression::eval() const {
     }
 
     //Evaluation * /
-    QRegExp r4("([0-9]+|([A-Z]([A-Z]|[0-9])*))([\\*/])([0-9]+|([A-Z]([A-Z]|[0-9])*))");
+    QRegExp r4("(-?[0-9]+|([A-Z]([A-Z]|[0-9])*))([\\*/])(-?[0-9]+|([A-Z]([A-Z]|[0-9])*))");
     while(r4.indexIn(s)>-1){
         QString arg1=r4.cap(1);
         QString op=r4.cap(4);
@@ -654,7 +655,7 @@ Litterale* Expression::eval() const {
     }
 
     //Evaluation + -
-    QRegExp r5("([0-9]+|([A-Z]([A-Z]|[0-9])*))([\\+-])([0-9]+|([A-Z]([A-Z]|[0-9])*))");
+    QRegExp r5("(-?[0-9]+|([A-Z]([A-Z]|[0-9])*))([\\+-])(-?[0-9]+|([A-Z]([A-Z]|[0-9])*))");
     while(r5.indexIn(s)>-1){
         QString arg1=r5.cap(1);
         QString op=r5.cap(4);
