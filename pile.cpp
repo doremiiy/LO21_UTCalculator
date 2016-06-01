@@ -146,6 +146,7 @@ void Controleur::commande(const QString & s)
                 f.supprimer(l);
             }
         }
+        else throw PileException("Erreur: Caractères non reconnu");
     }
 }
 
@@ -171,7 +172,8 @@ void Controleur::appliquerOperateur(Operateur * Op)
             C.getCareTaker().addLitteraleVecteur(l2);
             if (res != nullptr)
                 p.push(*res);
-            else throw PileException("Erreur ");
+            else
+                if(Op->getIdOp()!="STO") throw PileException("Erreur ");
             return;
         }
         catch (OperateurException e) {
@@ -234,6 +236,7 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     QMap<string, string>::const_iterator It=Var.find(s);
     if(It!=Var.end())
         Var.erase(It);
+        modificationVar();
 }
 
 LitteraleNumeric * Controleur::getVar(const string & s)
@@ -244,6 +247,5 @@ LitteraleNumeric * Controleur::getVar(const string & s)
         throw PileException("Erreur : variable inconnue");
     else
         return f.fabriquerLitNum((*It).second);
-    modificationVar();
 }*/
 

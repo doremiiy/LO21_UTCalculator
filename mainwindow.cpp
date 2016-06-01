@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Creation vueVar
     ui->vueVar->setColumnCount(2);
     ui->vueVar->setFixedWidth(2*ui->vueVar->columnWidth(0)+2);
-    ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);//A supprimer pour la modification
+    //ui->vueVar->setEditTriggers(QAbstractItemView::NoEditTriggers);//A supprimer pour la modification
     ui->vueVar->horizontalHeader()->setVisible(false);
     ui->vueVar->verticalHeader()->setVisible(false);
     //Creation du son
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refreshCalcul()));
     connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
-
+    //connect(&controleur,SIGNAL(pressedOperator()),this,SLOT(getNextCommande()));
     //initialisation
     refreshVar();
     ui->commande->setFocus();
@@ -78,16 +78,20 @@ void MainWindow::on_button9_clicked(){
     ui->commande->insert("9");
 }
 void MainWindow::on_buttonPlus_clicked(){
-    ui->commande->insert("+");
+    ui->commande->insert(" +");
+    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonMoins_clicked(){
-    ui->commande->insert("-");
+    ui->commande->insert(" -");
+    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonFois_clicked(){
-    ui->commande->insert("*");
+    ui->commande->insert(" *");
+    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonDiv_clicked(){
-    ui->commande->insert("/");
+    ui->commande->insert(" /");
+    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonPoint_clicked(){
     ui->commande->insert(".");
@@ -149,6 +153,26 @@ void MainWindow::on_taillePile_valueChanged(){
     ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
     refreshCalcul();
 }
+
+void MainWindow::on_vueVar_returnPressed(){//pas fonctionelle
+    FabriqueLitterale &f=FabriqueLitterale::getInstance();
+    ui->message->setText("value changed");
+    QHash<QString,LitteraleNumeric*>::iterator It = controleur.Var.begin();
+    unsigned int nb=0;
+    while(It!=controleur.Var.end()){
+        QString id=ui->vueVar->item(nb,0)->text();
+        QString value=ui->vueVar->item(nb,1)->text();
+        QHash<QString,LitteraleNumeric*>::iterator It2 = controleur.Var.find(id);
+        if(value==It2.value()->toString()){
+            LitteraleNumeric *temp =f.fabriquerLitNum(value);
+            controleur.Var.erase(It2);
+            controleur.Var.insert(id,temp);
+        }
+        nb++;
+        It++;
+    }
+}
+
 void MainWindow::son(){
     if(ui->activeSon->isChecked()) player->play();
 }
@@ -164,9 +188,11 @@ void MainWindow::refreshCalcul(){//Mettre a jour de la vuePile
     unsigned int nb=1;
     for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
         ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
-
 }
+
 void MainWindow::refreshVar(){//Mettre a jour de la vueVar
+    //Set message
+    ui->message->setText("Valeur Enregistrée");
     //Effacer tout
     ui->vueVar->clear();
     //Mettre a jour de la vueVar
@@ -190,12 +216,12 @@ void MainWindow::getNextCommande(){
             stream>>com;//extraction d'un element
             //envoyer la commande au controleur
             if(com!="") controleur.commande(com);
-            ui->commande->clear();
+            if(isLitterale(com)||isOperateur(com))
+                ui->commande->clear();
         }
         catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
         catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
         catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
     }while(com!="");
     //Ligne de commande a zero
-    ui->commande->clear();
 }

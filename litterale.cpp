@@ -572,7 +572,7 @@ Litterale* Expression::eval() const {
     FabriqueLitterale& f=FabriqueLitterale::getInstance();
     FabriqueOperateur& o=FabriqueOperateur::getInstance();
     Controleur& c=Controleur::getInstance();
-    QHash<QString,LitteraleNumeric*> v=c.getVar();
+    //QHash<QString,LitteraleNumeric*> v=c.getVar();
     QString exp=value;
     QString s=supprimerGuillemetsExpression(exp);
     if(isLitterale(s)){
@@ -581,8 +581,8 @@ Litterale* Expression::eval() const {
             return res;
         }
         else{
-            QHash<QString,LitteraleNumeric*>::iterator It=v.find(s);
-            if(It!=v.end()){
+            QHash<QString,LitteraleNumeric*>::iterator It=c.Var.find(s);
+            if(It!=c.Var.end()){
                 return It.value();
             }
             else
