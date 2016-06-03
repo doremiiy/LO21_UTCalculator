@@ -173,7 +173,7 @@ void Controleur::appliquerOperateur(Operateur * Op)
             if (res != nullptr)
                 p.push(*res);
             else
-                if(Op->getIdOp()!="STO") throw PileException("Erreur ");
+                if(Op->getIdOp()!="STO") throw OperateurException("Erreur ");
             return;
         }
         catch (OperateurException e) {

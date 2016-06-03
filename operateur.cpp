@@ -1133,7 +1133,8 @@ Litterale * OpSTRICTINF::faireOperation()
         f2.supprimer(OpTmp);
         return res;
     }
-    else return nullptr;
+    //else return nullptr;
+    else throw OperateurException("Erreur : variables non reconnues pour cet operateur");
 }
 
 OpSTRICTSUP * OpSTRICTSUP::Clone()
@@ -1529,7 +1530,7 @@ Litterale * OpSTO::faireOperation()
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
-    if(LitToComp(l1))
+    if(LitToComp(l1)!=nullptr)
         throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
     else
         if(isExpression(l2->toString())){
