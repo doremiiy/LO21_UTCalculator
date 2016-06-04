@@ -115,44 +115,134 @@ QVector<Item*> CareTaker::redo()
     return lState;
 }
 
-void Controleur::commande(const QString & s)
+void Controleur::commande(const QString & text)
 {
-    FabriqueLitterale& f = FabriqueLitterale::getInstance();
-    FabriqueOperateur& o = FabriqueOperateur::getInstance();
-    if (isOperateur(s)) {
-        Operateur* Op = o.fabriquer(s);
-        sauvegardeEtatPile(Op);
-        appliquerOperateur(Op);
-        o.supprimer(Op);
+    QString sTmp=text;
+    unsigned int nbCrochetGauche=0,nbCrochetDroit=0,nbParGauche=0,nbParDroite=0;
+    for(int i=0;i<sTmp.size();i++){
+        if(sTmp[i]=='[') nbCrochetGauche++;
+        if(sTmp[i]==']') nbCrochetDroit++;
+        if(sTmp[i]=='(') nbParGauche++;
+        if(sTmp[i]==')') nbParDroite++;
     }
-    else {
-        if (isLitterale(s)) {
-            sauvegardeEtatPile(nullptr);
-            if(isAtome(s)){
-                QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
-                if(It==Var.end()){
-                    QString stmp="'"+s+"'";
-                    Litterale* l=f.fabriquerExpression(stmp);
-                    p.push(*l);
-                    f.supprimer(l);
-                }
-                if(It!=Var.end()){
-                    p.push(*It.value());
-                }
-            }
-            else {
-                Litterale* l = f.fabriquerLitterale(s);
-                p.push(*l);
-                f.supprimer(l);
+    if((nbCrochetGauche != nbCrochetDroit) || (nbParGauche != nbParDroite))
+        throw PileException("Erreur : impossible de lire l'instruction");
+
+
+    QString tmpExp="";
+    int pos,size;
+    for(int i=0;i<sTmp.size();i++){
+        if(sTmp[i]=='\''){
+            i++;
+            pos=i;
+            while(sTmp[i] != '\''){
+                tmpExp+=sTmp[i];
+                i++;
             }
         }
-        else throw PileException("Erreur: Caractères non reconnu");
+        size=tmpExp.size();
+        tmpExp = supprimerEspacesExpression(tmpExp);
+        sTmp.replace(pos,size,tmpExp);
+    }
+
+    int in=0;
+    QString operande;
+    QVector<QString> listOperande;
+    for(int i=0;i<sTmp.size();i++){
+        if(sTmp[i]=='['){
+            in=1;
+            i++;
+            while(in!=0){
+                if(in==1 && sTmp[i]!=' ' && sTmp[i]!='[' && sTmp[i]!=']'){
+                    operande.clear();
+                    while(sTmp[i]!=' ' && sTmp[i]!=']'){
+                        operande+=sTmp[i];
+                        i++;
+                    }
+                    listOperande.push_back(operande);
+                }
+                if(in>1){
+                    operande.clear();
+                    while(in!=1){
+                        operande+=sTmp[i];
+                        i++;
+                        if(sTmp[i]=='[') in++;
+                        if(sTmp[i]==']') in--;
+                    }
+                    operande="["+operande+"]";
+                    listOperande.push_back(operande);
+                    i++;
+                }
+                if(sTmp[i]=='[') in++;
+                if(sTmp[i]==']') in--;
+                i++;
+            }
+        }
+        else
+            if(sTmp[i]!=' ' && sTmp[i]!='\0'){
+            operande.clear();
+            while(sTmp[i]!=' ' && sTmp[i]!='\0'){
+                operande+=sTmp[i];
+                i++;
+            }
+            listOperande.push_back(operande);
+        }
+    }
+    QVector<QString>::iterator It;
+
+    FabriqueLitterale& f = FabriqueLitterale::getInstance();
+    FabriqueOperateur& o = FabriqueOperateur::getInstance();
+
+    for(It=listOperande.begin();It!=listOperande.end();++It){
+        QString s=*It;
+        if (isOperateur(s)) {
+            Operateur* Op = o.fabriquer(s);
+            sauvegardeEtatPile(Op);
+            appliquerOperateur(Op);
+            o.supprimer(Op);
+        }
+        else {
+            if (isLitterale(s)) {
+                sauvegardeEtatPile(nullptr);
+                if(isAtome(s)){
+                    QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
+                    QHash<QString,Programme*>::iterator It2=Progs.find(s);
+                    if(It==Var.end() && It2==Progs.end()){
+                        QString stmp="'"+s+"'";
+                        Litterale* l=f.fabriquerExpression(stmp);
+                        p.push(*l);
+                        f.supprimer(l);
+                    }
+                    if(It!=Var.end()){
+                        p.push(*It.value());
+                    }
+                    if(It2!=Progs.end()){
+                        p.push(*It2.value());
+                        Operateur* Op = o.fabriquer("EVAL");
+                        appliquerOperateur(Op);
+                        o.supprimer(Op);
+                    }
+                }
+                else
+                    if(isProgramme(s)){
+                        Programme* l=f.fabriquerProgramme(s);
+                        p.push(*l);
+                        f.supprimer(l);
+                    }
+                    else {
+                        Litterale* l = f.fabriquerLitterale(s);
+                        p.push(*l);
+                        f.supprimer(l);
+                    }
+                }
+                else throw PileException("Erreur: Caractères non reconnu");
+        }
     }
 }
 
 void Controleur::appliquerOperateur(Operateur * Op)
 {
-    FabriqueLitterale& f = FabriqueLitterale::getInstance();
+    //FabriqueLitterale& f = FabriqueLitterale::getInstance();
     FabriqueOperateur& o = FabriqueOperateur::getInstance();
     Controleur& C = Controleur::getInstance();
     if (OperateurToOpBin(Op) != nullptr) {
@@ -162,8 +252,18 @@ void Controleur::appliquerOperateur(Operateur * Op)
         }
         Litterale* l1 = &p.top();
         p.pop();
+        if(LitToProgramme(l1)!=nullptr && Op->getIdOp()!="STO"){//empeche l'evaluation si l'operateur est STO
+            LitToProgramme(l1)->eval();
+            l1=&p.top();
+            p.pop();
+        }
         Litterale* l2 = &p.top();
         p.pop();
+        if(LitToProgramme(l2)!=nullptr && Op->getIdOp()!="STO"){
+            LitToProgramme(l2)->eval();
+            l2=&p.top();
+            p.pop();
+        }
         try {
             OperateurToOpBin(Op)->putLitterale(l2, l1);
             Litterale* res = Op->faireOperation();
@@ -224,6 +324,9 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
         throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+    //QHash<QString,Programme*>::iterator It1=Progs.find(s1);
+    //if(It1!=Progs.end())
+    //    Progs.erase(It1);
     QHash<QString,LitteraleNumeric*>::iterator It2 = Var.find(s1);
     if (It2 != Var.end())
         Var.erase(It2);
@@ -249,3 +352,19 @@ LitteraleNumeric * Controleur::getVar(const string & s)
         return f.fabriquerLitNum((*It).second);
 }*/
 
+void Controleur::addProg(const QString& s1,Programme* l){
+    map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
+    if (It != Operateur::listeOperateurs.end())
+        throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+    //QHash<QString,LitteraleNumeric*>::iterator It1=Var.find(s1);
+    //if(It1!=Var.end())
+    //    Var.erase(It1);
+    QHash<QString,Programme*>::iterator It2=Progs.find(s1);
+    if(It2!=Progs.end())
+        Progs.erase(It2);
+    Progs.insert(s1,l);
+    //ajouter signal ?
+}
+
+//void eraseProg(const QString& s);
+//Programme* getProg(const QString& s);

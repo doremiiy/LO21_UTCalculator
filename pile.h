@@ -111,6 +111,7 @@ private:
     Pile& p;
     CareTaker& ct;
     QHash<QString,LitteraleNumeric*> Var;
+    QHash<QString,Programme*> Progs;
     Controleur() :p(*new Pile()), ct(*new CareTaker()) {}
     struct Handler {
         Controleur* instance;
@@ -128,8 +129,12 @@ public:
     void sauvegardeEtatPile(Operateur* op);
     Pile& getPile() const { return p; }
     CareTaker& getCareTaker() const { return ct; }
-    void commande(const QString& s);
+    void commande(const QString& text);
     void appliquerOperateur(Operateur* Op);
+    QHash<QString,Programme*> getProgs() const { return Progs; }
+    void addProg(const QString& s1,Programme* l);
+    void eraseProg(const QString& s);
+    Programme* getProg(const QString& s);
 signals:
     void modificationVar();
     //void pressedOperator();

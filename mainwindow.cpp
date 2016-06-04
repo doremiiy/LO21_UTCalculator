@@ -209,19 +209,19 @@ void MainWindow::getNextCommande(){
     //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
     //Extraction de chaque element de la ligne
-    QTextStream stream(&c);
-    QString com;
-    do{
+    //QTextStream stream(&c);
+    //QString com;
+    //do{
         try{
-            stream>>com;//extraction d'un element
+            //stream>>com;//extraction d'un element
             //envoyer la commande au controleur
-            if(com!="") controleur.commande(com);
-            if(isLitterale(com)||isOperateur(com))
-                ui->commande->clear();
+            /*if(c!="")*/ controleur.commande(c);
+            //if(isLitterale(com)||isOperateur(com))
+            //    ui->commande->clear();
         }
         catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
         catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
         catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
-    }while(com!="");
+    //}while(com!="");
     //Ligne de commande a zero
 }

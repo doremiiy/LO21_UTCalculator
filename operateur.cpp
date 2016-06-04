@@ -381,7 +381,7 @@ Litterale * OpPlus::faireOperation()
         QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
         QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
         int samePrio1=0,samePrio2=0;
-        for(unsigned int i=0;i<exp1.length();i++){
+        for(int i=0;i<exp1.length();i++){
             if(exp1[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -389,7 +389,7 @@ Litterale * OpPlus::faireOperation()
                 samePrio1=1;
             }
         }
-        for(unsigned int i=0;i<exp2.length();i++){
+        for(int i=0;i<exp2.length();i++){
             if(exp2[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -522,7 +522,7 @@ Litterale * OpMoins::faireOperation()
         QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
         QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
         int samePrio1=0,samePrio2=0;
-        for(unsigned int i=0;i<exp1.length();i++){
+        for(int i=0;i<exp1.length();i++){
             if(exp1[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -530,7 +530,7 @@ Litterale * OpMoins::faireOperation()
                 samePrio1=1;
             }
         }
-        for(unsigned int i=0;i<exp2.length();i++){
+        for(int i=0;i<exp2.length();i++){
             if(exp2[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -689,7 +689,7 @@ Litterale * OpFois::faireOperation()
         QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
         QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
         int samePrio1=0,samePrio2=0;
-        for(unsigned int i=0;i<exp1.length();i++){
+        for(int i=0;i<exp1.length();i++){
             if(exp1[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -697,7 +697,7 @@ Litterale * OpFois::faireOperation()
                 samePrio1=1;
             }
         }
-        for(unsigned int i=0;i<exp2.length();i++){
+        for(int i=0;i<exp2.length();i++){
             if(exp2[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -935,7 +935,7 @@ Litterale * OpDiviser::faireOperation()
         QString exp1=supprimerGuillemetsExpression(LitToExpression(l1)->toString());
         QString exp2=supprimerGuillemetsExpression(LitToExpression(l2)->toString());
         int samePrio1=0,samePrio2=0;
-        for(unsigned int i=0;i<exp1.length();i++){
+        for(int i=0;i<exp1.length();i++){
             if(exp1[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -943,7 +943,7 @@ Litterale * OpDiviser::faireOperation()
                 samePrio1=1;
             }
         }
-        for(unsigned int i=0;i<exp2.length();i++){
+        for(int i=0;i<exp2.length();i++){
             if(exp2[i]=='('){
                 while(exp1[i]!=')') i++;
             }
@@ -1065,8 +1065,6 @@ Litterale * OpEGAL::faireOperation()
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
     Litterale* res;
-    if((LitToLitNum(l1) == nullptr) && (LitToLitNum(l2) == nullptr))
-        throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
     if (LitToLitNum(l1) != nullptr && LitToLitNum(l2) != nullptr) {
         Operateur* OpTmp=f2.fabriquer("-");
         OperateurBinaire* tmp = OperateurToOpBin(OpTmp);
@@ -1079,6 +1077,7 @@ Litterale * OpEGAL::faireOperation()
         f2.supprimer(OpTmp);
         return res;
     }
+    throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
 }
 
 OpDIF * OpDIF::Clone()
@@ -1246,7 +1245,7 @@ OpAND * OpAND::Clone()
 Litterale * OpAND::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
     Litterale* res;
@@ -1273,7 +1272,7 @@ OpOR * OpOR::Clone()
 Litterale * OpOR::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
     Litterale* res;
@@ -1300,7 +1299,7 @@ OpNOT * OpNOT::Clone()
 Litterale * OpNOT::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l = getLitterale();
     Litterale* res;
     if (LitToLitNum(l) != nullptr) {
@@ -1326,7 +1325,7 @@ OpNUM * OpNUM::Clone()
 Litterale * OpNUM::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l = getLitterale();
     Litterale* res;
     if (LitToRat(l) != nullptr) {
@@ -1353,7 +1352,7 @@ OpDEN * OpDEN::Clone()
 Litterale * OpDEN::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l = getLitterale();
     Litterale* res;
     if (LitToRat(l) != nullptr) {
@@ -1380,7 +1379,7 @@ OpDOLLAR * OpDOLLAR::Clone()
 Litterale * OpDOLLAR::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
     Litterale* res;
@@ -1406,7 +1405,7 @@ OpRE * OpRE::Clone()
 Litterale * OpRE::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l = getLitterale();
     Litterale* res;
     if (LitToComp(l) != nullptr) {
@@ -1433,7 +1432,7 @@ OpIM * OpIM::Clone()
 Litterale * OpIM::faireOperation()
 {
     FabriqueLitterale& f1 = FabriqueLitterale::getInstance();
-    FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
+    //FabriqueOperateur& f2 = FabriqueOperateur::getInstance();
     Litterale* l = getLitterale();
     Litterale* res;
     if (LitToComp(l) != nullptr) {
@@ -1527,17 +1526,23 @@ OpSTO * OpSTO::Clone()
 
 Litterale * OpSTO::faireOperation()
 {
-    FabriqueLitterale& f = FabriqueLitterale::getInstance();
+    //FabriqueLitterale& f = FabriqueLitterale::getInstance();
     Litterale* l1 = getLitterale1();
     Litterale* l2 = getLitterale2();
-    if(LitToComp(l1)!=nullptr)
-        throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
-    else
+    if(isLitteraleNumeric(l1->toString())){
         if(isExpression(l2->toString())){
             if(isAtome(supprimerGuillemetsExpression(LitToExpression(l2)->toString())))
                 Controleur::getInstance().addVar(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToLitNum(l1));
         }
+    }
+    if(isProgramme(l1->toString())){
+        if(isExpression(l2->toString())){
+            if(isAtome(supprimerGuillemetsExpression(LitToExpression(l2)->toString())))
+                Controleur::getInstance().addProg(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToProgramme(l1));
+        }
+    }
     return nullptr;
+    throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
 }
 
 OpDIV* OpDIV::Clone(){
@@ -1608,11 +1613,16 @@ OpEVAL* OpEVAL::Clone(){
 }
 
 Litterale* OpEVAL::faireOperation(){
-    FabriqueLitterale& f=FabriqueLitterale::getInstance();
+    //FabriqueLitterale& f=FabriqueLitterale::getInstance();
     Litterale* l=getLitterale();
     if(LitToExpression(l)!=nullptr){
         Litterale* res=LitToExpression(l)->eval();
         //Litterale* res=f.fabriquerLitterale(LitToExpression(l)->eval()->toString());
         return res;
     }
+    if(LitToProgramme(l)!=nullptr){
+        LitToProgramme(l)->eval();
+        return nullptr;
+    }
+    throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
 }

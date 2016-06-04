@@ -127,7 +127,9 @@ public:
     QString getValue() const { return value; }
     QString toString() const;
     Programme* Clone() const;
+    void eval() const;
 };
+
 
 class FabriqueLitterale {
 private:
@@ -158,6 +160,7 @@ public:
     Atome* fabriquerAtome(const QString& s);
     Atome* fabriquerAtome(Atome& a);
     Expression* fabriquerExpression(const QString & s);
+    Programme* fabriquerProgramme(const QString& s);
 
     Entier* fabriquer(const Entier& e);
     Entier* fabriquer(int value);
@@ -201,4 +204,5 @@ Rationnel* LitNumToRat(LitteraleNumeric* ln);
 const QString supprimerEspacesExpression(const QString& s);
 const QString supprimerGuillemetsExpression(const QString& s);
 const QString supprimerParentheseExpression(const QString& s);
+const QString supprimerCrochetExpression(const QString& s);
 #endif

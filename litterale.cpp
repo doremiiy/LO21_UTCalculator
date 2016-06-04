@@ -40,20 +40,6 @@ bool isAtome(const QString & s)
     return s.contains(r);
 }
 
-bool isExpression(const QString & s)
-{
-    unsigned int nbParGauche = 0;
-    unsigned int nbParDroite = 0;
-    for (unsigned int i = 0; i < s.length(); i++) {
-        if (s[i] == '(')
-            nbParGauche++;
-        if (s[i] == ')')
-            nbParDroite++;
-    }
-    if (nbParDroite != nbParGauche)return false;
-    QRegExp r("^'([A-Z0-9\\(\\)\\$\\+\\*/-,])+'$");
-    return s.contains(r);
-}
 
 const QString supprimerEspacesExpression(const QString & s)
 {
@@ -84,10 +70,13 @@ const QString supprimerParentheseExpression(const QString& s){
     return sSansPar;
 }
 
-bool isProgramme(const QString & s)
-{
-    //A Completer
-    return false;
+const QString supprimerCrochetExpression(const QString& s){
+    QString sSansCrochet;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] != '[' && s[i]!=']')
+            sSansCrochet += s[i];
+    }
+    return sSansCrochet;
 }
 
 Rationnel * Rationnel::Clone() const
@@ -187,7 +176,7 @@ Rationnel * LitNumToRat(LitteraleNumeric * ln)
 
 bool isLitterale(const QString& s)
 {
-    return (isLitteraleNumeric(s) || isComplexe(s) || isExpression(s) || isAtome(s));
+    return (isLitteraleNumeric(s) || isComplexe(s) || isExpression(s) || isAtome(s) || isProgramme(s));
 }
 
 Entier * LitToEnt(Litterale * l)
@@ -283,6 +272,10 @@ Litterale * FabriqueLitterale::fabriquerLitterale(const QString & s)
     }
     if (isExpression(s)) {
         L=fabriquerExpression(s);
+        return L;
+    }
+    if(isProgramme(s)) {
+        L=fabriquerProgramme(s);
         return L;
     }
     throw LitteraleException("Erreur : pas de litterale correspondant");
@@ -672,4 +665,44 @@ Litterale* Expression::eval() const {
         return ss->eval();
     }
 
+}
+
+bool isExpression(const QString & s)
+{
+    unsigned int nbParGauche = 0;
+    unsigned int nbParDroite = 0;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] == '(')
+            nbParGauche++;
+        if (s[i] == ')')
+            nbParDroite++;
+    }
+    if (nbParDroite != nbParGauche)return false;
+    QRegExp r("^'([A-Z0-9\\(\\)\\$\\+\\*/-,])+'$");
+    return s.contains(r);
+}
+
+bool isProgramme(const QString & s)
+{
+    unsigned int nbCrochetGauche = 0;
+    unsigned int nbCrochetDroit = 0;
+    for (unsigned int i = 0; i < s.length(); i++) {
+        if (s[i] == '[')
+            nbCrochetGauche++;
+        if (s[i] == ']')
+            nbCrochetDroit++;
+    }
+    if(nbCrochetGauche != nbCrochetDroit) return false;
+    QRegExp r("^\\[(.)+\\]$");
+    return s.contains(r);
+}
+
+Programme* FabriqueLitterale::fabriquerProgramme(const QString& s){
+    Programme* p=new Programme(s);
+    LitTab.push_back(p);
+    return p;
+}
+
+void Programme::eval() const{
+    Controleur::getInstance().commande(supprimerCrochetExpression(value));
 }
