@@ -19,6 +19,7 @@ public:
     ~MainWindow();
 
 public slots:
+    //clavier
     void on_button0_clicked();
     void on_button1_clicked();
     void on_button2_clicked();
@@ -35,9 +36,14 @@ public slots:
     void on_buttonDiv_clicked();
     void on_buttonPoint_clicked();
     void on_buttonEnter_clicked();
+    //Option
     void on_activeClavier_clicked();
     void on_taillePile_valueChanged();
-    void on_vueVar_returnPressed();
+    //Variable
+    void on_modifierVar_clicked();
+    void on_supprimerVar_clicked();
+    void on_toutSupprimerVar_clicked();
+    //Controleur
     void refreshCalcul();
     void refreshVar();
     void getNextCommande();

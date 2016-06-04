@@ -246,7 +246,7 @@ void FabriqueLitterale::supprimer(Litterale * l)
         ++It;
         i++;
     }
-    if (i == (unsigned int)LitTab.size()) throw LitteraleException("Element inconnu");
+    if (i == (unsigned int)LitTab.size()) throw LitteraleException("Erreur : Element inconnu");
     /*if (LitToComp(l) != nullptr) {
         supprimer(LitToComp(l)->getPReel());
         supprimer(LitToComp(l)->getPIm());
@@ -332,7 +332,7 @@ Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
     for(i=0;i<s.length();i++){
         if (s[i] == '$') pos = i;
     }
-    if (pos == s.length()) throw LitteraleException("Erreur");
+    if (pos == s.length()) throw LitteraleException("Erreur : Impossible de fabriquer ce complexe");
     if (pos != s.length()) {
         LitteraleNumeric* pRe = fabriquerLitNum(s.rightRef(pos).toString());
         LitteraleNumeric* pIm = fabriquerLitNum(s.leftRef(pos + 1).toString());

@@ -27,7 +27,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -184,15 +184,55 @@
        <attribute name="title">
         <string>Variable</string>
        </attribute>
-       <widget class="QTableWidget" name="vueVar">
+       <widget class="QWidget" name="verticalLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>190</x>
-          <y>50</y>
-          <width>256</width>
-          <height>192</height>
+          <x>170</x>
+          <y>80</y>
+          <width>339</width>
+          <height>236</height>
          </rect>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QLineEdit" name="messageVar"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QTableWidget" name="vueVarId"/>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="vueVarValue"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPushButton" name="modifierVar">
+             <property name="text">
+              <string>Modifier</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="supprimerVar">
+             <property name="text">
+              <string>Supprimer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="toutSupprimer">
+             <property name="text">
+              <string>Tout Supprimer</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="programme">
@@ -275,7 +315,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
