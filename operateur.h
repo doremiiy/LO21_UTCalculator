@@ -287,6 +287,20 @@ public:
     Litterale* faireOperation();
 };
 
+class OpFORGET : public OperateurUnaire {
+public:
+    OpFORGET(const QString& s) :OperateurUnaire(s) {}
+    OpFORGET* Clone();
+    Litterale* faireOperation();
+};
+
+class OpIFT : public OperateurBinaire {
+public:
+    OpIFT(const QString& s) :OperateurBinaire(s) {}
+    OpIFT* Clone();
+    Litterale* faireOperation();
+};
+
 
 class FabriqueOperateur {
 private:
