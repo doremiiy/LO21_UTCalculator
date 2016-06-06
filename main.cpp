@@ -1,5 +1,18 @@
-// ConsoleApplication3.cpp : définit le point d'entrée pour l'application console.
-//
+/**
+\mainpage Documentation de UTCalculette
+
+\section Introduction
+
+\file TP_Exemple.cpp
+\author DI VITA Rémi, PFISTER MORGAN
+\date 12/06/2016
+\version 1
+
+\brief Definition du point d'entrée pour l'application console
+
+Ce ficher définit le point d'entrée pour l'application console.
+**/
+
 #include <QApplication>
 #include "mainWindow.h"
 
