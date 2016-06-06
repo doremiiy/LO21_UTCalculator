@@ -17,7 +17,6 @@ Ce ficher définit le point d'entrée pour l'application console.
 #include "mainWindow.h"
 
  int main(int argc, char* argv[]){
-    //Pile& P=Pile::getInstance();
     QApplication app(argc, argv);
     MainWindow fenetre;
     fenetre.show();

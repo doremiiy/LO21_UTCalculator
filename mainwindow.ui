@@ -187,13 +187,16 @@
        <widget class="QWidget" name="verticalLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>80</y>
-          <width>339</width>
-          <height>236</height>
+          <x>50</x>
+          <y>70</y>
+          <width>526</width>
+          <height>269</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
          <item>
           <widget class="QLineEdit" name="messageVar"/>
          </item>
@@ -203,7 +206,14 @@
             <widget class="QTableWidget" name="vueVarId"/>
            </item>
            <item>
-            <widget class="QTableWidget" name="vueVarValue"/>
+            <widget class="QTableWidget" name="vueVarValue">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777212</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -224,7 +234,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="toutSupprimer">
+            <widget class="QPushButton" name="toutSupprimerVar">
              <property name="text">
               <string>Tout Supprimer</string>
              </property>
@@ -239,6 +249,16 @@
        <attribute name="title">
         <string>Programme</string>
        </attribute>
+       <widget class="QTableWidget" name="vueProg">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>110</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="parametres">
        <attribute name="title">

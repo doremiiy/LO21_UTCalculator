@@ -181,12 +181,15 @@ void MainWindow::on_modifierVar_clicked(){//pas fonctionelle
     refreshVar();
 }
 void MainWindow::on_supprimerVar_clicked(){
-    //QHash<QString,LitteraleNumeric*>::iterator It = controleur.Var.find(id);
-    //controleur.Var.erase(It);
+    QList<QTableWidgetItem *> items=ui->vueVarId->selectedItems();
+    for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
+        controleur.eraseVar((*It)->text());
+    refreshVar();
 }
 
 void MainWindow::on_toutSupprimerVar_clicked(){
-
+    controleur.Var.clear();
+    refreshVar();
 }
 
 void MainWindow::son(){
@@ -225,22 +228,12 @@ void MainWindow::refreshVar(){//Mettre a jour de la vueVar
 }
 
 void MainWindow::getNextCommande(){
-    //Recuperation du texte de la ligne de commande
     QString c = ui->commande->text();
-    //Extraction de chaque element de la ligne
-    //QTextStream stream(&c);
-    //QString com;
-    //do{
-        try{
-            //stream>>com;//extraction d'un element
-            //envoyer la commande au controleur
-            /*if(c!="")*/ controleur.commande(c);
-            //if(isLitterale(com)||isOperateur(com))
-            //    ui->commande->clear();
-        }
-        catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
-        catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
-        catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
-    //}while(com!="");
-    //Ligne de commande a zero
+    try{
+        controleur.commande(c);
+        ui->commande->clear();
+    }
+    catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
+    catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
+    catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
 }

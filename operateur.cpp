@@ -1024,7 +1024,7 @@ Litterale * OpDUP::faireOperation()
         res = f.fabriquerLitterale(*l);
         return res;
     }
-    throw PileException("La pile est vide");
+    throw PileException("Erreur : La pile est vide");
 }
 
 OpDROP * OpDROP::Clone()
@@ -1039,7 +1039,7 @@ Litterale * OpDROP::faireOperation()
         p.pop();
         return nullptr;
     }
-    throw PileException("La pile est vide");
+    throw PileException("Erreur : La pile est vide");
 }
 
 OpSWAP * OpSWAP::Clone()
@@ -1060,7 +1060,7 @@ Litterale * OpSWAP::faireOperation()
         p.push(*l2);
         return nullptr;
     }
-    throw PileException("Impossible d'appliquer l'operateur");
+    throw PileException("Erreur : Impossible d'appliquer l'operateur SWAP");
 }
 
 OpEGAL * OpEGAL::Clone()
@@ -1087,7 +1087,7 @@ Litterale * OpEGAL::faireOperation()
         f2.supprimer(OpTmp);
         return res;
     }
-    throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
+    throw OperateurException("Erreur : impossible d'appliquer l'operateur = sur ces litterales");
 }
 
 OpDIF * OpDIF::Clone()
