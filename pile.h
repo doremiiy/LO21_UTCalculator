@@ -125,7 +125,7 @@ public:
     QHash<QString,LitteraleNumeric*> getVar() const { return Var; }
     void addVar(const QString& s1,LitteraleNumeric* l);
     void eraseVar(const QString& s);
-    LitteraleNumeric* getVar(const QString& s);
+    //LitteraleNumeric* getVar(const QString& s);
     void sauvegardeEtatPile(Operateur* op);
     Pile& getPile() const { return p; }
     CareTaker& getCareTaker() const { return ct; }
@@ -134,7 +134,7 @@ public:
     QHash<QString,Programme*> getProgs() const { return Progs; }
     void addProg(const QString& s1,Programme* l);
     void eraseProg(const QString& s);
-    Programme* getProg(const QString& s);
+    //Programme* getProg(const QString& s);
 signals:
     void modificationVar();
     //void pressedOperator();

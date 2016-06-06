@@ -252,14 +252,14 @@ void Controleur::appliquerOperateur(Operateur * Op)
         }
         Litterale* l1 = &p.top();
         p.pop();
-        if(LitToProgramme(l1)!=nullptr && Op->getIdOp()!="STO"){//empeche l'evaluation si l'operateur est STO
+        if(LitToProgramme(l1)!=nullptr && (/*Op->getIdOp()!="STO" &&*/ Op->getIdOp()!="IFT")){//empeche l'evaluation si l'operateur est STO
             LitToProgramme(l1)->eval();
             l1=&p.top();
             p.pop();
         }
         Litterale* l2 = &p.top();
         p.pop();
-        if(LitToProgramme(l2)!=nullptr && Op->getIdOp()!="STO"){
+        if(LitToProgramme(l2)!=nullptr && (/*Op->getIdOp()!="STO" &&*/ Op->getIdOp()!="IFT")){
             LitToProgramme(l2)->eval();
             l2=&p.top();
             p.pop();
@@ -324,9 +324,9 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
         throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
-    //QHash<QString,Programme*>::iterator It1=Progs.find(s1);
-    //if(It1!=Progs.end())
-    //    Progs.erase(It1);
+    QHash<QString,Programme*>::iterator It1=Progs.find(s1);
+    if(It1!=Progs.end())
+        Progs.erase(It1);
     QHash<QString,LitteraleNumeric*>::iterator It2 = Var.find(s1);
     if (It2 != Var.end())
         Var.erase(It2);
@@ -334,15 +334,15 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     modificationVar();
 }
 
-/*void Controleur::eraseVar(const string & s)
+void Controleur::eraseVar(const QString & s)
 {
-    QMap<string, string>::const_iterator It=Var.find(s);
+    QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
     if(It!=Var.end())
         Var.erase(It);
         modificationVar();
 }
 
-LitteraleNumeric * Controleur::getVar(const string & s)
+/*LitteraleNumeric * Controleur::getVar(const string & s)
 {
     FabriqueLitterale& f = FabriqueLitterale::getInstance();
     map<string, string>::const_iterator It = Var.find(s);
@@ -366,5 +366,10 @@ void Controleur::addProg(const QString& s1,Programme* l){
     //ajouter signal ?
 }
 
-//void eraseProg(const QString& s);
-//Programme* getProg(const QString& s);
+void Controleur::eraseProg(const QString& s){
+    QHash<QString,Programme*>::iterator It=Progs.find(s);
+    if(It!=Progs.end())
+        Progs.erase(It);
+        modificationVar();
+}
+

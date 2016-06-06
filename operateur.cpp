@@ -2,7 +2,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1} };
+const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -224,6 +224,16 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
         }
         if (s == "EVAL") {
             Op = new OpEVAL("EVAL");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "FORGET") {
+            Op = new OpFORGET("FORGET");
+            OpTab.push_back(Op);
+            return Op;
+        }
+        if (s == "IFT") {
+            Op = new OpIFT("IFT");
             OpTab.push_back(Op);
             return Op;
         }
@@ -1625,4 +1635,41 @@ Litterale* OpEVAL::faireOperation(){
         return nullptr;
     }
     throw OperateurException("Erreur : impossible d'appliquer l'operateur sur ces litterales");
+}
+
+OpFORGET* OpFORGET::Clone(){
+    return new OpFORGET(*this);
+}
+
+Litterale* OpFORGET::faireOperation(){
+    Litterale* l=getLitterale();
+    Controleur& c=Controleur::getInstance();
+    if(isExpression(l->toString())){
+        QString s = supprimerGuillemetsExpression(l->toString());
+        if(isAtome(s)){
+            QHash<QString,LitteraleNumeric*>::iterator It=c.getVar().find(s);
+            if(It!=c.getVar().end())
+                c.eraseVar(s);
+            QHash<QString,Programme*>::iterator It2=c.getProgs().find(s);
+            if(It2!=c.getProgs().end())
+                c.eraseProg(s);
+        }
+    }
+    return nullptr;
+}
+
+OpIFT* OpIFT::Clone(){
+    return new OpIFT(*this);
+}
+
+Litterale* OpIFT::faireOperation(){
+    Litterale* l1=getLitterale1();
+    Litterale* l2=getLitterale2();
+    if(isLitteraleNumeric(l1->toString())){
+        if(!LitToLitNum(l1)->LitteraleNumeriqueNulle(LitToLitNum(l1))){
+            if(isProgramme(l2->toString())) LitToProgramme(l2)->eval();
+            else return l2;
+        }
+    }
+    throw OperateurException("Erreur : impossible d'appliquer l'opérateur à ces littérales");
 }
