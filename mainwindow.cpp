@@ -181,7 +181,8 @@ void MainWindow::on_modifierVar_clicked(){//pas fonctionelle
     refreshVar();
 }
 void MainWindow::on_supprimerVar_clicked(){
-
+    //QHash<QString,LitteraleNumeric*>::iterator It = controleur.Var.find(id);
+    //controleur.Var.erase(It);
 }
 
 void MainWindow::on_toutSupprimerVar_clicked(){
