@@ -83,6 +83,14 @@ public slots:
     void on_supprimerVar_clicked();
     //! \brief Supprime toutes les variable
     void on_toutSupprimerVar_clicked();
+    //Programme
+    //! \brief permet d'editer les programmes
+    void on_modifierProg_clicked();
+    //! \brief Supprime les programmes sélectionnées
+    void on_supprimerProg_clicked();
+    //! \brief Supprime toutes les programmes
+    void on_toutSupprimerProg_clicked();
+    void refreshProgs();
     //Controleur
     //! \brief Rafraichi l'affichage de l'onglet Calcul
     void refreshCalcul();

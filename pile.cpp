@@ -270,17 +270,23 @@ void Controleur::appliquerOperateur(Operateur * Op)
             C.getCareTaker().clearVecteurLits();
             C.getCareTaker().addLitteraleVecteur(l1);
             C.getCareTaker().addLitteraleVecteur(l2);
-            if (res != nullptr)
-                p.push(*res);
-            else
-                if(Op->getIdOp()!="STO") throw OperateurException("Erreur ");
+            //if (res != nullptr)
+            //    p.push(*res);
+            //else
+            //    if(Op->getIdOp()!="STO") throw OperateurException("Erreur ");
+            //return;
+            if(Op->getIdOp()!="STO"){
+                if (res != nullptr)
+                    p.push(*res);
+                //else throw OperateurException("Erreur ");
+            }
             return;
         }
         catch (OperateurException e) {
             p.push(*l2);
             p.push(*l1);
             o.supprimer(Op);
-            e.getInfo();
+            //e.getInfo();
         }
     }
     if (OperateurToOpUn(Op) != nullptr) {
@@ -321,7 +327,7 @@ void Controleur::appliquerOperateur(Operateur * Op)
 
 void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
 {
-    map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
+    QMap<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
         throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
     QHash<QString,Programme*>::iterator It1=Progs.find(s1);
@@ -353,7 +359,7 @@ void Controleur::eraseVar(const QString & s)
 }*/
 
 void Controleur::addProg(const QString& s1,Programme* l){
-    map<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
+    QMap<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
         throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
     //QHash<QString,LitteraleNumeric*>::iterator It1=Var.find(s1);

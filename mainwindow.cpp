@@ -160,7 +160,7 @@ void MainWindow::on_taillePile_valueChanged(){
     ui->vuePile->setFixedHeight(P.getNbToAffiche()*ui->vuePile->rowHeight(0)+2);
     refreshCalcul();
 }
-
+//Variable
 void MainWindow::on_modifierVar_clicked(){//pas fonctionelle
     FabriqueLitterale &f=FabriqueLitterale::getInstance();
     ui->message->setText("value changed");
@@ -186,10 +186,42 @@ void MainWindow::on_supprimerVar_clicked(){
         controleur.eraseVar((*It)->text());
     refreshVar();
 }
-
 void MainWindow::on_toutSupprimerVar_clicked(){
     controleur.Var.clear();
     refreshVar();
+}
+void MainWindow::refreshVar(){//Mettre a jour de la vueVar
+    //Set message
+    ui->message->setText("Valeur Enregistrée");
+    //Effacer tout
+    ui->vueVarId->clear();
+    ui->vueVarValue->clear();
+    //Mettre a jour de la vueVar
+    ui->vueVarId->setRowCount(controleur.Var.count());
+    ui->vueVarValue->setRowCount(controleur.Var.count());
+    unsigned int nb=0;
+    for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.Var.begin(); It!=controleur.Var.end();++It,nb++){
+        ui->vueVarId->setItem(nb,0,new QTableWidgetItem(It.key()));
+        ui->vueVarValue->setItem(nb,0,new QTableWidgetItem(It.value()->toString()));
+    }
+    ui->vueVarId->setFixedHeight(5*ui->vueVarId->rowHeight(0)+2);
+    ui->vueVarValue->setFixedHeight(5*ui->vueVarValue->rowHeight(0)+2);
+}
+//Programme
+void MainWindow::on_modifierProg_clicked(){
+
+}
+
+void MainWindow::on_supprimerProg_clicked(){
+
+}
+
+void MainWindow::on_toutSupprimerProg_clicked(){
+    controleur.Progs.clear();
+    refreshProgs();
+}
+void MainWindow::refreshProgs(){
+
 }
 
 void MainWindow::son(){
@@ -207,24 +239,6 @@ void MainWindow::refreshCalcul(){//Mettre a jour de la vuePile
     unsigned int nb=1;
     for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
         ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
-}
-
-void MainWindow::refreshVar(){//Mettre a jour de la vueVar
-    //Set message
-    ui->message->setText("Valeur Enregistrée");
-    //Effacer tout
-    ui->vueVarId->clear();
-    ui->vueVarValue->clear();
-    //Mettre a jour de la vueVar
-    ui->vueVarId->setRowCount(controleur.Var.count());
-    ui->vueVarValue->setRowCount(controleur.Var.count());
-    unsigned int nb=0;
-    for(QHash<QString,LitteraleNumeric*>::iterator It=controleur.Var.begin(); It!=controleur.Var.end();++It,nb++){
-        ui->vueVarId->setItem(nb,0,new QTableWidgetItem(It.key()));
-        ui->vueVarValue->setItem(nb,0,new QTableWidgetItem(It.value()->toString()));
-    }
-    ui->vueVarId->setFixedHeight(5*ui->vueVarId->rowHeight(0)+2);
-    ui->vueVarValue->setFixedHeight(5*ui->vueVarValue->rowHeight(0)+2);
 }
 
 void MainWindow::getNextCommande(){

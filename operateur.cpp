@@ -2,7 +2,7 @@
 #include "Operateur.h"
 #include "Pile.h"
 
-const map<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
+const QMap<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -10,9 +10,9 @@ unsigned int OperateurPile::arite = 0;
 
 bool isOperateur(const QString & s)
 {
-    map<QString, unsigned int>::const_iterator It;
+    QMap<QString, unsigned int>::const_iterator It;
     for (It = Operateur::listeOperateurs.begin(); It != Operateur::listeOperateurs.end(); ++It)
-        if (s == It->first) return true;
+        if (s == It.key()/*->first*/) return true;
     return false;
 }
 
@@ -1551,8 +1551,8 @@ Litterale * OpSTO::faireOperation()
                 Controleur::getInstance().addProg(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToProgramme(l1));
         }
     }
-    return nullptr;
     throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
+    return nullptr;
 }
 
 OpDIV* OpDIV::Clone(){

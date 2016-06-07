@@ -13,7 +13,6 @@
 Ce ficher définit le point d'entrée pour l'application console.
 **/
 
-#include <QApplication>
 #include "mainWindow.h"
 
  int main(int argc, char* argv[]){

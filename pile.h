@@ -1,11 +1,7 @@
 #ifndef Pile_h
 #define Pile_h
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <QMap>
-#include <sstream>
-#include <regex>
-#include <list>
 #include <QVector>
 #include <QString>
 #include <QTextStream>

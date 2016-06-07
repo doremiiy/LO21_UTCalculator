@@ -44,7 +44,7 @@ bool isAtome(const QString & s)
 const QString supprimerEspacesExpression(const QString & s)
 {
     QString sSansEsp;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         if (s[i] != ' ')
             sSansEsp += s[i];
     }
@@ -54,7 +54,7 @@ const QString supprimerEspacesExpression(const QString & s)
 const QString supprimerGuillemetsExpression(const QString & s)
 {
     QString sSansGuillemet;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         if (s[i] != '\'')
             sSansGuillemet += s[i];
     }
@@ -63,7 +63,7 @@ const QString supprimerGuillemetsExpression(const QString & s)
 
 const QString supprimerParentheseExpression(const QString& s){
     QString sSansPar;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         if (s[i] != '(' && s[i]!=')')
             sSansPar += s[i];
     }
@@ -72,7 +72,7 @@ const QString supprimerParentheseExpression(const QString& s){
 
 const QString supprimerCrochetExpression(const QString& s){
     QString sSansCrochet;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         if (s[i] != '[' && s[i]!=']')
             sSansCrochet += s[i];
     }
@@ -324,11 +324,12 @@ LitteraleNumeric * FabriqueLitterale::fabriquerLitNum(const QString & s)
     if (isRationnel(s)) {
         return fabriquer/*Rationnel*/(NumerateurFromStr(s), DenominateurFromStr(s));
     }
+    throw LitteraleException("Erreur: L'argument n'est pas valide");
 }
 
 Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
 {
-    unsigned int i, pos = s.length();
+    int i, pos = s.length();
     for(i=0;i<s.length();i++){
         if (s[i] == '$') pos = i;
     }
@@ -349,7 +350,7 @@ Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
             return c;
         }
     }
-
+    throw LitteraleException("Erreur: L'argument n'est pas valide");
 }
 
 Entier * FabriqueLitterale::fabriquer(const Entier & e)
@@ -400,14 +401,6 @@ Reel * FabriqueLitterale::fabriquer(double value)
     LitTab.push_back(r);
     return r;
 }
-
-/*Rationnel * FabriqueLitterale::fabriquer(int num, int den)
-{
-    Rationnel* ra = new Rationnel(num,den);
-    ra->simplifier();
-    LitTab.push_back(ra);
-    return ra;
-}*/
 
 Litterale * FabriqueLitterale::fabriquerComplexe(LitteraleNumeric * l1, LitteraleNumeric * l2)
 {
@@ -474,6 +467,7 @@ int NumerateurFromStr(const QString & s)
         while (s[i] != '/') i++;
         return s.rightRef(i).toInt();
     }
+    throw LitteraleException("Erreur : L'argument n'est pas un rationelle");
 }
 
 int DenominateurFromStr(const QString & s)
@@ -483,6 +477,7 @@ int DenominateurFromStr(const QString & s)
         while (s[i] != '/') i++;
         return s.leftRef(i + 1).toInt();
     }
+    throw LitteraleException("Erreur : L'argument n'est pas un rationelle");
 }
 
 
@@ -509,7 +504,7 @@ bool LitteraleNumeric::LitteraleNumeriquePositive(LitteraleNumeric* ln) const
         return false;
     }
     if (LitNumToRat(ln) != nullptr) {
-        if ((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() > 0) || (LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() < 0))
+        if (((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() > 0)) || ((LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() < 0)))
             return true;
         return false;
     }
@@ -529,7 +524,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNegative(LitteraleNumeric * ln) const
         return false;
     }
     if (LitNumToRat(ln) != nullptr) {
-        if ((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() < 0) || (LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() > 0))
+        if (((LitNumToRat(ln)->getNumerateur() > 0) && (LitNumToRat(ln)->getDenominateur() < 0)) || ((LitNumToRat(ln)->getNumerateur() < 0) && (LitNumToRat(ln)->getDenominateur() > 0)))
             return true;
         return false;
     }
@@ -538,7 +533,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNegative(LitteraleNumeric * ln) const
             return true;
         return false;
     }
-    throw LitteraleException("Erreur");
+    throw LitteraleException("Erreur : L'argument n'est pas une litteral numérique");
 }
 
 bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
@@ -558,7 +553,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
             return true;
         return false;
     }
-    throw LitteraleException("Erreur");
+    throw LitteraleException("Erreur: L'argument n'est pas unne litteral numérique");
 }
 
 Litterale* Expression::eval() const {
@@ -664,14 +659,14 @@ Litterale* Expression::eval() const {
         Expression* ss=f.fabriquerExpression(s);
         return ss->eval();
     }
-
+    throw LitteraleException("Erreur: Impossible d'évaluer cette expression");
 }
 
 bool isExpression(const QString & s)
 {
     unsigned int nbParGauche = 0;
     unsigned int nbParDroite = 0;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for ( int i = 0; i < s.length(); i++) {
         if (s[i] == '(')
             nbParGauche++;
         if (s[i] == ')')
@@ -686,7 +681,7 @@ bool isProgramme(const QString & s)
 {
     unsigned int nbCrochetGauche = 0;
     unsigned int nbCrochetDroit = 0;
-    for (unsigned int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); i++) {
         if (s[i] == '[')
             nbCrochetGauche++;
         if (s[i] == ']')

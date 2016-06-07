@@ -1,13 +1,7 @@
 #ifndef litterale_h
 #define litterale_h
 
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
 #include <QVector>
-#include <map>
-#include <sstream>
-#include <regex>
 #include <QRegExp>
 #include <QString>
 #include <QStringRef>
