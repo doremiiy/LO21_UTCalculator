@@ -71,9 +71,45 @@ public slots:
     void on_buttonPoint_clicked();
     //! \brief Slot correspondant a l'appuis sur le bonton Entrer
     void on_buttonEnter_clicked();
+    //Operteur pile
+    void on_buttonLastarg_clicked();
+    void on_buttonDup_clicked();
+    void on_buttonDrop_clicked();
+    void on_buttonRedo_clicked();
+    void on_buttonLastop_clicked();
+    void on_buttonUndo_clicked();
+    void on_buttonSwap_clicked();
+    void on_buttonClear_clicked();
+    //Calivier scienifique
+    void on_buttonIft_clicked();
+    void on_buttonDiv_2_clicked();
+    void on_buttonSto_clicked();
+    void on_buttonNeg_clicked();
+    void on_buttonForget_clicked();
+    void on_buttonEval_clicked();
+    void on_buttonComp_clicked();
+    void on_buttonRe_clicked();
+    void on_buttonDen_clicked();
+    void on_buttonNum_clicked();
+    void on_buttonIm_clicked();
+    void on_buttonMod_clicked();
+    void on_buttonAnd_clicked();
+    void on_buttonEgal_clicked();
+    void on_buttonStricSup_clicked();
+    void on_buttonOr_clicked();
+    void on_buttonNot_clicked();
+    void on_buttonSup_clicked();
+    void on_buttonStricInf_clicked();
+    void on_buttonDif_clicked();
+    void on_buttonInf_clicked();
+    //buton commande
+    void on_buttonC_clicked();
+    void on_buttonAC_clicked();
     //Option
     //! \brief Affiche ou Cache le clavier
     void on_activeClavier_clicked();
+    void on_activeClavComp_clicked();
+    void on_activeOpPile_clicked();
     //! \brief Change le nombre d'element de la pile a afficher
     void on_taillePile_valueChanged();
     //Variable

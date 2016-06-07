@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>807</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>UTCalculette</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <layout class="QHBoxLayout" name="horizontalLayout_12">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="maximumSize">
@@ -27,7 +27,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -36,20 +36,264 @@
        <attribute name="title">
         <string>Calcul</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="LayoutPrincipal">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item>
            <widget class="QLineEdit" name="message"/>
           </item>
           <item>
-           <widget class="QTableWidget" name="vuePile"/>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QTableWidget" name="vuePile"/>
+            </item>
+            <item>
+             <layout class="QGridLayout" name="gridLayout_7">
+              <item row="1" column="1">
+               <widget class="QPushButton" name="buttonLastarg">
+                <property name="text">
+                 <string>LASTARGS</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="buttonDup">
+                <property name="text">
+                 <string>DUP</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QPushButton" name="buttonDrop">
+                <property name="text">
+                 <string>DROP</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QPushButton" name="buttonRedo">
+                <property name="text">
+                 <string>REDO</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="buttonLastop">
+                <property name="text">
+                 <string>LASTOP</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QPushButton" name="buttonUndo">
+                <property name="text">
+                 <string>UNDO</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="buttonSwap">
+                <property name="text">
+                 <string>SWAP</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QPushButton" name="buttonClear">
+                <property name="text">
+                 <string>CLEAR</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QLineEdit" name="commande"/>
+           <layout class="QHBoxLayout" name="Barre">
+            <item>
+             <widget class="QLineEdit" name="commande"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonC">
+              <property name="text">
+               <string>C</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonAC">
+              <property name="text">
+               <string>AC</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="clavier">
+            <item>
+             <layout class="QHBoxLayout" name="ClavierComplet">
+              <item>
+               <layout class="QGridLayout" name="gridLayout_5">
+                <item row="3" column="0">
+                 <widget class="QPushButton" name="buttonIft">
+                  <property name="text">
+                   <string>IFT</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="buttonDiv_2">
+                  <property name="text">
+                   <string>DIV</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="buttonSto">
+                  <property name="text">
+                   <string>STO</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="buttonNeg">
+                  <property name="text">
+                   <string>NEG</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="buttonForget">
+                  <property name="text">
+                   <string>FORGET</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="buttonEval">
+                  <property name="text">
+                   <string>EVAL</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="buttonComp">
+                  <property name="text">
+                   <string>$</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="buttonRe">
+                  <property name="text">
+                   <string>RE</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="buttonDen">
+                  <property name="text">
+                   <string>DEN</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="buttonNum">
+                  <property name="text">
+                   <string>NUM</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QPushButton" name="buttonIm">
+                  <property name="text">
+                   <string>IM</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="buttonMod">
+                  <property name="text">
+                   <string>MOD</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="gridLayout_6">
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="buttonAnd">
+                  <property name="text">
+                   <string>AND</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="buttonEgal">
+                  <property name="text">
+                   <string>=</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QPushButton" name="buttonStricSup">
+                  <property name="text">
+                   <string>&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="buttonOr">
+                  <property name="text">
+                   <string>OR</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="buttonNot">
+                  <property name="text">
+                   <string>NOT</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="buttonSup">
+                  <property name="text">
+                   <string>&gt;=</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="buttonStricInf">
+                  <property name="text">
+                   <string>&lt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="buttonDif">
+                  <property name="text">
+                   <string>!=</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="buttonInf">
+                  <property name="text">
+                   <string>=&lt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
@@ -129,7 +373,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
+             <layout class="QVBoxLayout" name="OperateurPile">
               <item>
                <widget class="QPushButton" name="buttonPlus">
                 <property name="text">
@@ -184,176 +428,169 @@
        <attribute name="title">
         <string>Variable</string>
        </attribute>
-       <widget class="QWidget" name="verticalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>50</x>
-          <y>70</y>
-          <width>526</width>
-          <height>269</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <item>
-          <widget class="QLineEdit" name="messageVar"/>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QTableWidget" name="vueVarId"/>
-           </item>
-           <item>
-            <widget class="QTableWidget" name="vueVarValue">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777212</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="modifierVar">
-             <property name="text">
-              <string>Modifier</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="supprimerVar">
-             <property name="text">
-              <string>Supprimer</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="toutSupprimerVar">
-             <property name="text">
-              <string>Tout Supprimer</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QTableWidget" name="vueVarId"/>
+            </item>
+            <item>
+             <widget class="QTableWidget" name="vueVarValue">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777212</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="modifierVar">
+              <property name="text">
+               <string>Modifier</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="supprimerVar">
+              <property name="text">
+               <string>Supprimer</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="toutSupprimerVar">
+              <property name="text">
+               <string>Tout Supprimer</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="programme">
        <attribute name="title">
         <string>Programme</string>
        </attribute>
-       <widget class="QWidget" name="verticalLayoutWidget_3">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>100</y>
-          <width>345</width>
-          <height>194</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <item>
-          <widget class="QTableWidget" name="vueProgs"/>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QPushButton" name="modifierProg">
-             <property name="text">
-              <string>Modifier</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="suprimerProg">
-             <property name="text">
-              <string>Supprimer</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="toutSupprimerProg">
-             <property name="text">
-              <string>Tout Supprimer</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QTableWidget" name="vueProgs"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QPushButton" name="modifierProg">
+              <property name="text">
+               <string>Modifier</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="suprimerProg">
+              <property name="text">
+               <string>Supprimer</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="toutSupprimerProg">
+              <property name="text">
+               <string>Tout Supprimer</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="parametres">
        <attribute name="title">
         <string>Paramètres</string>
        </attribute>
-       <widget class="QWidget" name="verticalLayoutWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>80</y>
-          <width>182</width>
-          <height>72</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
-          <widget class="QCheckBox" name="activeSon">
-           <property name="text">
-            <string>Son</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="activeClavier">
-           <property name="text">
-            <string>Clavier</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="Label">
-             <property name="text">
-              <string>Taille Pile :</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="taillePile">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>5</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="afficheTaillePile">
-             <property name="text">
-              <string>5</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="activeSon">
+            <property name="text">
+             <string>Son</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="activeClavier">
+            <property name="text">
+             <string>Clavier Numerique</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="activeClavComp">
+            <property name="text">
+             <string>Clavier Complet</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="activeOpPile">
+            <property name="text">
+             <string>Operateur Pile</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="Label">
+              <property name="text">
+               <string>Taille Pile :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="taillePile">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="afficheTaillePile">
+              <property name="text">
+               <string>5</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -364,7 +601,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>807</width>
      <height>22</height>
     </rect>
    </property>
@@ -380,12 +617,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>454</x>
-     <y>173</y>
+     <x>441</x>
+     <y>357</y>
     </hint>
     <hint type="destinationlabel">
-     <x>476</x>
-     <y>173</y>
+     <x>761</x>
+     <y>249</y>
     </hint>
    </hints>
   </connection>

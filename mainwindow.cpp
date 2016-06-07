@@ -18,17 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vuePile->horizontalHeader()->setStretchLastSection(true);
     //Creation la vue des variable
         //VueVArID
+    ui->vueVarId->setColumnCount(1);
     ui->vueVarId->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->vueVarId->horizontalHeader()->setVisible(false);
     ui->vueVarId->verticalHeader()->setVisible(false);
-    ui->vueVarId->setColumnCount(1);
+    ui->vueVarId->horizontalHeader()->setStretchLastSection(true);
         //vueVarValue
+    ui->vueVarValue->setColumnCount(1);
     ui->vueVarValue->horizontalHeader()->setVisible(false);
     ui->vueVarValue->verticalHeader()->setVisible(false);
-    ui->vueVarValue->setColumnCount(1);
-        //MessageVar
-    ui->messageVar->setStyleSheet("background: cyan; color: black");
-    ui->messageVar->setReadOnly(true);
+    ui->vueVarValue->horizontalHeader()->setStretchLastSection(true);
     //Creation du son
     player = new QMediaPlayer();
     player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.mp3")));
@@ -41,12 +40,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
     connect(&controleur,SIGNAL(modificationProgs()),this,SLOT(refreshProgs()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
+    //connect(QKeySequence(Qt::CTRL + Qt::Key_P)),SIGNAL(returnPressed()),,this,controleur.commande("UNDO");)
     //connect(&controleur,SIGNAL(pressedOperator()),this,SLOT(getNextCommande()));
     //initialisation
     refreshVar();
     refreshProgs();
     ui->commande->setFocus();
-    on_activeClavier_clicked();
+    on_activeClavier_clicked();//on clache le clavier numerique
+    on_activeClavComp_clicked();//on cache le clavier complet
+    on_activeOpPile_clicked();//on cache le clavier operateur
     on_taillePile_valueChanged();
     ui->message->setText("Bonjour");
 }
@@ -108,6 +110,99 @@ void MainWindow::on_buttonPoint_clicked(){
 void MainWindow::on_buttonEnter_clicked(){
     ui->commande->returnPressed();
 }
+void MainWindow::on_buttonLastarg_clicked(){
+    ui->commande->insert(" LASTARG");
+}
+void MainWindow::on_buttonDup_clicked(){
+    ui->commande->insert(" DUP");
+}
+void MainWindow::on_buttonDrop_clicked(){
+    ui->commande->insert(" DROP");
+}
+void MainWindow::on_buttonRedo_clicked(){
+    ui->commande->insert(" REDO");
+}
+void MainWindow::on_buttonLastop_clicked(){
+    ui->commande->insert(" LASTOP");
+}
+void MainWindow::on_buttonUndo_clicked(){
+    ui->commande->insert(" UNDO");
+}
+void MainWindow::on_buttonSwap_clicked(){
+    ui->commande->insert(" SWAP");
+}
+void MainWindow::on_buttonClear_clicked(){
+    ui->commande->insert(" CLEAR");
+}
+void MainWindow::on_buttonIft_clicked(){
+    ui->commande->insert(" IFT");
+}
+void MainWindow::on_buttonDiv_2_clicked(){
+    ui->commande->insert(" DIV");
+}
+void MainWindow::on_buttonSto_clicked(){
+    ui->commande->insert(" STO");
+}
+void MainWindow::on_buttonNeg_clicked(){
+    ui->commande->insert(" NEG");
+}
+void MainWindow::on_buttonForget_clicked(){
+    ui->commande->insert(" FORGET");
+}
+void MainWindow::on_buttonEval_clicked(){
+    ui->commande->insert(" EVAL");
+}
+void MainWindow::on_buttonComp_clicked(){
+    ui->commande->insert(" $");
+}
+void MainWindow::on_buttonRe_clicked(){
+    ui->commande->insert(" RE");
+}
+void MainWindow::on_buttonDen_clicked(){
+    ui->commande->insert(" DEN");
+}
+void MainWindow::on_buttonNum_clicked(){
+    ui->commande->insert(" NUM");
+}
+void MainWindow::on_buttonIm_clicked(){
+    ui->commande->insert(" IM");
+}
+void MainWindow::on_buttonMod_clicked(){
+    ui->commande->insert(" MOD");
+}
+void MainWindow::on_buttonAnd_clicked(){
+    ui->commande->insert(" AND");
+}
+void MainWindow::on_buttonEgal_clicked(){
+    ui->commande->insert(" =");
+}
+void MainWindow::on_buttonStricSup_clicked(){
+    ui->commande->insert(" >");
+}
+void MainWindow::on_buttonOr_clicked(){
+    ui->commande->insert(" OR");
+}
+void MainWindow::on_buttonNot_clicked(){
+    ui->commande->insert(" NOT");
+}
+void MainWindow::on_buttonSup_clicked(){
+    ui->commande->insert(" >=");
+}
+void MainWindow::on_buttonStricInf_clicked(){
+    ui->commande->insert(" <");
+}
+void MainWindow::on_buttonDif_clicked(){
+    ui->commande->insert(" !=");
+}
+void MainWindow::on_buttonInf_clicked(){
+    ui->commande->insert(" =<");
+}
+void MainWindow::on_buttonC_clicked(){
+    ui->commande->backspace();
+}
+void MainWindow::on_buttonAC_clicked(){
+    ui->commande->clear();
+}
 void MainWindow::on_activeClavier_clicked(){
     if(ui->activeClavier->isChecked()){
         ui->button0->show();
@@ -146,6 +241,78 @@ void MainWindow::on_activeClavier_clicked(){
         ui->buttonEnter->hide();
     }
 }
+void MainWindow::on_activeClavComp_clicked(){
+    if(ui->activeClavComp->isChecked()){
+        ui->buttonIft->show();
+        ui->buttonDiv_2->show();
+        ui->buttonSto->show();
+        ui->buttonNeg->show();
+        ui->buttonForget->show();
+        ui->buttonEval->show();
+        ui->buttonComp->show();
+        ui->buttonRe->show();
+        ui->buttonDen->show();
+        ui->buttonNum->show();
+        ui->buttonIm->show();
+        ui->buttonMod->show();
+        ui->buttonAnd->show();
+        ui->buttonEgal->show();
+        ui->buttonStricSup->show();
+        ui->buttonOr->show();
+        ui->buttonNot->show();
+        ui->buttonSup->show();
+        ui->buttonStricInf->show();
+        ui->buttonDif->show();
+        ui->buttonInf->show();
+    }
+    else{
+        ui->buttonIft->hide();
+        ui->buttonDiv_2->hide();
+        ui->buttonSto->hide();
+        ui->buttonNeg->hide();
+        ui->buttonForget->hide();
+        ui->buttonEval->hide();
+        ui->buttonComp->hide();
+        ui->buttonRe->hide();
+        ui->buttonDen->hide();
+        ui->buttonNum->hide();
+        ui->buttonIm->hide();
+        ui->buttonMod->hide();
+        ui->buttonAnd->hide();
+        ui->buttonEgal->hide();
+        ui->buttonStricSup->hide();
+        ui->buttonOr->hide();
+        ui->buttonNot->hide();
+        ui->buttonSup->hide();
+        ui->buttonStricInf->hide();
+        ui->buttonDif->hide();
+        ui->buttonInf->hide();
+
+    }
+}
+void MainWindow::on_activeOpPile_clicked(){
+    if(ui->activeOpPile->isChecked()){
+        ui->buttonLastarg->show();
+        ui->buttonDup->show();
+        ui->buttonDrop->show();
+        ui->buttonRedo->show();
+        ui->buttonLastop->show();
+        ui->buttonUndo->show();
+        ui->buttonSwap->show();
+        ui->buttonClear->show();
+    }
+    else{
+        ui->buttonLastarg->hide();
+        ui->buttonDup->hide();
+        ui->buttonDrop->hide();
+        ui->buttonRedo->hide();
+        ui->buttonLastop->hide();
+        ui->buttonUndo->hide();
+        ui->buttonSwap->hide();
+        ui->buttonClear->hide();
+    }
+}
+
 void MainWindow::on_taillePile_valueChanged(){
     Pile& P = Controleur::getInstance().getPile();
     P.setNbToAffiche((unsigned)ui->afficheTaillePile->text().toInt());
@@ -186,7 +353,7 @@ void MainWindow::on_supprimerVar_clicked(){
     QList<QTableWidgetItem *> items=ui->vueVarId->selectedItems();
     for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
         controleur.eraseVar((*It)->text());
-    refreshVar();
+    refreshVar();       
 }
 void MainWindow::on_toutSupprimerVar_clicked(){
     controleur.Var.clear();
