@@ -30,7 +30,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -294,6 +294,27 @@
                  <widget class="QPushButton" name="buttonInf">
                   <property name="text">
                    <string>=&lt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QPushButton" name="buttonLCroch">
+                  <property name="text">
+                   <string>[</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="buttonEscp">
+                  <property name="text">
+                   <string>Espace</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="buttonRCroch">
+                  <property name="text">
+                   <string>]</string>
                   </property>
                  </widget>
                 </item>

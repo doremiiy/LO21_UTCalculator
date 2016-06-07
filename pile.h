@@ -22,6 +22,10 @@ class Memento;
 class CareTaker;
 class Controleur;
 
+/**
+   \class
+   \brief
+**/
 class PileException {
 private:
     QString info;
@@ -30,6 +34,10 @@ public:
     PileException(const QString& s) :info(s) {}
 };
 
+/**
+   \class
+   \brief
+**/
 class Item {
 private:
     friend class Memento;
@@ -43,6 +51,10 @@ public:
     Litterale& getLitterale() const { return L; }
 };
 
+/**
+   \class
+   \brief
+**/
 class Memento {
 private:
     friend class Controleur;
@@ -53,6 +65,10 @@ public:
     QVector<Item*> getState() const { return state; }
 };
 
+/**
+   \class
+   \brief
+**/
 class Pile:public QObject{
 private:
     Q_OBJECT
@@ -80,6 +96,11 @@ public:
 signals:
     void modificationEtat();
 };
+
+/**
+   \class
+   \brief
+**/
 class CareTaker {
 private:
     friend class Controleur;
@@ -99,6 +120,10 @@ public:
     QVector<Item*> redo();
 };
 
+/**
+   \class
+   \brief
+**/
 class Controleur:public QObject{
     Q_OBJECT
     friend class MainWindow;

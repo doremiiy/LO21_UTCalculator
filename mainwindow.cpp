@@ -1,3 +1,4 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -28,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vueVarValue->horizontalHeader()->setVisible(false);
     ui->vueVarValue->verticalHeader()->setVisible(false);
     ui->vueVarValue->horizontalHeader()->setStretchLastSection(true);
+    //Creation vueProgs
+    ui->vueProgs->setColumnCount(1);
+    ui->vueProgs->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->vueProgs->horizontalHeader()->setVisible(false);
+    ui->vueProgs->verticalHeader()->setVisible(false);
+    ui->vueProgs->horizontalHeader()->setStretchLastSection(true);
     //Creation du son
     player = new QMediaPlayer();
     player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.mp3")));
@@ -209,6 +216,15 @@ void MainWindow::on_buttonC_clicked(){
 }
 void MainWindow::on_buttonAC_clicked(){
     ui->commande->clear();
+}
+void MainWindow::on_buttonLCroch_clicked(){
+    ui->commande->insert("[");
+}
+void MainWindow::on_buttonRCroch_clicked(){
+    ui->commande->insert("]");
+}
+void MainWindow::on_buttonEsp_clicked(){
+    ui->commande->insert(" ");
 }
 void MainWindow::on_activeClavier_clicked(){
     if(ui->activeClavier->isChecked()){
@@ -401,13 +417,16 @@ void MainWindow::on_toutSupprimerProg_clicked(){
     controleur.Progs.clear();
     refreshProgs();
 }
+void MainWindow::on_vueProgs_itemDoubleClicked(QTableWidgetItem * item){
+
+}
 void MainWindow::refreshProgs(){
     //Set message
     ui->message->setText("Programme Enregistré");
     //Effacer tout
     ui->vueProgs->clear();
     //Mettre a jour de la vueVar
-    ui->vueVarId->setRowCount(controleur.Progs.count());
+    ui->vueProgs->setRowCount(controleur.Progs.count());
     unsigned int nb=0;
     for(QHash<QString,Programme*>::iterator It=controleur.Progs.begin(); It!=controleur.Progs.end();++It,nb++){
         ui->vueProgs->setItem(nb,0,new QTableWidgetItem(It.key()));

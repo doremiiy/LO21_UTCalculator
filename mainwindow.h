@@ -15,11 +15,18 @@ Ce fichier defini la fenetre graphique principale\n
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "pile.h"
 #include <QApplication>
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QShortcut>
+#include <QTableWidget>
+
+#include <QDialog>
+#include <QPlainTextEdit>
+#include <QHBoxLayout>
+#include <QPushButton>
+
+#include "pile.h"
 
 namespace Ui {
 class MainWindow;
@@ -138,6 +145,12 @@ public slots:
     void on_buttonDif_clicked();
     //! \brief Slot correspondant a l'appuis sur le bonton =<
     void on_buttonInf_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton [
+    void on_buttonLCroch_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton ]
+    void on_buttonRCroch_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton Espace
+    void on_buttonEsp_clicked();
     //buton commande
     //! \brief Slot correspondant a l'appuis sur le bonton C (Clear One)
     void on_buttonC_clicked();
@@ -168,6 +181,7 @@ public slots:
     void on_toutSupprimerProg_clicked();
     //! \brief Rafraichi l'affichage de l'onglet Programme
     void refreshProgs();
+    void on_vueProgs_itemDoubleClicked(QTableWidgetItem *item);
     //Controleur
     //! \brief Rafraichi l'affichage de l'onglet Calcul
     void refreshCalcul();

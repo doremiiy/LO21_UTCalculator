@@ -188,7 +188,7 @@ public:
 
 /**
    \class FabriqueLitterale
-   \brief Permet de crée n'importe quel objet heritant de la classe litterale
+   \brief Permet de crée n'importe quel objet heritant de la classe Litterale
 **/
 class FabriqueLitterale {
 private:

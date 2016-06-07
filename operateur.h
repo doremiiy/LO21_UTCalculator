@@ -25,7 +25,10 @@ public:
 
 /**
    \class Operateur
-   \brief
+   \brief Definit les fonctions qui s'applique au operateur
+
+    Lorsqu’un opérateur d’arité n est appliqué alors n éléments de la pile sont dépilés. Le premier argument de l’opérateur est alors le dernier dépilé, le 2e est l’avant dernier dépilé, le 3e est l’avant-avant dernier dépilé, etc. L’application d’un opérateur peut être restreinte à certains types de littérales. Lors de la tentative d’application d’un opérateur sur un type non prévu, les arguments ne sont pas dépilés et un message d’erreur est affiché pour l’utilisateur.
+
 **/
 class Operateur {
 private:
@@ -41,7 +44,7 @@ public:
 
 /**
    \class OperateurBinaire
-   \brief
+   \brief Operateur d'arité 2
 **/
 class OperateurBinaire : public Operateur {
 private:
@@ -58,7 +61,7 @@ public:
 
 /**
    \class OperateurUnaire
-   \brief
+   \brief Operateur d'arité 1
 **/
 class OperateurUnaire : public Operateur {
 private:
@@ -73,7 +76,7 @@ public:
 
 /**
    \class OperateurPile
-   \brief
+   \brief Operateur d'action sur la pile
 **/
 class OperateurPile : public Operateur {
 private:
@@ -85,7 +88,8 @@ public:
 
 /**
    \class OpPlus
-   \brief
+   \brief Opérateur binaire : addition
+
 **/
 class OpPlus : public OperateurBinaire {
 public:
@@ -96,7 +100,7 @@ public:
 
 /**
    \class OpMoins
-   \brief
+   \brief Opérateur binaire : soustraction
 **/
 class OpMoins : public OperateurBinaire {
 public:
@@ -107,7 +111,7 @@ public:
 
 /**
    \class OpFois
-   \brief
+   \brief Opérateur binaire : multiplication
 **/
 class OpFois : public OperateurBinaire {
 public:
@@ -118,7 +122,10 @@ public:
 
 /**
    \class OpDiviser
-   \brief
+   \brief Opérateur binaire : division.
+
+    Une tentative de division par zéro ne modifie pas la pile et affiche un message d’erreur à l’utilisateur.
+
 **/
 class OpDiviser : public OperateurBinaire {
 public:
@@ -129,7 +136,10 @@ public:
 
 /**
    \class OpDIV
-   \brief
+   \brief Opérateur binaire : division entière
+
+    Cette opération ne peut s’appliquer que sur des littérales entières.
+
 **/
 class OpDIV : public OperateurBinaire {
 public:
@@ -140,7 +150,10 @@ public:
 
 /**
    \class OpMOD
-   \brief
+   \brief Opérateur binaire : modulo (reste de la division entière).
+
+   Cette opération ne peut s’appliquer que sur des littérales entières.
+
 **/
 class OpMOD : public OperateurBinaire {
 public:
@@ -151,7 +164,10 @@ public:
 
 /**
    \class OpEVAL
-   \brief
+   \brief L’opérateur EVAL permet d’évaluer numériquement une littérale expression.
+
+   Si la littérale expression comprend au moins un atome qui ne correspond pas au nom d’une variable, l’évaluation n’a aucune effet et un message en informe l’utilisateur. Si la littérale expression comprend au moins un atome qui correspond à l’identificateur d’un programme, l’évaluation n’a aucun effet et un message d’erreur informe l’utilisateur. Si tous les atomes de la littérales expression sont des identificateurs de variables, l’expression est évaluée numériquement.
+
 **/
 class OpEVAL : public OperateurUnaire {
 public:
@@ -162,7 +178,10 @@ public:
 
 /**
    \class OpNEG
-   \brief
+   \brief Opérateur unaire : change le signe de la littérale
+
+    (transforme un nombre négatif en nombre positif et vice et versa). Par exemple 4 NEG renvoie -4.
+
 **/
 class OpNEG : public OperateurUnaire {
 public:
@@ -173,7 +192,8 @@ public:
 
 /**
    \class OpDUP
-   \brief
+   \brief Opérateur unaire : empile une nouvelle littérale identique à celle du sommet de la pile
+
 **/
 class OpDUP : public OperateurPile {
 public:
@@ -184,7 +204,7 @@ public:
 
 /**
    \class OpDROP
-   \brief
+   \brief Opérateur unaire : dépile la littérale au sommet de la pile
 **/
 class OpDROP : public OperateurPile {
 public:
@@ -195,7 +215,7 @@ public:
 
 /**
    \class OpSWAP
-   \brief
+   \brief Opérateur binaire : intervertit les deux derniers éléments empilés dans la pile
 **/
 class OpSWAP : public OperateurPile {
 public:
@@ -206,7 +226,8 @@ public:
 
 /**
    \class OpEGAL
-   \brief
+   \brief Opérateurs binaires pour le test égal
+
 **/
 class OpEGAL : public OperateurBinaire {
 public:
@@ -217,7 +238,7 @@ public:
 
 /**
    \class OpDIF
-   \brief
+   \brief Opérateurs binaires pour le test différent
 **/
 class OpDIF : public OperateurBinaire {
 public:
@@ -228,7 +249,7 @@ public:
 
 /**
    \class OpSTRICTINF
-   \brief
+   \brief Opérateur binaire pour le test strictement inférieur
 **/
 class OpSTRICTINF : public OperateurBinaire {
 public:
@@ -239,7 +260,7 @@ public:
 
 /**
    \class OpSTRICTSUP
-   \brief
+   \brief Opérateur binaire pour le test strictement supérieur
 **/
 class OpSTRICTSUP : public OperateurBinaire{
 public:
@@ -250,7 +271,7 @@ public:
 
 /**
    \class OpINF
-   \brief
+   \brief Opérateur binaire pour le test inférieur ou égal
 **/
 class OpINF : public OperateurBinaire {
 public:
@@ -261,7 +282,7 @@ public:
 
 /**
    \class OpSUP
-   \brief
+   \brief Opérateur binaire pour le test supérieur ou égal
 **/
 class OpSUP : public OperateurBinaire {
 public:
@@ -272,7 +293,7 @@ public:
 
 /**
    \class OpAND
-   \brief
+   \brief Opérateur binaire : ET logique.
 **/
 class OpAND : public OperateurBinaire {
 public:
@@ -283,7 +304,7 @@ public:
 
 /**
    \class OpOR
-   \brief
+   \brief Opérateur binaire : OU logique
 **/
 class OpOR : public OperateurBinaire {
 public:
@@ -294,7 +315,7 @@ public:
 
 /**
    \class OpNOT
-   \brief
+   \brief Opérateur unaire : NON logique
 **/
 class OpNOT : public OperateurUnaire {
 public:
@@ -305,7 +326,10 @@ public:
 
 /**
    \class OpNUM
-   \brief
+   \brief Opérateur unaire : renvoie le numérateur d’une littérale rationnelle
+
+    Appliquée à une littérale entière, cet opérateur renvoie la littérale inchangée. Provoque une erreur sur une littérale réelle ou complexe.
+
 **/
 class OpNUM : public OperateurUnaire {
 public:
@@ -316,7 +340,10 @@ public:
 
 /**
    \class OpDEN
-   \brief
+   \brief Opérateur unaire : renvoie le dénominateur d’une littérale rationnelle
+
+    Renvoie la littérale entière 1 lorsqu’il est appliqué sur une littérale entière. Provoque une erreur sur une littérale réelle ou complexe.
+
 **/
 class OpDEN : public OperateurUnaire {
 public:
@@ -327,7 +354,10 @@ public:
 
 /**
    \class OpDOLLAR
-   \brief
+   \brief Opérateur binaire : renvoie une littérale complexe
+
+    Les deux derniers éléments de la pile qui constitueront la partie réelle et la partie imaginaire du complexe.
+
 **/
 class OpDOLLAR : public OperateurBinaire {
 public:
@@ -338,7 +368,10 @@ public:
 
 /**
    \class OpRE
-   \brief
+   \brief Opérateur unaire : renvoie la partie réelle d’une littérale complexe
+
+    La partie réelle peut être une littérale entière, rationelle ou réelle. Appliqué à une littérale entière, rationelle ou réelle, cet opérateur renvoie la littérale inchangée.
+
 **/
 class OpRE : public OperateurUnaire {
 public:
@@ -349,7 +382,10 @@ public:
 
 /**
    \class OpIM
-   \brief
+   \brief Opérateur unaire : renvoie la partie iméginaire d’une littérale complexe
+
+    La partie iméginaire  peut être une littérale entière, rationelle ou réelle. Appliqué à une littérale entière, rationelle ou réelle, cet opérateur renvoie la littérale entière 0.
+
 **/
 class OpIM : public OperateurUnaire {
 public:
@@ -360,7 +396,7 @@ public:
 
 /**
    \class OpUNDO
-   \brief
+   \brief Rétablit l’état du calculateur avant la dernière opération
 **/
 class OpUNDO : public OperateurPile {
 public:
@@ -371,7 +407,7 @@ public:
 
 /**
    \class OpREDO
-   \brief
+   \brief Rétablit l’état du calculateur avant l’application de la dernière opération UNDO
 **/
 class OpREDO : public OperateurPile {
 public:
@@ -382,7 +418,7 @@ public:
 
 /**
    \class OpLASTOP
-   \brief
+   \brief Applique le dernier opérateur utilisé
 **/
 class OpLASTOP : public OperateurPile {
 public:
@@ -393,7 +429,7 @@ public:
 
 /**
    \class OpLASTARG
-   \brief
+   \brief Empile les littérales utilisées pour la dernière opération
 **/
 class OpLASTARG : public OperateurPile {
 public:
@@ -404,7 +440,7 @@ public:
 
 /**
    \class OpCLEAR
-   \brief
+   \brief Vide tous les éléments de la pile
 **/
 class OpCLEAR : public OperateurPile {
 public:
@@ -415,7 +451,14 @@ public:
 
 /**
    \class OpSTO
-   \brief
+   \brief L'opérateur binaire STO permet d'associer une littérale à un identificateur
+
+À toute littérale peut être associée un identificateur en utilisant l’opérateur binaire STO. Le premier argument est la littérale à stocker (qui peut être une littérale numérique, une littérale expression ou une littérale programme). Le deuxième est une littérale expression ne comportant qu’un atome (i.e. un atome entre guillemets). L’atome devient alors l’identificateur d’une variable s’il est associé à une littérale numérique ou l’identificateur d’un programme s’il est associé à une littérale programme.
+On ne peut pas utiliser un identificateur égal à un opérateur prédéfini. Une tentative dans ce sens provoque l’affichage d’un message d’erreur. Si l’identificateur utilisé correspondait déjà à une autre variable ou un autre programme, la variable ou le programme est ecrasé par cette nouvelle valeur.
+Quand un atome est utilisé sans guillemet :\n
+ - s’il est l’identicateur d’une variable, il est remplacé par la valeur de la littérale associée\n
+ - s’il est l’identificateur d’un programme, il provoque l’évaluation (l’exécution) du programme
+
 **/
 class OpSTO : public OperateurBinaire {
 public:
@@ -426,7 +469,7 @@ public:
 
 /**
    \class OpFORGET
-   \brief
+   \brief L’opérateur unaire FORGET permet d’effacer la variable ou le programme associé à l’atome proposé en argument
 **/
 class OpFORGET : public OperateurUnaire {
 public:
@@ -437,7 +480,10 @@ public:
 
 /**
    \class OpIFT
-   \brief
+   \brief Réalise un test logique
+
+   L’opérateur binaire IFT dépile 2 arguments. Le 1er (i.e. le dernier dépilé) est un test logique. Si la valeur de ce test est vrai, le 2e argument est évalué sinon il est abandonné.
+
 **/
 class OpIFT : public OperateurBinaire {
 public:
@@ -448,7 +494,7 @@ public:
 
 /**
    \class FabriqueOperateur
-   \brief
+   \brief Permet de crée n'importe quel objet heritant de la classe Operateur
 **/
 class FabriqueOperateur {
 private:
@@ -470,9 +516,13 @@ public:
     Operateur* fabriquer(const QString& s);
 };
 
+//! \brief Retrourne VRAI si la chaine de caratère passé en argument est un Operateur
 bool isOperateur(const QString& s);
 
+//! \brief Convertit un pointeur sur un Operateur en pointeur vers une OperateurBinaire
 OperateurBinaire* OperateurToOpBin(Operateur* Op);
+//! \brief Convertit un pointeur sur un Operateur en pointeur vers une OperateurUnaire
 OperateurUnaire* OperateurToOpUn(Operateur* Op);
+//! \brief Convertit un pointeur sur un Operateur en pointeur vers une OperateurPile
 OperateurPile* OperateurToOpPile(Operateur* Op);
 #endif

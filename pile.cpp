@@ -252,14 +252,14 @@ void Controleur::appliquerOperateur(Operateur * Op)
         }
         Litterale* l1 = &p.top();
         p.pop();
-        if(LitToProgramme(l1)!=nullptr && (/*Op->getIdOp()!="STO" &&*/ Op->getIdOp()!="IFT")){//empeche l'evaluation si l'operateur est STO
+        if(LitToProgramme(l1)!=nullptr && (Op->getIdOp()!="STO" && Op->getIdOp()!="IFT")){//empeche l'evaluation si l'operateur est STO
             LitToProgramme(l1)->eval();
             l1=&p.top();
             p.pop();
         }
         Litterale* l2 = &p.top();
         p.pop();
-        if(LitToProgramme(l2)!=nullptr && (/*Op->getIdOp()!="STO" &&*/ Op->getIdOp()!="IFT")){
+        if(LitToProgramme(l2)!=nullptr && (Op->getIdOp()!="STO" && Op->getIdOp()!="IFT")){
             LitToProgramme(l2)->eval();
             l2=&p.top();
             p.pop();
