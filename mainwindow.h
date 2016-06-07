@@ -6,15 +6,20 @@
 \brief  Interface Graphique
 
 Ce fichier defini la fenetre graphique principale\n
+
+\namespace Ui
+\brief Interface Graphique
+
 **/
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "pile.h"
 #include <QApplication>
 #include <QMainWindow>
-#include "pile.h"
 #include <QMediaPlayer>
+#include <QShortcut>
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +30,8 @@ class MainWindow;
    \brief Decrit la fenetre principale
 
    \todo Ajouter la vue des programme et la fenetre d'edition
+   \todo Remplacer Ctrl + O par Ctrl + Z et Ctrl+ P pr Crtl + Y
+
    **/
 class MainWindow : public QMainWindow
 {
@@ -72,43 +79,76 @@ public slots:
     //! \brief Slot correspondant a l'appuis sur le bonton Entrer
     void on_buttonEnter_clicked();
     //Operteur pile
+    //! \brief Slot correspondant a l'appuis sur le bonton LASTARG
     void on_buttonLastarg_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton DUP
     void on_buttonDup_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton DROP
     void on_buttonDrop_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton REDO
     void on_buttonRedo_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton  LASTOP
     void on_buttonLastop_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton UNDO
     void on_buttonUndo_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton SWAP
     void on_buttonSwap_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton CLEAR
     void on_buttonClear_clicked();
     //Calivier scienifique
+    //! \brief Slot correspondant a l'appuis sur le bonton IFT
     void on_buttonIft_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton DIV
     void on_buttonDiv_2_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton STO
     void on_buttonSto_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton NEG
     void on_buttonNeg_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton FORGET
     void on_buttonForget_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton EVAL
     void on_buttonEval_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton $
     void on_buttonComp_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton RE
     void on_buttonRe_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton DEN
     void on_buttonDen_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton NUM
     void on_buttonNum_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton IM
     void on_buttonIm_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton MOD
     void on_buttonMod_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton AND
     void on_buttonAnd_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton =
     void on_buttonEgal_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton >
     void on_buttonStricSup_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton OR
     void on_buttonOr_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton NOT
     void on_buttonNot_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton >=
     void on_buttonSup_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton <
     void on_buttonStricInf_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton !=
     void on_buttonDif_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton =<
     void on_buttonInf_clicked();
     //buton commande
+    //! \brief Slot correspondant a l'appuis sur le bonton C (Clear One)
     void on_buttonC_clicked();
+    //! \brief Slot correspondant a l'appuis sur le bonton AC (All Clear)
     void on_buttonAC_clicked();
     //Option
-    //! \brief Affiche ou Cache le clavier
+    //! \brief Affiche ou Cache le clavier Numerique
     void on_activeClavier_clicked();
+    //! \brief Affiche ou Cache le clavier Complet
     void on_activeClavComp_clicked();
+    //! \brief Affiche ou Cache le clavier des operateurs de la pile
     void on_activeOpPile_clicked();
     //! \brief Change le nombre d'element de la pile a afficher
     void on_taillePile_valueChanged();
@@ -123,9 +163,10 @@ public slots:
     //! \brief permet d'editer les programmes
     void on_modifierProg_clicked();
     //! \brief Supprime les programmes sélectionnées
-    void on_supprimerProg_clicked();
+    void on_suprimerProg_clicked();
     //! \brief Supprime toutes les programmes
     void on_toutSupprimerProg_clicked();
+    //! \brief Rafraichi l'affichage de l'onglet Programme
     void refreshProgs();
     //Controleur
     //! \brief Rafraichi l'affichage de l'onglet Calcul
@@ -134,10 +175,16 @@ public slots:
     void refreshVar();
     //! \brief Envois une commande au controleur
     void getNextCommande();
+    //! \brief Envois La commande undo au controleur grace au racourci Ctrl + O
+    void activeUndo();
+    //! \brief Envois La commande undo au controleur grace au racourci Ctrl + P
+    void activeRedo();
 private:
     Ui::MainWindow *ui;
     Controleur& controleur = Controleur::getInstance();
     QMediaPlayer *player;
+    QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+O"), this);
+    QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+P"), this);
 };
 
 #endif // MAINWINDOW_H

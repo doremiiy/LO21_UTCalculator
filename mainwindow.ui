@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>807</width>
-    <height>596</height>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>UTCalculette</string>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_12">
@@ -27,7 +30,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -115,7 +118,11 @@
           <item>
            <layout class="QHBoxLayout" name="Barre">
             <item>
-             <widget class="QLineEdit" name="commande"/>
+             <widget class="QLineEdit" name="commande">
+              <property name="echoMode">
+               <enum>QLineEdit::Normal</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="buttonC">
@@ -139,6 +146,13 @@
              <layout class="QHBoxLayout" name="ClavierComplet">
               <item>
                <layout class="QGridLayout" name="gridLayout_5">
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="buttonRe">
+                  <property name="text">
+                   <string>RE</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="3" column="0">
                  <widget class="QPushButton" name="buttonIft">
                   <property name="text">
@@ -160,24 +174,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="buttonNeg">
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="buttonMod">
                   <property name="text">
-                   <string>NEG</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QPushButton" name="buttonForget">
-                  <property name="text">
-                   <string>FORGET</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QPushButton" name="buttonEval">
-                  <property name="text">
-                   <string>EVAL</string>
+                   <string>MOD</string>
                   </property>
                  </widget>
                 </item>
@@ -188,24 +188,10 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="buttonRe">
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="buttonForget">
                   <property name="text">
-                   <string>RE</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QPushButton" name="buttonDen">
-                  <property name="text">
-                   <string>DEN</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="buttonNum">
-                  <property name="text">
-                   <string>NUM</string>
+                   <string>FORGET</string>
                   </property>
                  </widget>
                 </item>
@@ -216,10 +202,31 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="buttonMod">
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="buttonNum">
                   <property name="text">
-                   <string>MOD</string>
+                   <string>NUM</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="buttonEval">
+                  <property name="text">
+                   <string>EVAL</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="buttonDen">
+                  <property name="text">
+                   <string>DEN</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="buttonNeg">
+                  <property name="text">
+                   <string>NEG</string>
                   </property>
                  </widget>
                 </item>

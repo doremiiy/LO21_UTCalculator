@@ -11,6 +11,10 @@ class OperateurPile;
 
 using namespace std;
 
+/**
+   \class OperateurException
+   \brief Permet de lancer des message d'erreur lié au Operateur
+**/
 class OperateurException {
 private:
     QString info;
@@ -19,6 +23,10 @@ public:
     OperateurException(const QString& s) :info(s) {}
 };
 
+/**
+   \class Operateur
+   \brief
+**/
 class Operateur {
 private:
     QString idOp;
@@ -31,6 +39,10 @@ public:
     const QString& getIdOp() const { return  idOp; }
 };
 
+/**
+   \class OperateurBinaire
+   \brief
+**/
 class OperateurBinaire : public Operateur {
 private:
     Litterale* l1;
@@ -44,6 +56,10 @@ public:
     Litterale* getLitterale2() const { return l2; }
 };
 
+/**
+   \class OperateurUnaire
+   \brief
+**/
 class OperateurUnaire : public Operateur {
 private:
     Litterale* l;
@@ -55,6 +71,10 @@ public:
     Litterale* getLitterale() const { return l; }
 };
 
+/**
+   \class OperateurPile
+   \brief
+**/
 class OperateurPile : public Operateur {
 private:
     static unsigned int arite;
@@ -63,6 +83,10 @@ public:
     static unsigned int getArite() { return arite; }
 };
 
+/**
+   \class OpPlus
+   \brief
+**/
 class OpPlus : public OperateurBinaire {
 public:
     OpPlus(const QString& s):OperateurBinaire(s){}
@@ -70,6 +94,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpMoins
+   \brief
+**/
 class OpMoins : public OperateurBinaire {
 public:
     OpMoins(const QString& s) :OperateurBinaire(s) {}
@@ -77,6 +105,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpFois
+   \brief
+**/
 class OpFois : public OperateurBinaire {
 public:
     OpFois(const QString& s) :OperateurBinaire(s) {}
@@ -84,6 +116,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDiviser
+   \brief
+**/
 class OpDiviser : public OperateurBinaire {
 public:
     OpDiviser(const QString& s) :OperateurBinaire(s) {}
@@ -91,6 +127,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDIV
+   \brief
+**/
 class OpDIV : public OperateurBinaire {
 public:
     OpDIV(const QString& s) :OperateurBinaire(s) {}
@@ -98,6 +138,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpMOD
+   \brief
+**/
 class OpMOD : public OperateurBinaire {
 public:
     OpMOD(const QString& s) :OperateurBinaire(s) {}
@@ -105,6 +149,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpEVAL
+   \brief
+**/
 class OpEVAL : public OperateurUnaire {
 public:
     OpEVAL(const QString& s) :OperateurUnaire(s) {}
@@ -112,6 +160,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpNEG
+   \brief
+**/
 class OpNEG : public OperateurUnaire {
 public:
     OpNEG(const QString& s):OperateurUnaire(s){}
@@ -119,6 +171,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDUP
+   \brief
+**/
 class OpDUP : public OperateurPile {
 public:
     OpDUP(const QString& s):OperateurPile(s){}
@@ -126,6 +182,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDROP
+   \brief
+**/
 class OpDROP : public OperateurPile {
 public:
     OpDROP(const QString& s) :OperateurPile(s) {}
@@ -133,6 +193,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpSWAP
+   \brief
+**/
 class OpSWAP : public OperateurPile {
 public:
     OpSWAP(const QString& s) :OperateurPile(s) {}
@@ -140,6 +204,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpEGAL
+   \brief
+**/
 class OpEGAL : public OperateurBinaire {
 public:
     OpEGAL(const QString& s) :OperateurBinaire(s) {}
@@ -147,6 +215,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDIF
+   \brief
+**/
 class OpDIF : public OperateurBinaire {
 public:
     OpDIF(const QString& s) :OperateurBinaire(s) {}
@@ -154,6 +226,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpSTRICTINF
+   \brief
+**/
 class OpSTRICTINF : public OperateurBinaire {
 public:
     OpSTRICTINF(const QString& s) :OperateurBinaire(s) {}
@@ -161,6 +237,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpSTRICTSUP
+   \brief
+**/
 class OpSTRICTSUP : public OperateurBinaire{
 public:
     OpSTRICTSUP(const QString& s) :OperateurBinaire(s) {}
@@ -168,6 +248,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpINF
+   \brief
+**/
 class OpINF : public OperateurBinaire {
 public:
     OpINF(const QString& s) :OperateurBinaire(s) {}
@@ -175,6 +259,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpSUP
+   \brief
+**/
 class OpSUP : public OperateurBinaire {
 public:
     OpSUP(const QString& s) :OperateurBinaire(s) {}
@@ -182,6 +270,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpAND
+   \brief
+**/
 class OpAND : public OperateurBinaire {
 public:
     OpAND(const QString& s) :OperateurBinaire(s) {}
@@ -189,6 +281,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpOR
+   \brief
+**/
 class OpOR : public OperateurBinaire {
 public:
     OpOR(const QString& s) :OperateurBinaire(s) {}
@@ -196,6 +292,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpNOT
+   \brief
+**/
 class OpNOT : public OperateurUnaire {
 public:
     OpNOT(const QString& s) :OperateurUnaire(s) {}
@@ -203,6 +303,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpNUM
+   \brief
+**/
 class OpNUM : public OperateurUnaire {
 public:
     OpNUM(const QString& s) :OperateurUnaire(s) {}
@@ -210,6 +314,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDEN
+   \brief
+**/
 class OpDEN : public OperateurUnaire {
 public:
     OpDEN(const QString& s) :OperateurUnaire(s) {}
@@ -217,6 +325,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpDOLLAR
+   \brief
+**/
 class OpDOLLAR : public OperateurBinaire {
 public:
     OpDOLLAR(const QString& s) :OperateurBinaire(s) {}
@@ -224,6 +336,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpRE
+   \brief
+**/
 class OpRE : public OperateurUnaire {
 public:
     OpRE(const QString& s) :OperateurUnaire(s) {}
@@ -231,6 +347,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpIM
+   \brief
+**/
 class OpIM : public OperateurUnaire {
 public:
     OpIM(const QString& s) :OperateurUnaire(s) {}
@@ -238,6 +358,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpUNDO
+   \brief
+**/
 class OpUNDO : public OperateurPile {
 public:
     OpUNDO(const QString& s) :OperateurPile(s) {}
@@ -245,6 +369,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpREDO
+   \brief
+**/
 class OpREDO : public OperateurPile {
 public:
     OpREDO(const QString& s) :OperateurPile(s) {}
@@ -252,6 +380,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpLASTOP
+   \brief
+**/
 class OpLASTOP : public OperateurPile {
 public:
     OpLASTOP(const QString& s) :OperateurPile(s) {}
@@ -259,6 +391,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpLASTARG
+   \brief
+**/
 class OpLASTARG : public OperateurPile {
 public:
     OpLASTARG(const QString& s) :OperateurPile(s) {}
@@ -266,6 +402,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpCLEAR
+   \brief
+**/
 class OpCLEAR : public OperateurPile {
 public:
     OpCLEAR(const QString& s) :OperateurPile(s) {}
@@ -273,6 +413,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpSTO
+   \brief
+**/
 class OpSTO : public OperateurBinaire {
 public:
     OpSTO(const QString& s) :OperateurBinaire(s) {}
@@ -280,6 +424,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpFORGET
+   \brief
+**/
 class OpFORGET : public OperateurUnaire {
 public:
     OpFORGET(const QString& s) :OperateurUnaire(s) {}
@@ -287,6 +435,10 @@ public:
     Litterale* faireOperation();
 };
 
+/**
+   \class OpIFT
+   \brief
+**/
 class OpIFT : public OperateurBinaire {
 public:
     OpIFT(const QString& s) :OperateurBinaire(s) {}
@@ -294,7 +446,10 @@ public:
     Litterale* faireOperation();
 };
 
-
+/**
+   \class FabriqueOperateur
+   \brief
+**/
 class FabriqueOperateur {
 private:
     QVector<Operateur*> OpTab;

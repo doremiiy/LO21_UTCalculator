@@ -40,8 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
     connect(&controleur,SIGNAL(modificationProgs()),this,SLOT(refreshProgs()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
-    //connect(QKeySequence(Qt::CTRL + Qt::Key_P)),SIGNAL(returnPressed()),,this,controleur.commande("UNDO");)
-    //connect(&controleur,SIGNAL(pressedOperator()),this,SLOT(getNextCommande()));
+    connect(shortcut1, SIGNAL(activated()), this, SLOT(activeUndo()));
+    connect(shortcut2, SIGNAL(activated()), this, SLOT(activeRedo()));
     //initialisation
     refreshVar();
     refreshProgs();
@@ -56,6 +56,13 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+//CTRL + O : Undo
+void MainWindow::activeUndo(){
+    controleur.commande("UNDO");
+}
+void MainWindow::activeRedo(){
+    controleur.commande("REDO");
 }
 //clavier
 void MainWindow::on_button0_clicked(){
@@ -383,7 +390,7 @@ void MainWindow::on_modifierProg_clicked(){
         //ouvrir un fenntre d'edition
 }
 
-void MainWindow::on_supprimerProg_clicked(){
+void MainWindow::on_suprimerProg_clicked(){
     QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
     for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
         controleur.eraseProg((*It)->text());
