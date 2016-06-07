@@ -1551,8 +1551,8 @@ Litterale * OpSTO::faireOperation()
                 Controleur::getInstance().addProg(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToProgramme(l1));
         }
     }
-    throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
     return nullptr;
+    throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
 }
 
 OpDIV* OpDIV::Clone(){

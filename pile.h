@@ -133,6 +133,7 @@ public:
     //Programme* getProg(const QString& s);
 signals:
     void modificationVar();
+    void modificationProgs();
     //void pressedOperator();
 };
 

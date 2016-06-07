@@ -39,10 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //conection des signaux
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refreshCalcul()));
     connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
+    connect(&controleur,SIGNAL(modificationProgs()),this,SLOT(refreshProgs()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
     //connect(&controleur,SIGNAL(pressedOperator()),this,SLOT(getNextCommande()));
     //initialisation
     refreshVar();
+    refreshProgs();
     ui->commande->setFocus();
     on_activeClavier_clicked();
     on_taillePile_valueChanged();
@@ -209,11 +211,16 @@ void MainWindow::refreshVar(){//Mettre a jour de la vueVar
 }
 //Programme
 void MainWindow::on_modifierProg_clicked(){
-
+    QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
+    for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
+        //ouvrir un fenntre d'edition
 }
 
 void MainWindow::on_supprimerProg_clicked(){
-
+    QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
+    for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
+        controleur.eraseProg((*It)->text());
+    refreshProgs();
 }
 
 void MainWindow::on_toutSupprimerProg_clicked(){
@@ -221,7 +228,17 @@ void MainWindow::on_toutSupprimerProg_clicked(){
     refreshProgs();
 }
 void MainWindow::refreshProgs(){
-
+    //Set message
+    ui->message->setText("Programme Enregistré");
+    //Effacer tout
+    ui->vueProgs->clear();
+    //Mettre a jour de la vueVar
+    ui->vueVarId->setRowCount(controleur.Progs.count());
+    unsigned int nb=0;
+    for(QHash<QString,Programme*>::iterator It=controleur.Progs.begin(); It!=controleur.Progs.end();++It,nb++){
+        ui->vueProgs->setItem(nb,0,new QTableWidgetItem(It.key()));
+    }
+    ui->vueProgs->setFixedHeight(5*ui->vueProgs->rowHeight(0)+2);
 }
 
 void MainWindow::son(){

@@ -278,7 +278,7 @@ void Controleur::appliquerOperateur(Operateur * Op)
             if(Op->getIdOp()!="STO"){
                 if (res != nullptr)
                     p.push(*res);
-                //else throw OperateurException("Erreur ");
+                else throw OperateurException("Erreur ");
             }
             return;
         }
@@ -348,16 +348,6 @@ void Controleur::eraseVar(const QString & s)
         modificationVar();
 }
 
-/*LitteraleNumeric * Controleur::getVar(const string & s)
-{
-    FabriqueLitterale& f = FabriqueLitterale::getInstance();
-    map<string, string>::const_iterator It = Var.find(s);
-    if (It == Var.end())
-        throw PileException("Erreur : variable inconnue");
-    else
-        return f.fabriquerLitNum((*It).second);
-}*/
-
 void Controleur::addProg(const QString& s1,Programme* l){
     QMap<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
@@ -369,13 +359,13 @@ void Controleur::addProg(const QString& s1,Programme* l){
     if(It2!=Progs.end())
         Progs.erase(It2);
     Progs.insert(s1,l);
-    //ajouter signal ?
+    modificationProgs();
 }
 
 void Controleur::eraseProg(const QString& s){
     QHash<QString,Programme*>::iterator It=Progs.find(s);
     if(It!=Progs.end())
         Progs.erase(It);
-        modificationVar();
+        modificationProgs();
 }
 
