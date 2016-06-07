@@ -211,8 +211,8 @@ void MainWindow::refreshVar(){//Mettre a jour de la vueVar
 }
 //Programme
 void MainWindow::on_modifierProg_clicked(){
-    QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
-    for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
+    //QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
+    //for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
         //ouvrir un fenntre d'edition
 }
 
