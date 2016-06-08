@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>beep.wav</file>
-        <file>context.xml</file>
     </qresource>
 </RCC>

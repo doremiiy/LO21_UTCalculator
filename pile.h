@@ -74,6 +74,7 @@ private:
     Q_OBJECT
     friend class MainWindow;
     friend class Controleur;
+    friend class Xml_Dom;
 
     QVector<Item*> itTab;
     unsigned int nbAffiche;

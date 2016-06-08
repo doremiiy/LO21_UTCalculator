@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     //restauration du contexte
-    test->saveContext();
+    test->retreiveContext();
     //Creation vuePile
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //destructeur
 MainWindow::~MainWindow()
 {
-    //test->saveContext();
+    test->saveContext();
     delete ui;
 }
 //CTRL + O : Undo

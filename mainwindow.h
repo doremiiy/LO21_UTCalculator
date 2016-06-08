@@ -40,7 +40,15 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    friend class Xml_Dom;
+private:
+    Ui::MainWindow *ui;
+    Controleur& controleur = Controleur::getInstance();
+    QSound *player;
+    QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+O"), this);
+    QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+P"), this);
+    ProgsEdit *fen;
+    Xml_Dom *test=new Xml_Dom;
 public:
      //! \brief Contructeur par defaut
     explicit MainWindow(QWidget *parent = 0);
@@ -189,14 +197,6 @@ public slots:
     //! \brief Envois La commande undo au controleur grace au racourci Ctrl + P
     void activeRedo();
     void on_commande_textChanged();
-private:
-    Ui::MainWindow *ui;
-    Controleur& controleur = Controleur::getInstance();
-    QSound *player;
-    QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+O"), this);
-    QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+P"), this);
-    ProgsEdit *fen;
-    Xml_Dom *test=new Xml_Dom;
 };
 
 #endif // MAINWINDOW_H
