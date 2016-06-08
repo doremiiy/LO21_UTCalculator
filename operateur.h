@@ -518,6 +518,8 @@ public:
 
 //! \brief Retrourne VRAI si la chaine de caratère passé en argument est un Operateur
 bool isOperateur(const QString& s);
+//! \brief Retrourne VRAI si la fin de la chaine de caratère passé en argument est un Operateur
+bool endIsOperateur(const QString& s);
 
 //! \brief Convertit un pointeur sur un Operateur en pointeur vers une OperateurBinaire
 OperateurBinaire* OperateurToOpBin(Operateur* Op);

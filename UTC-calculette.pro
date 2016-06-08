@@ -5,15 +5,21 @@ SOURCES += \
     litterale.cpp \
     operateur.cpp \
     pile.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    progsedit.cpp
 
 HEADERS += \
     litterale.h \
     operateur.h \
     pile.h \
-    mainwindow.h
+    mainwindow.h \
+    progsedit.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    progsedit.ui
 
 DISTFILES +=
+
+RESOURCES += \
+    sonido.qrc

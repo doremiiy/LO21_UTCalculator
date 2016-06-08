@@ -15,7 +15,7 @@
 using namespace std;
 
 class Operateur;
-class PileException;
+class ComputerException;
 class Item;
 class Pile;
 class Memento;
@@ -26,12 +26,12 @@ class Controleur;
    \class
    \brief
 **/
-class PileException {
+class ComputerException {
 private:
     QString info;
 public:
     QString getInfo() const { return info; }
-    PileException(const QString& s) :info(s) {}
+    ComputerException(const QString& s) :info(s) {}
 };
 
 /**
@@ -127,6 +127,7 @@ public:
 class Controleur:public QObject{
     Q_OBJECT
     friend class MainWindow;
+    friend class ProgsEdit;
     friend class Expression;
 private:
     Pile& p;
@@ -157,9 +158,7 @@ public:
     void eraseProg(const QString& s);
     //Programme* getProg(const QString& s);
 signals:
-    void modificationVar();
-    void modificationProgs();
-    //void pressedOperator();
+    void modification();
 };
 
 #endif

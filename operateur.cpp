@@ -1,5 +1,3 @@
-
-#include "Operateur.h"
 #include "Pile.h"
 
 const QMap<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
@@ -13,6 +11,25 @@ bool isOperateur(const QString & s)
     QMap<QString, unsigned int>::const_iterator It;
     for (It = Operateur::listeOperateurs.begin(); It != Operateur::listeOperateurs.end(); ++It)
         if (s == It.key()/*->first*/) return true;
+    return false;
+}
+bool endIsOperateur(const QString& s){
+    unsigned int nbCrochet=0,nbGuillemet=0;
+    for(int i=0;i<s.size();i++){
+        if(s[i]=='[') nbCrochet++;
+        if(s[i]==']') nbCrochet--;
+        if(s[i]=='\'') nbGuillemet++;
+    }
+    if((nbCrochet==0) && nbGuillemet%2==0){
+        int i=s.length()-1;
+        QString op="";
+        while(i>=0 && s[i]!=' '){
+            op.push_front(s[i]);
+            i--;
+        }
+        if(isOperateur(op))
+            return true;
+    }
     return false;
 }
 
@@ -1024,7 +1041,7 @@ Litterale * OpDUP::faireOperation()
         res = f.fabriquerLitterale(*l);
         return res;
     }
-    throw PileException("Erreur : La pile est vide");
+    throw ComputerException("Erreur : La pile est vide");
 }
 
 OpDROP * OpDROP::Clone()
@@ -1039,7 +1056,7 @@ Litterale * OpDROP::faireOperation()
         p.pop();
         return nullptr;
     }
-    throw PileException("Erreur : La pile est vide");
+    throw ComputerException("Erreur : La pile est vide");
 }
 
 OpSWAP * OpSWAP::Clone()
@@ -1060,7 +1077,7 @@ Litterale * OpSWAP::faireOperation()
         p.push(*l2);
         return nullptr;
     }
-    throw PileException("Erreur : Impossible d'appliquer l'operateur SWAP");
+    throw ComputerException("Erreur : Impossible d'appliquer l'operateur SWAP");
 }
 
 OpEGAL * OpEGAL::Clone()
@@ -1544,15 +1561,16 @@ Litterale * OpSTO::faireOperation()
             if(isAtome(supprimerGuillemetsExpression(LitToExpression(l2)->toString())))
                 Controleur::getInstance().addVar(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToLitNum(l1));
         }
+        return nullptr;
     }
     if(isProgramme(l1->toString())){
         if(isExpression(l2->toString())){
             if(isAtome(supprimerGuillemetsExpression(LitToExpression(l2)->toString())))
                 Controleur::getInstance().addProg(supprimerGuillemetsExpression(LitToExpression(l2)->toString()),LitToProgramme(l1));
         }
+        return nullptr;
     }
-    return nullptr;
-    throw OperateurException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
+    throw ComputerException ("Erreur : Impossible d'appliquer l'opérateur sur ces litterales");
 }
 
 OpDIV* OpDIV::Clone(){

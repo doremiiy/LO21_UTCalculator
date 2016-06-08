@@ -36,16 +36,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->vueProgs->verticalHeader()->setVisible(false);
     ui->vueProgs->horizontalHeader()->setStretchLastSection(true);
     //Creation du son
-    player = new QMediaPlayer();
-    player->setMedia(QMediaContent(QUrl::fromLocalFile("beep.mp3")));
-    player->setVolume(50);
+    player = new QSound(":/beep.wav",this);
     //Paramtre de Message
     ui->message->setStyleSheet("background: cyan; color: black");
     ui->message->setReadOnly(true);
     //conection des signaux
     connect(&P,SIGNAL(modificationEtat()),this,SLOT(refreshCalcul()));
-    connect(&controleur,SIGNAL(modificationVar()),this,SLOT(refreshVar()));
-    connect(&controleur,SIGNAL(modificationProgs()),this,SLOT(refreshProgs()));
+    connect(&controleur,SIGNAL(modification()),this,SLOT(refreshVar()));
+    connect(&controleur,SIGNAL(modification()),this,SLOT(refreshProgs()));
     connect(ui->commande,SIGNAL(returnPressed()),this,SLOT(getNextCommande()));
     connect(shortcut1, SIGNAL(activated()), this, SLOT(activeUndo()));
     connect(shortcut2, SIGNAL(activated()), this, SLOT(activeRedo()));
@@ -58,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     on_activeOpPile_clicked();//on cache le clavier operateur
     on_taillePile_valueChanged();
     ui->message->setText("Bonjour");
+    fen=new ProgsEdit(this);
 }
 //destructeur
 MainWindow::~MainWindow()
@@ -104,19 +103,15 @@ void MainWindow::on_button9_clicked(){
 }
 void MainWindow::on_buttonPlus_clicked(){
     ui->commande->insert(" +");
-    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonMoins_clicked(){
     ui->commande->insert(" -");
-    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonFois_clicked(){
     ui->commande->insert(" *");
-    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonDiv_clicked(){
     ui->commande->insert(" /");
-    ui->commande->returnPressed();
 }
 void MainWindow::on_buttonPoint_clicked(){
     ui->commande->insert(".");
@@ -209,7 +204,7 @@ void MainWindow::on_buttonDif_clicked(){
     ui->commande->insert(" !=");
 }
 void MainWindow::on_buttonInf_clicked(){
-    ui->commande->insert(" =<");
+    ui->commande->insert(" <=");
 }
 void MainWindow::on_buttonC_clicked(){
     ui->commande->backspace();
@@ -287,6 +282,9 @@ void MainWindow::on_activeClavComp_clicked(){
         ui->buttonStricInf->show();
         ui->buttonDif->show();
         ui->buttonInf->show();
+        ui->buttonLCroch->show();
+        ui->buttonRCroch->show();
+        ui->buttonEsp->show();
     }
     else{
         ui->buttonIft->hide();
@@ -310,7 +308,9 @@ void MainWindow::on_activeClavComp_clicked(){
         ui->buttonStricInf->hide();
         ui->buttonDif->hide();
         ui->buttonInf->hide();
-
+        ui->buttonLCroch->hide();
+        ui->buttonRCroch->hide();
+        ui->buttonEsp->hide();
     }
 }
 void MainWindow::on_activeOpPile_clicked(){
@@ -384,7 +384,7 @@ void MainWindow::on_toutSupprimerVar_clicked(){
 }
 void MainWindow::refreshVar(){//Mettre a jour de la vueVar
     //Set message
-    ui->message->setText("Valeur Enregistrée");
+    ui->message->setText("Enregistré");
     //Effacer tout
     ui->vueVarId->clear();
     ui->vueVarValue->clear();
@@ -400,12 +400,6 @@ void MainWindow::refreshVar(){//Mettre a jour de la vueVar
     ui->vueVarValue->setFixedHeight(5*ui->vueVarValue->rowHeight(0)+2);
 }
 //Programme
-void MainWindow::on_modifierProg_clicked(){
-    //QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
-    //for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
-        //ouvrir un fenntre d'edition
-}
-
 void MainWindow::on_suprimerProg_clicked(){
     QList<QTableWidgetItem *> items=ui->vueProgs->selectedItems();
     for(QList<QTableWidgetItem *>::iterator It=items.begin(); It!=items.end();++It)
@@ -417,12 +411,9 @@ void MainWindow::on_toutSupprimerProg_clicked(){
     controleur.Progs.clear();
     refreshProgs();
 }
-void MainWindow::on_vueProgs_itemDoubleClicked(QTableWidgetItem * item){
-
-}
 void MainWindow::refreshProgs(){
     //Set message
-    ui->message->setText("Programme Enregistré");
+    ui->message->setText("Enregistré");
     //Effacer tout
     ui->vueProgs->clear();
     //Mettre a jour de la vueVar
@@ -433,7 +424,14 @@ void MainWindow::refreshProgs(){
     }
     ui->vueProgs->setFixedHeight(5*ui->vueProgs->rowHeight(0)+2);
 }
-
+//ProgEdit
+void MainWindow::on_vueProgs_itemDoubleClicked(QTableWidgetItem * item){
+    QHash<QString,Programme*>::iterator It=controleur.Progs.find(item->text());
+    fen->setText(It.value()->toString());
+    fen->setlabel(It.key());
+    fen->show();
+}
+//SON
 void MainWindow::son(){
     if(ui->activeSon->isChecked()) player->play();
 }
@@ -450,6 +448,9 @@ void MainWindow::refreshCalcul(){//Mettre a jour de la vuePile
     for(QVector<Item*>::iterator It=P.itTab.begin(); It!=P.itTab.end() && nb<=P.getNbToAffiche();++It,++nb)
         ui->vuePile->item(P.getNbToAffiche()-nb,0)->setText((*It)->getLitterale().toString());
 }
+void MainWindow::on_commande_textChanged(){
+    if(endIsOperateur(ui->commande->text())) getNextCommande();
+}
 
 void MainWindow::getNextCommande(){
     QString c = ui->commande->text();
@@ -457,7 +458,5 @@ void MainWindow::getNextCommande(){
         controleur.commande(c);
         ui->commande->clear();
     }
-    catch (LitteraleException e) { ui->message->setText(e.getInfo());son(); }
-    catch (OperateurException o) { ui->message->setText(o.getInfo()); son(); }
-    catch (PileException p) { ui->message->setText(p.getInfo()); son(); }
+    catch (ComputerException e) { ui->message->setText(e.getInfo());son(); }
 }

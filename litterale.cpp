@@ -1,6 +1,5 @@
 
-#include "litterale.h"
-#include "Operateur.h"
+#include "pile.h"
 
 Entier * Entier::Clone() const
 {
@@ -101,7 +100,7 @@ bool isRationnel(const QString & s)
 
 void Rationnel::simplifier()
 {
-    if (denominateur == 0) throw LitteraleException("Erreur : Dénominateur nul");
+    if (denominateur == 0) throw ComputerException("Erreur : Dénominateur nul");
     int a = numerateur;
     int b = denominateur;
     if (a < 0) a = -a;
@@ -246,7 +245,7 @@ void FabriqueLitterale::supprimer(Litterale * l)
         ++It;
         i++;
     }
-    if (i == (unsigned int)LitTab.size()) throw LitteraleException("Erreur : Element inconnu");
+    if (i == (unsigned int)LitTab.size()) throw ComputerException("Erreur : Element inconnu");
     /*if (LitToComp(l) != nullptr) {
         supprimer(LitToComp(l)->getPReel());
         supprimer(LitToComp(l)->getPIm());
@@ -278,7 +277,7 @@ Litterale * FabriqueLitterale::fabriquerLitterale(const QString & s)
         L=fabriquerProgramme(s);
         return L;
     }
-    throw LitteraleException("Erreur : pas de litterale correspondant");
+    throw ComputerException("Erreur : pas de litterale correspondant");
 }
 
 Atome * FabriqueLitterale::fabriquerAtome(const QString & s)
@@ -324,7 +323,7 @@ LitteraleNumeric * FabriqueLitterale::fabriquerLitNum(const QString & s)
     if (isRationnel(s)) {
         return fabriquer/*Rationnel*/(NumerateurFromStr(s), DenominateurFromStr(s));
     }
-    throw LitteraleException("Erreur: L'argument n'est pas valide");
+    throw ComputerException("Erreur: L'argument n'est pas valide");
 }
 
 Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
@@ -333,7 +332,7 @@ Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
     for(i=0;i<s.length();i++){
         if (s[i] == '$') pos = i;
     }
-    if (pos == s.length()) throw LitteraleException("Erreur : Impossible de fabriquer ce complexe");
+    if (pos == s.length()) throw ComputerException("Erreur : Impossible de fabriquer ce complexe");
     if (pos != s.length()) {
         LitteraleNumeric* pRe = fabriquerLitNum(s.rightRef(pos).toString());
         LitteraleNumeric* pIm = fabriquerLitNum(s.leftRef(pos + 1).toString());
@@ -350,7 +349,7 @@ Litterale * FabriqueLitterale::fabriquerComplexe(const QString & s)
             return c;
         }
     }
-    throw LitteraleException("Erreur: L'argument n'est pas valide");
+    throw ComputerException("Erreur: L'argument n'est pas valide");
 }
 
 Entier * FabriqueLitterale::fabriquer(const Entier & e)
@@ -434,7 +433,7 @@ Atome * FabriqueLitterale::fabriquerAtome(Atome & a)
 
 LitteraleNumeric * FabriqueLitterale::fabriquer/*Rationnel*/(int n, int d)
 {
-    if (d == 0) throw LitteraleException("Erreur : denominateur nul");
+    if (d == 0) throw ComputerException("Erreur : denominateur nul");
     Rationnel* r = new Rationnel(n, d);
     r->simplifier();
     if (r->getDenominateur() == 1) {
@@ -467,7 +466,7 @@ int NumerateurFromStr(const QString & s)
         while (s[i] != '/') i++;
         return s.rightRef(i).toInt();
     }
-    throw LitteraleException("Erreur : L'argument n'est pas un rationelle");
+    throw ComputerException("Erreur : L'argument n'est pas un rationelle");
 }
 
 int DenominateurFromStr(const QString & s)
@@ -477,7 +476,7 @@ int DenominateurFromStr(const QString & s)
         while (s[i] != '/') i++;
         return s.leftRef(i + 1).toInt();
     }
-    throw LitteraleException("Erreur : L'argument n'est pas un rationelle");
+    throw ComputerException("Erreur : L'argument n'est pas un rationelle");
 }
 
 
@@ -513,7 +512,7 @@ bool LitteraleNumeric::LitteraleNumeriquePositive(LitteraleNumeric* ln) const
             return true;
         return false;
     }
-    throw LitteraleException("Erreur");
+    throw ComputerException("Erreur");
 }
 
 bool LitteraleNumeric::LitteraleNumeriqueNegative(LitteraleNumeric * ln) const
@@ -533,7 +532,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNegative(LitteraleNumeric * ln) const
             return true;
         return false;
     }
-    throw LitteraleException("Erreur : L'argument n'est pas une litteral numérique");
+    throw ComputerException("Erreur : L'argument n'est pas une litteral numérique");
 }
 
 bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
@@ -553,7 +552,7 @@ bool LitteraleNumeric::LitteraleNumeriqueNulle(LitteraleNumeric * ln) const
             return true;
         return false;
     }
-    throw LitteraleException("Erreur: L'argument n'est pas unne litteral numérique");
+    throw ComputerException("Erreur: L'argument n'est pas unne litteral numérique");
 }
 
 Litterale* Expression::eval() const {
@@ -659,7 +658,7 @@ Litterale* Expression::eval() const {
         Expression* ss=f.fabriquerExpression(s);
         return ss->eval();
     }
-    throw LitteraleException("Erreur: Impossible d'évaluer cette expression");
+    throw ComputerException("Erreur: Impossible d'évaluer cette expression");
 }
 
 bool isExpression(const QString & s)

@@ -17,15 +17,11 @@ Ce fichier defini la fenetre graphique principale\n
 
 #include <QApplication>
 #include <QMainWindow>
-#include <QMediaPlayer>
+#include <QSound>
 #include <QShortcut>
 #include <QTableWidget>
 
-#include <QDialog>
-#include <QPlainTextEdit>
-#include <QHBoxLayout>
-#include <QPushButton>
-
+#include "progsedit.h"
 #include "pile.h"
 
 namespace Ui {
@@ -173,8 +169,6 @@ public slots:
     //! \brief Supprime toutes les variable
     void on_toutSupprimerVar_clicked();
     //Programme
-    //! \brief permet d'editer les programmes
-    void on_modifierProg_clicked();
     //! \brief Supprime les programmes sélectionnées
     void on_suprimerProg_clicked();
     //! \brief Supprime toutes les programmes
@@ -193,12 +187,14 @@ public slots:
     void activeUndo();
     //! \brief Envois La commande undo au controleur grace au racourci Ctrl + P
     void activeRedo();
+    void on_commande_textChanged();
 private:
     Ui::MainWindow *ui;
     Controleur& controleur = Controleur::getInstance();
-    QMediaPlayer *player;
+    QSound *player;
     QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+O"), this);
     QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+P"), this);
+    ProgsEdit *fen;
 };
 
 #endif // MAINWINDOW_H

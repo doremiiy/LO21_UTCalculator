@@ -1,4 +1,3 @@
-
 #include "Pile.h"
 
 Controleur::Handler Controleur::handler = Controleur::Handler();
@@ -50,14 +49,14 @@ void Pile::pop()
         modificationEtat();
     }
     else
-        throw PileException("Erreur : pile vide");
+        throw ComputerException("Erreur : pile vide");
 }
 
 Litterale & Pile::top() const
 {
     if (!estVide())
         return itTab.front()->getLitterale();
-    throw PileException("Erreur : pile vide");
+    throw ComputerException("Erreur : pile vide");
 }
 
 void Pile::push(Litterale & L)
@@ -93,7 +92,7 @@ CareTaker::~CareTaker()
 QVector<Item*> CareTaker::undo()
 {
     if (VecteurUndo.size() == 0 || VecteurUndo.size() == 1)
-        throw PileException("Erreur impossible d'appliquer l'operateur");
+        throw ComputerException("Erreur impossible d'appliquer l'operateur");
     Memento* c = VecteurUndo.back();
     QVector<Item*> cState = c->getState();
     VecteurRedo.push_back(new Memento(cState));
@@ -126,7 +125,7 @@ void Controleur::commande(const QString & text)
         if(sTmp[i]==')') nbParDroite++;
     }
     if((nbCrochetGauche != nbCrochetDroit) || (nbParGauche != nbParDroite))
-        throw PileException("Erreur : impossible de lire l'instruction");
+        throw ComputerException("Erreur : impossible de lire l'instruction");
 
 
     QString tmpExp="";
@@ -235,7 +234,7 @@ void Controleur::commande(const QString & text)
                         f.supprimer(l);
                     }
                 }
-                else throw PileException("Erreur: Caractères non reconnu");
+                else throw ComputerException("Erreur: Caractères non reconnu");
         }
     }
 }
@@ -329,7 +328,7 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
 {
     QMap<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
-        throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+        throw ComputerException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
     QHash<QString,Programme*>::iterator It1=Progs.find(s1);
     if(It1!=Progs.end())
         Progs.erase(It1);
@@ -337,7 +336,7 @@ void Controleur::addVar(const QString& s1,LitteraleNumeric* l)
     if (It2 != Var.end())
         Var.erase(It2);
     Var.insert(s1,l);
-    modificationVar();
+    modification();
 }
 
 void Controleur::eraseVar(const QString & s)
@@ -345,27 +344,27 @@ void Controleur::eraseVar(const QString & s)
     QHash<QString,LitteraleNumeric*>::iterator It=Var.find(s);
     if(It!=Var.end())
         Var.erase(It);
-        modificationVar();
+        modification();
 }
 
 void Controleur::addProg(const QString& s1,Programme* l){
     QMap<QString, unsigned int>::const_iterator It = Operateur::listeOperateurs.find(s1);
     if (It != Operateur::listeOperateurs.end())
-        throw PileException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
-    //QHash<QString,LitteraleNumeric*>::iterator It1=Var.find(s1);
-    //if(It1!=Var.end())
-    //    Var.erase(It1);
+        throw ComputerException("Erreur : impossible de declarer une variable avec le nom d'un operateur predefini");
+    QHash<QString,LitteraleNumeric*>::iterator It1=Var.find(s1);
+    if(It1!=Var.end())
+        Var.erase(It1);
     QHash<QString,Programme*>::iterator It2=Progs.find(s1);
     if(It2!=Progs.end())
         Progs.erase(It2);
     Progs.insert(s1,l);
-    modificationProgs();
+    modification();
 }
 
 void Controleur::eraseProg(const QString& s){
     QHash<QString,Programme*>::iterator It=Progs.find(s);
     if(It!=Progs.end())
         Progs.erase(It);
-        modificationProgs();
+        modification();
 }
 
