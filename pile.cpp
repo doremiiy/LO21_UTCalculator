@@ -269,11 +269,6 @@ void Controleur::appliquerOperateur(Operateur * Op)
             C.getCareTaker().clearVecteurLits();
             C.getCareTaker().addLitteraleVecteur(l1);
             C.getCareTaker().addLitteraleVecteur(l2);
-            //if (res != nullptr)
-            //    p.push(*res);
-            //else
-            //    if(Op->getIdOp()!="STO") throw OperateurException("Erreur ");
-            //return;
             if(Op->getIdOp()!="STO"){
                 if (res != nullptr)
                     p.push(*res);

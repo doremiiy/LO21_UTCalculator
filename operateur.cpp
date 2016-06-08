@@ -1,6 +1,6 @@
 #include "Pile.h"
 
-const QMap<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARG",0},{"LASTOP",0},{"LASTARG",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
+const QMap<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARGS",0},{"LASTOP",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
 
 unsigned int OperateurBinaire::arite = 2;
 unsigned int OperateurUnaire::arite = 1;
@@ -214,8 +214,8 @@ Operateur * FabriqueOperateur::fabriquer(const QString & s)
             OpTab.push_back(Op);
             return Op;
         }
-        if (s == "LASTARG") {
-            Op = new OpLASTARG("LASTARG");
+        if (s == "LASTARGS") {
+            Op = new OpLASTARGS("LASTARGS");
             OpTab.push_back(Op);
             return Op;
         }
@@ -1511,17 +1511,17 @@ Litterale * OpLASTOP::faireOperation()
     QString s = C.getCareTaker().getDernierOpUtilise();
     if (s != "") {
         Operateur* Op = FabriqueOperateur::getInstance().fabriquer(s);
-        C.appliquerOperateur(Op);
+        C.commande(Op->getIdOp());
     }
     return nullptr;
 }
 
-OpLASTARG * OpLASTARG::Clone()
+OpLASTARGS * OpLASTARGS::Clone()
 {
-    return new OpLASTARG(*this);
+    return new OpLASTARGS(*this);
 }
 
-Litterale * OpLASTARG::faireOperation()
+Litterale * OpLASTARGS::faireOperation()
 {
     Controleur& C = Controleur::getInstance();
     QVector<Litterale*> vec = C.getCareTaker().getVecteurLits();

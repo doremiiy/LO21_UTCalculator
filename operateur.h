@@ -428,13 +428,13 @@ public:
 };
 
 /**
-   \class OpLASTARG
+   \class OpLASTARGS
    \brief Empile les littérales utilisées pour la dernière opération
 **/
-class OpLASTARG : public OperateurPile {
+class OpLASTARGS : public OperateurPile {
 public:
-    OpLASTARG(const QString& s) :OperateurPile(s) {}
-    OpLASTARG* Clone();
+    OpLASTARGS(const QString& s) :OperateurPile(s) {}
+    OpLASTARGS* Clone();
     Litterale* faireOperation();
 };
 

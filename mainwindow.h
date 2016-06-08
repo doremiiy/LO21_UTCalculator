@@ -23,6 +23,7 @@ Ce fichier defini la fenetre graphique principale\n
 
 #include "progsedit.h"
 #include "pile.h"
+#include "savecontext.h"
 
 namespace Ui {
 class MainWindow;
@@ -195,6 +196,7 @@ private:
     QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+O"), this);
     QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+P"), this);
     ProgsEdit *fen;
+    Xml_Dom *test=new Xml_Dom;
 };
 
 #endif // MAINWINDOW_H

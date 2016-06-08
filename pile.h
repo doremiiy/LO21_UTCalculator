@@ -129,6 +129,7 @@ class Controleur:public QObject{
     friend class MainWindow;
     friend class ProgsEdit;
     friend class Expression;
+    friend class Xml_Dom;
 private:
     Pile& p;
     CareTaker& ct;

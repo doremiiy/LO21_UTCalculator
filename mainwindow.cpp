@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //restauration du contexte
+    test->saveContext();
     //Creation vuePile
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
@@ -61,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //destructeur
 MainWindow::~MainWindow()
 {
+    //test->saveContext();
     delete ui;
 }
 //CTRL + O : Undo
@@ -73,6 +76,7 @@ void MainWindow::activeRedo(){
 //clavier
 void MainWindow::on_button0_clicked(){
     ui->commande->insert("0");
+    //test->saveContext();
 }
 void MainWindow::on_button1_clicked(){
     ui->commande->insert("1");
@@ -120,7 +124,7 @@ void MainWindow::on_buttonEnter_clicked(){
     ui->commande->returnPressed();
 }
 void MainWindow::on_buttonLastarg_clicked(){
-    ui->commande->insert(" LASTARG");
+    ui->commande->insert(" LASTARGS");
 }
 void MainWindow::on_buttonDup_clicked(){
     ui->commande->insert(" DUP");

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<context>
+	<pile>
+		<litterale>2</litterale>
+		<litterale>'1+2'</litterale>
+		<litterale>[1+2]</litterale>
+	</pile>
+	<variables>
+		<var>
+			<id></id>
+			<value></value>
+		</var>
+	</variables>
+	<programmes>
+	</programmes>
+	<parametres>
+		<son>1</son>
+		<clavier></clavier>
+		<clavierComplet></clavierComplet>
+		<OperateurPile></OperateurPile>
+		<taillePile><>
+	</parametres>
+</context>
