@@ -69,6 +69,8 @@ void Xml_Dom::saveContext(){
     //Noeud son
     QDomElement son = doc.createElement("son");
     parametres.appendChild(son);
+    //QDomText valeur = doc.createTextNode("1");
+    //parametres.appendChild(valeur);
     //Noeud Clavier
     QDomElement clavier = doc.createElement("clavier");
     parametres.appendChild(clavier);
