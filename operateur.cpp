@@ -1,4 +1,5 @@
 #include "Pile.h"
+#include <QDebug>
 
 const QMap<QString, unsigned int> Operateur::listeOperateurs = { {"+",2},{"-",2},{"*",2},{"/",2},{"NEG",1},{"DUP",1},{"DROP",1},{"SWAP",2},{"=",2},{"!=",2},{"<=",2},{">=",2},{"<",2},{">",2},{"AND",2},{"OR",2},{"NOT",1},{"NUM",1},{"DEN",1},{"$",2},{"RE",2},{"IM",2},{"UNDO",0},{"REDO",0},{"LASTARGS",0},{"LASTOP",0},{"CLEAR",0},{"STO",2},{"DIV",2},{"MOD",2},{"EVAL",1},{"FORGET",1},{"IFT",2} };
 
@@ -1681,11 +1682,24 @@ OpIFT* OpIFT::Clone(){
 }
 
 Litterale* OpIFT::faireOperation(){
+    Controleur& c=Controleur::getInstance();
+    FabriqueOperateur& o=FabriqueOperateur::getInstance();
     Litterale* l1=getLitterale1();
     Litterale* l2=getLitterale2();
+    qDebug()<<l1->toString();
+    qDebug()<<l2->toString();
     if(isLitteraleNumeric(l1->toString())){
         if(!LitToLitNum(l1)->LitteraleNumeriqueNulle(LitToLitNum(l1))){
-            if(isProgramme(l2->toString())) LitToProgramme(l2)->eval();
+            qDebug()<<'1';
+            if(isProgramme(l2->toString())) {
+                qDebug()<<"programme";
+                qDebug()<<LitToProgramme(l2)->getValue();
+                qDebug()<<c.getPile().taille();
+                OperateurUnaire *op=OperateurToOpUn(o.fabriquer("EVAL"));
+                op->putLitterale(l2);
+                op->faireOperation();
+                o.supprimer(op);
+            }
             else return l2;
         }
     }

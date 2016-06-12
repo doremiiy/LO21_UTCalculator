@@ -63,6 +63,7 @@ void Xml_Dom::saveContext(){
         }
     }
 
+<<<<<<< HEAD
     //Noeud Parametres
     QDomElement parametres = doc.createElement("parametres");
     context.appendChild(parametres);
@@ -88,6 +89,8 @@ void Xml_Dom::saveContext(){
     QDomText valeurTaillePile = doc.createTextNode(QString::number(nb));
     taillePile.appendChild(valeurTaillePile);
 
+=======
+>>>>>>> origin/master
     QDomProcessingInstruction instruction=doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"ISO-8859-1\"");
     doc.insertBefore(instruction,context);
     //Creation du fichier
@@ -179,14 +182,6 @@ void Xml_Dom::retreiveContext(){
         prog = prog.previousSiblingElement();
         delete res;
     }
-
-    //parcours parametres
-    //taille pile
-    QDomElement taillePile=parametre.lastChildElement();
-    qDebug()<<taillePile.text();
-    Controleur::getInstance().getPile().setNbToAffiche(taillePile.text().toInt());
-    MainWindow *ui = new MainWindow();
-    //ui->on_taillePile_valueChanged();
     xml_doc.close();
 }
 

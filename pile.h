@@ -131,6 +131,7 @@ class Controleur:public QObject{
     friend class ProgsEdit;
     friend class Expression;
     friend class Xml_Dom;
+    friend class Programme;
 private:
     Pile& p;
     CareTaker& ct;
@@ -151,7 +152,7 @@ public:
     void eraseVar(const QString& s);
     //LitteraleNumeric* getVar(const QString& s);
     void sauvegardeEtatPile(Operateur* op);
-    Pile& getPile() const { return p; }
+    Pile& getPile() /*const*/ { return p; }
     CareTaker& getCareTaker() const { return ct; }
     void commande(const QString& text);
     void appliquerOperateur(Operateur* Op);
