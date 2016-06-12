@@ -569,9 +569,15 @@ Litterale* Expression::eval() const {
         }
         else{
             QHash<QString,LitteraleNumeric*>::iterator It=c.Var.find(s);
+            QHash<QString,Programme*>::iterator It2=c.Progs.find(s);
             if(It!=c.Var.end()){
                 return It.value();
             }
+            else
+                if(It2!=c.Progs.end()){
+                    It2.value()->eval();
+                    return nullptr;
+                }
             else
                 throw OperateurException("Erreur : nom de variable inconnu");
         }

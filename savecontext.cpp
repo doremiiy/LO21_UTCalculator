@@ -63,29 +63,6 @@ void Xml_Dom::saveContext(){
         }
     }
 
-    //Noeud Parametres
-    QDomElement parametres = doc.createElement("parametres");
-    context.appendChild(parametres);
-    //Noeud son
-    QDomElement son = doc.createElement("son");
-    parametres.appendChild(son);
-    //Noeud Clavier
-    QDomElement clavier = doc.createElement("clavier");
-    parametres.appendChild(clavier);
-    //Noeud clavierComplet
-    QDomElement clavierComplet = doc.createElement("clavierComplet");
-    parametres.appendChild(clavierComplet);
-    //Noeud opPile
-    QDomElement opPile = doc.createElement("opPile");
-    parametres.appendChild(opPile);
-    //Noeud TaillePile
-    QDomElement taillePile = doc.createElement("taillePile");
-    parametres.appendChild(taillePile);
-    int nb=c.getPile().getNbToAffiche();
-    qDebug()<<nb;
-    QDomText valeurTaillePile = doc.createTextNode(QString::number(nb));
-    taillePile.appendChild(valeurTaillePile);
-
     QDomProcessingInstruction instruction=doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"ISO-8859-1\"");
     doc.insertBefore(instruction,context);
     //Creation du fichier
@@ -177,14 +154,6 @@ void Xml_Dom::retreiveContext(){
         prog = prog.previousSiblingElement();
         delete res;
     }
-
-    //parcours parametres
-    //taille pile
-    QDomElement taillePile=parametre.lastChildElement();
-    qDebug()<<taillePile.text();
-    Controleur::getInstance().getPile().setNbToAffiche(taillePile.text().toInt());
-    MainWindow *ui = new MainWindow();
-    //ui->on_taillePile_valueChanged();
     xml_doc.close();
 }
 
