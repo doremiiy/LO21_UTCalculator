@@ -63,34 +63,6 @@ void Xml_Dom::saveContext(){
         }
     }
 
-<<<<<<< HEAD
-    //Noeud Parametres
-    QDomElement parametres = doc.createElement("parametres");
-    context.appendChild(parametres);
-    //Noeud son
-    QDomElement son = doc.createElement("son");
-    parametres.appendChild(son);
-    //QDomText valeur = doc.createTextNode("1");
-    //parametres.appendChild(valeur);
-    //Noeud Clavier
-    QDomElement clavier = doc.createElement("clavier");
-    parametres.appendChild(clavier);
-    //Noeud clavierComplet
-    QDomElement clavierComplet = doc.createElement("clavierComplet");
-    parametres.appendChild(clavierComplet);
-    //Noeud opPile
-    QDomElement opPile = doc.createElement("opPile");
-    parametres.appendChild(opPile);
-    //Noeud TaillePile
-    QDomElement taillePile = doc.createElement("taillePile");
-    parametres.appendChild(taillePile);
-    int nb=c.getPile().getNbToAffiche();
-    qDebug()<<nb;
-    QDomText valeurTaillePile = doc.createTextNode(QString::number(nb));
-    taillePile.appendChild(valeurTaillePile);
-
-=======
->>>>>>> origin/master
     QDomProcessingInstruction instruction=doc.createProcessingInstruction("xml","version=\"1.0\" encoding=\"ISO-8859-1\"");
     doc.insertBefore(instruction,context);
     //Creation du fichier

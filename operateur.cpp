@@ -1702,6 +1702,7 @@ Litterale* OpIFT::faireOperation(){
             }
             else return l2;
         }
+        return nullptr;
     }
     throw OperateurException("Erreur : impossible d'appliquer l'opérateur à ces littérales");
 }

@@ -273,10 +273,16 @@ void Controleur::appliquerOperateur(Operateur * Op)
             C.getCareTaker().clearVecteurLits();
             C.getCareTaker().addLitteraleVecteur(l1);
             C.getCareTaker().addLitteraleVecteur(l2);
-            if(Op->getIdOp()!="STO"){
+            /*if(Op->getIdOp()!="STO"){
                 if (res != nullptr)
                     p.push(*res);
                 else throw OperateurException("Erreur ");
+            }*/
+            if (res != nullptr)
+                p.push(*res);
+            else {
+                if ((Op->getIdOp()!="STO") && Op->getIdOp()!="IFT")
+                    throw OperateurException("Erreur : Opération Impossible");
             }
             return;
         }

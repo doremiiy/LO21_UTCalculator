@@ -9,7 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     //restauration du contexte
-    test->retreiveContext();
+    try{
+        test->retreiveContext();
+    }
+    catch (ComputerException e) { ui->message->setText(e.getInfo());son(); }
     //Creation vuePile
     Pile& P = controleur.getPile();
     ui->vuePile->setRowCount(P.getNbToAffiche());
