@@ -20,19 +20,7 @@ class Programme;
 class FabriqueLitterale;
 
 using namespace std;
-/**
-   \class LitteraleException
-   \brief Permet de lancer des message d'erreur lié au litterale
-**/
-/*
-class LitteraleException {
-private:
-    QString info;
-public:
-    QString getInfo() const { return info; }
-    LitteraleException(const QString& s):info(s){}
-};
-*/
+
 /**
    \class Litteral
    \brief Classe qui décrit tous les éléments manipulés par les operateurs

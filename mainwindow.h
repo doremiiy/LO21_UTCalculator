@@ -40,7 +40,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    friend class Xml_Dom;
 private:
     Ui::MainWindow *ui;
     Controleur& controleur = Controleur::getInstance();
@@ -196,6 +195,7 @@ public slots:
     void activeUndo();
     //! \brief Envois La commande undo au controleur grace au racourci Ctrl + P
     void activeRedo();
+    //! \brief Verifie si un Operateur a été ajouter en fin de ligne
     void on_commande_textChanged();
 };
 

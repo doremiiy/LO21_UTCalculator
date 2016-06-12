@@ -7,7 +7,10 @@
 namespace Ui {
 class ProgsEdit;
 }
-
+/**
+   \class ProgsEdit
+   \brief Fenetre d'edition des Programmes
+**/
 class ProgsEdit : public QDialog
 {
     Q_OBJECT

@@ -3,13 +3,15 @@
 
 #include <QtXml>
 #include <QWidget>
-//#include "mainwindow.h"
 #include "pile.h"
 
+/**
+   \class Xml_Dom
+   \brief Sauvegarde du contexte
+**/
 class Xml_Dom : public QWidget
 {
 private:
-     QDomDocument *dom;
      Controleur &controleur = Controleur::getInstance();
 public:
     Xml_Dom();

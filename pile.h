@@ -23,7 +23,7 @@ class CareTaker;
 class Controleur;
 
 /**
-   \class
+   \class ComputerException
    \brief
 **/
 class ComputerException {
@@ -35,8 +35,8 @@ public:
 };
 
 /**
-   \class
-   \brief
+   \class Item
+   \brief Permet d'encapsuler les litterales
 **/
 class Item {
 private:
@@ -52,8 +52,8 @@ public:
 };
 
 /**
-   \class
-   \brief
+   \class Memento
+   \brief Permet Se sauvegarder un état de la Pile
 **/
 class Memento {
 private:
@@ -66,8 +66,8 @@ public:
 };
 
 /**
-   \class
-   \brief
+   \class Pile
+   \brief Permet de stocker les differents Item et de gérer leur priorité (LIFO)
 **/
 class Pile:public QObject{
 private:
@@ -99,8 +99,8 @@ signals:
 };
 
 /**
-   \class
-   \brief
+   \class CareTaker
+   \brief Permet de conserver memoire les differentes instances de Memento et leur type (Undo ou Redo)
 **/
 class CareTaker {
 private:
@@ -122,8 +122,8 @@ public:
 };
 
 /**
-   \class
-   \brief
+   \class Controleur
+   \brief Permet de gérer l'ahout d'element dans la Pile, et lance les differents operateurs.
 **/
 class Controleur:public QObject{
     Q_OBJECT

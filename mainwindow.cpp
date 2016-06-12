@@ -462,8 +462,11 @@ void MainWindow::on_commande_textChanged(){
 void MainWindow::getNextCommande(){
     QString c = ui->commande->text();
     try{
+    try{
         controleur.commande(c);
         ui->commande->clear();
     }
     catch (ComputerException e) { ui->message->setText(e.getInfo());son(); }
+    }
+    catch (OperateurException e) { ui->message->setText(e.getInfo());son(); }
 }
